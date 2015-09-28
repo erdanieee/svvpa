@@ -1,0 +1,5 @@
+proc            /proc           proc    defaults          0       0
+/dev/mmcblk0p1  /boot           vfat    defaults          0       2
+/dev/mmcblk0p2  /               ext4    defaults,noatime  0       1
+UUID=d44e1f60-06b0-43f3-9c79-0a7bc013bff6	/var/www/media	ext4	uid=1000,gid=1000,umask=007	0	0
+# a swapfile is not a swap partition, so no using swapon|off from here on, use  dphys-swapfile swap[on|off]  for that

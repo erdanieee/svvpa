@@ -1,0 +1,9 @@
+TARGETS = hostapd triggerhappy fake-hwclock ifplugd cgroup-bin apache2 nginx isc-dhcp-server mysql udhcpd motion wittypi rtc.sh lightdm setClock.sh plymouth urandom alsa-utils sendsigs rsyslog umountnfs.sh rpcbind nfs-common hwclock.sh networking umountfs umountroot halt reboot
+sendsigs: setClock.sh hostapd lightdm triggerhappy alsa-utils nginx isc-dhcp-server mysql udhcpd motion wittypi plymouth ifplugd rtc.sh apache2
+rsyslog: sendsigs setClock.sh nginx isc-dhcp-server mysql udhcpd wittypi rtc.sh apache2
+umountnfs.sh: rsyslog setClock.sh hostapd lightdm sendsigs triggerhappy alsa-utils nginx isc-dhcp-server mysql udhcpd motion wittypi plymouth ifplugd rtc.sh apache2
+networking: umountnfs.sh nginx isc-dhcp-server mysql rpcbind ifplugd apache2
+umountfs: setClock.sh hostapd lightdm networking hwclock.sh triggerhappy urandom umountnfs.sh alsa-utils nginx isc-dhcp-server mysql udhcpd motion wittypi plymouth rpcbind ifplugd rtc.sh apache2
+umountroot: fake-hwclock umountfs
+halt: umountroot
+reboot: umountroot

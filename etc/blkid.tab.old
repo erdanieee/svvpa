@@ -1,0 +1,2 @@
+<device DEVNO="0xb301" TIME="1442263029.583776" SEC_TYPE="msdos" LABEL="boot" UUID="140A-14B7" TYPE="vfat">/dev/mmcblk0p1</device>
+<device DEVNO="0xb302" TIME="1442263029.584065" UUID="f24a4949-f4b2-4cad-a780-a138695079ec" TYPE="ext4">/dev/mmcblk0p2</device>
