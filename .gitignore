@@ -1,0 +1,5 @@
+*.backup
+test*
+*~
+motion/*.jpg
+motion/*.mp4
