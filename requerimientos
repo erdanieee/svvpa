@@ -1,4 +1,19 @@
-1.- gspread
-pip install gspread
+###################################
+### INSTALACIÓN DE DEPENDENCIAS	###
+###################################
+sudo apt-get install motion apache2
+sudo pip install --upgrade oauth2client
+sudo pip install PyOpenSSL --upgrade
+sudo pip install gspread
 
-2.- 
+
+
+################################
+### MODIFICACIÓN DE FICHEROS ###
+################################
+* Definir variables de entorno en bin/env.sh y en /etc/apache2/apache2.conf
+* Comprobar los paths de las funciones on_picture_save, on_movie_start, on_movie_end del fichero /etc/motion/motion.conf
+
+
+
+
