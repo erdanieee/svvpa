@@ -19,6 +19,10 @@ then
         	exit 1
         fi
 
+	#send file by email
+	./sendEmailImage.py $fileIn
+
+	#move file to www
 	chmod 775 $fileIn
 	mv $fileIn $dirOut
 	

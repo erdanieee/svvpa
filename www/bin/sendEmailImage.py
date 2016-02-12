@@ -1,10 +1,11 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*- 
 
 import sys
 import os
 import smtplib
 import time
+import urllib
 from email.mime.text import MIMEText
 from email.MIMEImage import MIMEImage
 from email.mime.multipart import MIMEMultipart
@@ -20,9 +21,9 @@ html        = """\
   <head></head>
   <body>
     <h3>Movimiento detectado</h3>
-    <p>S.V.V.P.A. ha detectado un nuevo movimiento en E.C. Adjunto a este mensaje se incluye el fotograma más representativo.</p>
-    <p>Si el vídeo es interesante y deseas guardarlo en Google Drive haz <a href="http://svvpa.duckdns.org:9999/gsp.php?id=XXX">click aquí</a>. Recuerda que el vídeo puede tardar unos minutos en subir y que este disponible en la nube.</p>
-   <p>Puedes ver los vídeos guardados anteriormente en <a href="https://drive.google.com/folderview?id=0Bwse_WnehFNKT2I3N005YmlYMms&usp=sharing">este enlace</a>.</p>
+    <p>S.V.V.P.A. (XXIPXX) ha detectado un nuevo movimiento en E.C. Adjunto a este mensaje se incluye el fotograma más representativo.</p>
+    <p>Si el vídeo es interesante y deseas guardarlo en Google Drive haz <a href="http://svvpa.duckdns.org:9999/uploadVideo.php?id=XXIDXX">click aquí</a>. Recuerda que el vídeo puede tardar unos minutos en subir y que este disponible en la nube.</p>
+   <p>Puedes ver las capturas guardadas anteriormente en <a href="https://drive.google.com/folderview?id=0Bwse_WnehFNKT2I3N005YmlYMms&usp=sharing">este enlace</a>.</p>			 
   </body>
 </html>
 """
@@ -39,6 +40,8 @@ def main(argv):
 			else:
 				datetime = "el " + time.strftime("%Y/%m/%d") + " aproximadamente a las " + time.strftime("%H:%M:%S")			
 
+			
+
 			# Construct email
 			msg = MIMEMultipart()
 			msg['To'] = addr_to
@@ -47,7 +50,7 @@ def main(argv):
 			msg.preamble = 'Movimiento detectado' + datetime
 
 			# Attach html
-			msg.attach(MIMEText(html, 'html', 'utf-8'))
+			msg.attach(MIMEText(html.replace("XXIDXX",os.path.basename(image).split(".")[0]).replace("XXIPXX",get_ip()), 'html', 'utf-8'))
 
 			#attach image
 			fp=open(image,'rb')
@@ -71,6 +74,15 @@ def main(argv):
 	else:
 		print "USAGE: " + sys.argv[0] + " <image>"
 		
+
+def get_ip():
+	url = "http://ipecho.net/plain"
+	fp = urllib.urlopen(url)
+	try:
+		data = fp.read()
+	finally:
+		fp.close()
+	return data
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv))
