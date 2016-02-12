@@ -1,5 +1,5 @@
 *.backup
 test*
 *~
-motion/*.jpg
-motion/*.mp4
+www/motion/*.jpg
+www/motion/*.mp4

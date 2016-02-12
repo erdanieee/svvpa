@@ -5,26 +5,23 @@
 <body>
 
 <?php
-	$RCLONE="/home/dan/software/rclone-v1.27-linux-amd64/rclone";
-	$tempDir="/tmp/motion/";
-	//$targetDir="/var/www/motion/";	
-	$targetDir="/var/www/html/svvpa/www/motion/";	
+	$targetDir=system('echo $PWD') . "/motion/";	
 	$id=htmlspecialchars($_GET["id"]);
 	
-	while ( file_exists($tempDir . $id . ".avi") ){
+	while ( file_exists(getenv("MOTION_TEMP_DIR") . $id . ".avi") ){
 		sleep(10);
 	}
 	
 	echo '<h5>Transfiriendo imagen...</h5>';
 	echo '<pre>';
-	system($RCLONE . ' copy ' . $targetDir . $id . ".jpg" . " google:SVVPA/fotos 2>&1", $out1);	
+	system(getenv("RCLONE_BIN") . ' copy ' . $targetDir . $id . ".jpg" . " google:SVVPA/imagenes 2>&1", $out1);	
 	echo '</pre>';
 
 //	echo '<br><br>';	
 
 	echo '<h5>Transfiriendo video...</h5>';
 	echo '<pre>';
-	system($RCLONE . ' copy ' . $targetDir . $id . ".mp4" . " google:SVVPA/videos 2>&1", $out2);
+	system(getenv("RCLONE_BIN") . ' copy ' . $targetDir . $id . ".mp4" . " google:SVVPA/videos 2>&1", $out2);
 	echo '</pre>';
 
 	echo '<br>';	

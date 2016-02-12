@@ -232,8 +232,8 @@ function checkShutdown(){
                                                                                         <td></td>
 										</tr>
                                                                                 <tr>
-                                                                                        <td>Carpeta <i>/tmp/motion</i></td>
-                                                                                        <td><?php echo (human_filesize(exec("du -sb /tmp/motion|awk '{print $1}'"),0)) ?></td>
+                                                                                        <td>Carpeta <i><?php echo getenv("MOTION_TEMP_DIR")?></i></td>
+                                                                                        <td><?php echo (human_filesize(exec("du -sb " . getenv("MOTION_TEMP_DIR") . "|awk '{print $1}'"),0)) ?></td>
                                                                                         <td></td>
                                                                                 </tr>
 										<tr>

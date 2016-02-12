@@ -1,6 +1,13 @@
 #!/bin/bash
 
-cd /var/www/bin
+if [ -z "${APACHE_DIR}" ]
+then
+	echo "ERROR: No se ha cargado la librería de variables env.sh!!!"
+	exit 1
+fi
+
+
+cd ${APACHE_DIR}/bin
 
 cpuTemp="$(sudo ./readInternalTemp.sh)"
 bmp180Pres="$(sudo ./readBmp180Press.py)"
