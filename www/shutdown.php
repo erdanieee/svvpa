@@ -8,8 +8,7 @@
 
 	<body>
 		<p>El sistema se ha apagado correctamente.</p>
-		<p>Para volver a iniciarlo es necesario quitar y volver a poner la alimentación.</p>
-
+		<p>Para volver a iniciarlo es necesario desactivar y volver a activar el miniinterruptor que está junto a las baterías.</p>
 	</body>
 </html>
 
