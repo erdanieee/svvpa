@@ -1,6 +1,8 @@
+CREATE DATABASE  IF NOT EXISTS `svvpa` /*!40100 DEFAULT CHARACTER SET latin1 */;
+USE `svvpa`;
 -- MySQL dump 10.13  Distrib 5.5.46, for debian-linux-gnu (x86_64)
 --
--- Host: localhost    Database: svvpa
+-- Host: 127.0.0.1    Database: svvpa
 -- ------------------------------------------------------
 -- Server version	5.5.46-0ubuntu0.14.04.2
 
@@ -34,14 +36,8 @@ CREATE TABLE `sensors` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `sensors`
+-- Dumping routines for database 'svvpa'
 --
-
-LOCK TABLES `sensors` WRITE;
-/*!40000 ALTER TABLE `sensors` DISABLE KEYS */;
-INSERT INTO `sensors` VALUES ('2016-02-09 16:22:46',45,42,1005,60,30),('2016-02-09 16:25:21',45,42,1005,60,32),('2016-02-09 16:25:23',45,42,1005,60,32),('2016-02-09 16:25:24',45,42,1005,60,32),('2016-02-09 16:25:27',45,42,1005,60,35);
-/*!40000 ALTER TABLE `sensors` ENABLE KEYS */;
-UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -52,4 +48,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-02-09 17:29:34
+-- Dump completed on 2016-02-15 18:25:44
