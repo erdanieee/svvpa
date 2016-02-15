@@ -21,7 +21,8 @@ then
 
 	fileOut=${dirOut}"/"$(basename $fileIn)
 	fileOut=${fileOut/.avi/.mp4}
-        /usr/bin/ffmpeg -i $fileIn -preset ultrafast -y ${fileOut}
+	//TODO: usar avconv (see http://www.thehelloworldprogram.com/web-development/encode-video-and-audio-for-html5-with-avconv/)
+        /usr/local/bin/ffmpeg -i $fileIn -preset ultrafast -y ${fileOut}	
 
 	if [[ ! -e $fileOut || ! -f $fileOut ]]
 	then
