@@ -1,7 +1,7 @@
 ###################################
 ### INSTALACIÓN DE DEPENDENCIAS	###
 ###################################
-sudo apt-get install git motion apache2 mysql-server 
+sudo apt-get install git motion apache2 php5 mysql-server 
 sudo pip install --upgrade oauth2client PyOpenSSL gspread
 rclone 
 	- http://downloads.rclone.org/rclone-current-linux-arm.zip
@@ -15,6 +15,8 @@ ffmpeg (probar a usar avconv que está en los repositorios [libav-tools])
 ### MODIFICACIÓN DE FICHEROS ###
 ################################
 * copiar archivos www a la ruta default de apache2
+* copiar ~/.rclone.conf
+* copiar svvpa-81b7a04fc4c2.json para gspread
 * Definir variables de entorno en bin/env.sh y en /etc/apache2/apache2.conf
 * Comprobar los paths de las funciones on_picture_save, on_movie_start, on_movie_end del fichero /etc/motion/motion.conf
 
