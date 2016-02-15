@@ -1,7 +1,7 @@
 <?php
 $servername = "localhost";
-$username = "temp";
-$password = "readtemperature";
+$username = "web";
+$password = "readSensors";
 $dbname = "svvpa";
 $bmp180Temp = [];
 $bmp180Press = [];

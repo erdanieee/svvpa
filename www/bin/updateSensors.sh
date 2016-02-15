@@ -34,7 +34,7 @@ echo $dht22Temp
 echo $dht22Hr
 echo
 
-mysql -u temp -preadtemperature svvpa < <(echo "insert into sensors (CPU_temp, BMP180_temp, BMP180_press, DHT22_temp, DHT22_HR) values ($cpuTemp, $bmp180Temp, $bmp180Pres, $dht22Temp, $dht22Hr)")
+mysql -u svvpa -pupdateSensors svvpa < <(echo "insert into sensors (CPU_temp, BMP180_temp, BMP180_press, DHT22_temp, DHT22_HR) values ($cpuTemp, $bmp180Temp, $bmp180Pres, $dht22Temp, $dht22Hr)")
 
 ./updateGoogleSpreadsheetSensors.py $cpuTemp $bmp180Temp $bmp180Pres $dht22Temp $dht22Hr
 
