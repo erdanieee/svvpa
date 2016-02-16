@@ -1,7 +1,7 @@
 ###################################
 ### INSTALACIÓN DE DEPENDENCIAS	###
 ###################################
-sudo apt-get install git motion apache2 php5 mysql-server 
+sudo apt-get install git motion apache2 mysql-server php5 php5-mysql
 sudo pip install --upgrade oauth2client PyOpenSSL gspread
 rclone 
 	- http://downloads.rclone.org/rclone-current-linux-arm.zip
@@ -11,13 +11,24 @@ ffmpeg (probar a usar avconv que está en los repositorios [libav-tools])
 			
 
 
+####################
+### TABLAS MYSQL ###
+####################
+* crear base de datos a partir del archivo config/svvpa.sql
+* crear usuario con permisos select, insert, update y poner user/pass en updateSensors.sh
+* crear usuario con permiso select y poner user/pass en sensors.php
+
+
+
 ################################
 ### MODIFICACIÓN DE FICHEROS ###
 ################################
 * copiar archivos www a la ruta default de apache2
 * copiar ~/.rclone.conf
 * copiar svvpa-81b7a04fc4c2.json para gspread
-* Definir variables de entorno en bin/env.sh y en /etc/apache2/apache2.conf
+* copiar CONSTANTS.php.example a CONSTANTS.php y modificar a criterio
+* copiar CONSTANTS.sh.example a CONSTANTS.sh y modificar a criterio
+
 * Comprobar los paths de las funciones on_picture_save, on_movie_start, on_movie_end del fichero /etc/motion/motion.conf
 
 

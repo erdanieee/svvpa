@@ -1,8 +1,6 @@
 <?php
-$servername = "localhost";
-$username = "temp";
-$password = "readtemperature";
-$dbname = "svvpa";
+require_once('CONSTANTS.php');
+
 $bmp180Temp = [];
 $bmp180Press = [];
 $dht22Temp = [];
@@ -11,7 +9,7 @@ $dht22HR = [];
 date_default_timezone_set('UTC');
 
 // Create connection
-$conn = mysqli_connect($servername, $username, $password, $dbname);
+$conn = mysqli_connect(MYSQL_SERVER, MYSQL_USER, MYSQL_PASS, MYSQL_DB);
 // Check connection
 if (mysqli_connect_errno())
   {
@@ -261,30 +259,18 @@ $( document ).ready(function() {
 
 
 <!-- Footer -->
-                        <footer id="footer">
-                                <div class="container">
-                                        <div class="row">
-                                                <div class="8u 12u$(medium)">
-                                                        <ul class="copyright">
-                                                                <li>&copy;SVVPA 2015. Todos los derechos reservados.</li>
-                                                                <li>Diseño: Er Danié</li>
-                                                                <li>Instalación: Pae, Andrex y Er Danié</li>
-                                                        </ul>
-                                                </div>
-                                        </div>
-                                </div>
-                        </footer>
-
-
-
-
-<form id="changeDateForm" action="changeDate.php">
-  <input type="hidden" id="dateField" name="dateField">
-</form>
-<form id="changeTimeForm" action="changeTime.php">
-  <input type="hidden" id="timeField" name="timeField">
-</form>
-
-
+      <footer id="footer">
+              <div class="container">
+                      <div class="row">
+                              <div class="8u 12u$(medium)">
+                                      <ul class="copyright">
+                                              <li>&copy;SVVPA 2015. Todos los derechos reservados.</li>
+                                              <li>Diseño: Er Danié</li>
+                                              <li>Instalación: Pae, Andrex y Er Danié</li>
+                                      </ul>
+                              </div>
+                      </div>
+              </div>
+      </footer>
 	</body>
 </html>
