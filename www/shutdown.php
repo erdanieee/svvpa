@@ -1,10 +1,8 @@
 <html>
 	<head>
-                <meta charset="UTF-8">
-                <title>SVVPA</title>
-                <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-                <link rel="shortcut icon" type="image/x-icon" href="images/favicon.png" />
-        </head>
+		<?php require 'meta.php'; ?>
+		<link rel="shortcut icon" type="image/x-icon" href="images/favicon.png" />
+	</head>
 
 	<body>
 		<p>El sistema se ha apagado correctamente.</p>
@@ -13,6 +11,6 @@
 </html>
 
 <?php
-	exec("/sbin/shutdown -h now");
+exec("/sbin/shutdown -h now");
 ?>
 

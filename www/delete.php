@@ -1,14 +1,16 @@
 <?php
-$image = 'motion/' . htmlspecialchars($_GET["n"]) . '.jpg';
-$video = 'motion/' . htmlspecialchars($_GET["n"]) . '.mp4';
+require_once('CONSTANTS.php');
+
+$image = MOTION_DIR . '/' . htmlspecialchars($_GET["n"]) . '.' . MOTION_IMAGE_EXT;
+$video = MOTION_DIR . '/' . htmlspecialchars($_GET["n"]) . '.' . MOTION_VIDEO_EXT;
 $back  = htmlspecialchars($_GET["b"]);
 
 try {
-    unlink($video);
+	unlink($video);
 } catch (Exception $e) {}
 
 try {
-    unlink($image);
+	unlink($image);
 } catch (Exception $e) {}
 
 if ($back){
