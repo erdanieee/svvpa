@@ -1,9 +1,9 @@
 #!/bin/bash
 
 fileIn=$1
-dirOut=$2
+dirOut=${APACHE_DIR}${MOTION_DIR}
 
-if [[ $# -eq 2 ]]
+if [[ $# -eq 1 ]]
 then
 	logger "$(basename $0) DEBUG $@"
 
@@ -13,11 +13,6 @@ then
 		exit 1
 	fi
 
-	if [[ ! -d $dirOut ]]
-        then
-                logger "$0 - ERROR! El directorio de destino no existe: $dirOut"
-        	exit 1
-        fi
 
 	#send file by email
 	./sendEmailImage.py $fileIn
