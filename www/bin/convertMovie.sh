@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source CONSTANTS.sh
+
 fileIn=$1
 dirOut=$2
 
@@ -7,22 +9,18 @@ if [[ $# -eq 2 ]]
 then
 	logger "$(basename $0) DEBUG $@"	
 
-        if [[ ! -e $fileIn || ! -f $fileIn ]]
-        then
-                logger "$0 - ERROR! Archivo de origen no existe o es un directorio: $fileIn"
-                exit 1
-        fi
+	if [[ ! -e $fileIn || ! -f $fileIn ]]
+	then
+		logger "$0 - ERROR! Archivo de origen no existe o es un directorio: $fileIn"
+		exit 1
+	fi
 
-        if [[ ! -d $dirOut ]]
-        then
-                logger "$0 - ERROR! El directorio de destino no existe: $dirOut"
-                exit 1
-        fi
+	mdir -p $dirOut 2>/dev/null
 
 	fileOut=${dirOut}"/"$(basename $fileIn)
-	fileOut=${fileOut/.avi/.mp4}
-	//TODO: usar avconv (see http://www.thehelloworldprogram.com/web-development/encode-video-and-audio-for-html5-with-avconv/)
-        /usr/local/bin/ffmpeg -i $fileIn -preset ultrafast -y ${fileOut}	
+	fileOut=${fileOut/.${MOTION_IMAGE_EXT}/.${MOTION_VIDEO_EXT}}
+	#TODO: usar avconv (see http://www.thehelloworldprogram.com/web-development/encode-video-and-audio-for-html5-with-avconv/)
+	${FFMPEG_BIN} -i $fileIn -preset ultrafast -y ${fileOut}	
 
 	if [[ ! -e $fileOut || ! -f $fileOut ]]
 	then
@@ -31,9 +29,9 @@ then
 	fi
 
 	chmod 666 $fileOut
-        rm -f $fileIn 
+	rm -f $fileIn 
 
 else
-        logger "$0 ERROR! Invalid number of arguments: $#"
-        exit 1
+	logger "$0 ERROR! Invalid number of arguments: $#"
+exit 1
 fi

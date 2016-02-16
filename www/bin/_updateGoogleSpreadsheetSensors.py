@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import os
 import sys
 import json
 import time
@@ -26,7 +27,7 @@ def main(argv):
 		print 
 
 		print "load json and credentials"
-		json_key = json.load(open('svvpa-81b7a04fc4c2.json'))
+		json_key = json.load(open(os.environ['GSREAD_JSON']))
 		scope = ['https://spreadsheets.google.com/feeds']
 		credentials = SignedJwtAssertionCredentials(json_key['client_email'], json_key['private_key'], scope)
 

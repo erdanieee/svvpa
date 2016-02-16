@@ -1,7 +1,7 @@
 ###################################
 ### INSTALACIÓN DE DEPENDENCIAS	###
 ###################################
-sudo apt-get install git motion apache2 mysql-server php5 php5-mysql
+sudo apt-get install git motion apache2 mysql-server php5 php5-mysql bc
 sudo pip install --upgrade oauth2client PyOpenSSL gspread
 rclone 
 	- http://downloads.rclone.org/rclone-current-linux-arm.zip

@@ -10,12 +10,6 @@ from email.mime.text import MIMEText
 from email.MIMEImage import MIMEImage
 from email.mime.multipart import MIMEMultipart
 
-addr_to     = 'erdanieee@gmail.com'
-addr_from   = 'SVVPA@elcarabo.com'
-smtp_server = 'smtp.gmail.com'
-smtp_port   = 587
-smtp_user   = 'svvpaec@gmail.com'
-smtp_pass   = 'elojoquetodolove'
 html        = """\
 <html>
   <head></head>
@@ -44,8 +38,8 @@ def main(argv):
 
 			# Construct email
 			msg = MIMEMultipart()
-			msg['To'] = addr_to
-			msg['From'] = addr_from
+			msg['To'] = os.environ['EMAIL_ADDR']
+			msg['From'] = os.environ['EMAIL_FROM']
 			msg['Subject'] = 'Movimiento detectado ' + datetime
 			msg.preamble = 'Movimiento detectado' + datetime
 
@@ -58,12 +52,12 @@ def main(argv):
 			fp.close()
 
 			#send email
-			server = smtplib.SMTP(smtp_server,smtp_port) #port 465 or 587
+			server = smtplib.SMTP(os.environ['SMPT_SERVER'],os.environ['SMPT_PORT']) #port 465 or 587
 			server.ehlo()
 			server.starttls()
 			server.ehlo()
-			server.login(smtp_user,smtp_pass)
-			server.sendmail(addr_from, addr_to, msg.as_string())
+			server.login(os.environ['SMPT_USER'],os.environ['SMPT_PASS'])
+			server.sendmail(os.environ['EMAIL_FROM'], os.environ['EMAIL_ADDR'], msg.as_string())
 			server.close()
 
 

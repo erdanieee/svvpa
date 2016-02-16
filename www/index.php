@@ -225,7 +225,7 @@ require_once('CONSTANTS.php');
 							</tr>
 							<tr>
 								<td>Temperatura RPI</td>
-								<td><?php $t=exec('cat /sys/class/thermal/thermal_zone0/temp') / 1000; echo number_format($t,1);?>ºC</td>
+								<td><?php system('./bin/readInternalTemp.sh');?>ºC</td>
 							</tr>
 						</tbody>
 					</table>

@@ -211,7 +211,7 @@
 									</tr>
 									<tr>
 										<td>Temperatura RPI</td>
-										<td><?php $t=exec('cat /sys/class/thermal/thermal_zone0/temp') / 1000; echo number_format($t,1);?>ºC</td>
+										<td><?php system('./bin/readInternalTemp.sh');?>ºC</td>
 										<td><a href="/sensors.php?h=0,1,4" class="button icon small fa-eye">ver</a></td>
 									</tr>
 								</tbody>

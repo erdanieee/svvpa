@@ -1,10 +1,6 @@
 #!/bin/bash
 
-if [[ -z "$CURRENT_IP_FILE" || -z "${DUCKDNS_TOKEN}" ]]
-then
-	echo "Error!! No se ha cargado el archivo fuente con todas las variables!!!"
-	exit 1
-fi
+source CONSTANTS.sh
 
 echo "Updating svvpa.duckdns.org"
 echo url="https://www.duckdns.org/update?domains=${DUCKDNS_DOMAIN}&token=${DUCKDNS_TOKEN}&ip=" | curl -k -K -
@@ -26,7 +22,7 @@ fi
 echo "Uploading IP file to Google Drive"
 echo "http://${DUCKDNS_DOMAIN}.duckdns.org:${APACHE_PORT}" > ${CURRENT_IP_PATH}${CURRENT_IP_FILE} 
 echo "http://$ip:${APACHE_PORT}" >> ${CURRENT_IP_PATH}${CURRENT_IP_FILE}
-${RCLONE_BIN} copy ${CURRENT_IP_PATH}${CURRENT_IP_FILE} google:SVVPA/ 2>&1
+${RCLONE_BIN} --config ${RCLONE_CONFIG} copy ${CURRENT_IP_PATH}${CURRENT_IP_FILE} google:SVVPA/ 2>&1
 r3=$?
 
 if [[ $r1 -eq 0 && $r2 -eq 0  && $r3 -eq 0 ]]
