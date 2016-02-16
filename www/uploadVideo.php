@@ -19,7 +19,7 @@ require_once('CONSTANTS.php');
 		ob_flush();
 		flush();
 		echo '<pre>';
-		system(RCLONE_BIN . ' copy ' . $targetDir . $id . "." . MOTION_IMAGE_EXT . " google:SVVPA/imagenes 2>&1", $out1);	
+		system(RCLONE_BIN . ' --config '. RCLONE_CONFIG .' copy ' . $targetDir . $id . "." . MOTION_IMAGE_EXT . " google:SVVPA/imagenes 2>&1", $out1);	
 		echo '</pre>';
 
 	//	echo '<br><br>';	
@@ -28,7 +28,7 @@ require_once('CONSTANTS.php');
 		ob_flush();
 		flush();
 		echo '<pre>';
-		system(RCLONE_BIN . ' copy ' . $targetDir . $id . "." . MOTION_VIDEO.EXT . " google:SVVPA/videos 2>&1", $out2);
+		system(RCLONE_BIN . ' --config '. RCLONE_CONFIG .' copy ' . $targetDir . $id . "." . MOTION_VIDEO.EXT . " google:SVVPA/videos 2>&1", $out2);
 		echo '</pre>';
 		echo '<br>';	
 		if ($out1==0 && $out2==0){

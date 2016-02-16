@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source CONSTANTS.sh
+
 fileIn=$1
 dirOut=${APACHE_DIR}${MOTION_DIR}
 
@@ -13,14 +15,14 @@ then
 		exit 1
 	fi
 
+	mkdir -p $dirOut 2>/dev/null
 
 	#send file by email
-	./sendEmailImage.py $fileIn
+	./_sendEmailImage.py $fileIn
 
 	#move file to www
 	chmod 775 $fileIn
 	mv $fileIn $dirOut
-	
 
 else
 	logger "$0 ERROR! Invalid number of arguments: $#"

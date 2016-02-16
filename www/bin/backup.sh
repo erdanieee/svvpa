@@ -1,12 +1,7 @@
 #!/bin/bash
 
-dir=${APACHE_DIR}
-
-if [ -z "$dir" ]
-then
-	dir="../"
-fi
+. CONSTANTS.sh
 
 mkdir ~/backup 2>/dev/null
-tar -zcvf ~/backup/www-`date +%Y%m%d`.tar.gz --exclude='motion' $dir
+tar -zcvf ~/backup/www-`date +%Y%m%d`.tar.gz --exclude=${MOTION_DIR} $dir
 
