@@ -1,1 +1,1 @@
-El archivo de ejemplo se encuentra en el directorio bin
+El archivo CONSTANTS.sh debe estar en el directorio donde se encuentran losscript bash y python (bin). Puedes encontrar un ejemplo (CONSTANTS.sh.example" en ese mismo directorio
