@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source ${CONFIG_DIR}CONSTANTS.sh
+source CONSTANTS.sh
 
 cd ${BIN_DIR}
 
