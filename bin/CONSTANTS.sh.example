@@ -31,5 +31,7 @@ export SMPT_PORT="587"
 export SMPT_USER="XXX@gmail.com"
 export SMPT_PASS="XXX"
 
- 
+export MYSQL_USER="svvpa"
+export MYSQL_PASS="updateSensors"
+export MYSQL_DB="svvpa"
 
