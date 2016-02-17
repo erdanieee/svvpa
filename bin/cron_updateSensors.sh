@@ -2,7 +2,7 @@
 
 source ${CONFIG_DIR}CONSTANTS.sh
 
-cd ${APACHE_DIR}/bin
+cd ${BIN_DIR}
 
 cpuTemp="$(sudo ./readInternalTemp.sh)"
 bmp180Pres="$(sudo ./_readBmp180Press.py)"
