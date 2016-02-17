@@ -12,6 +12,6 @@ define('MOTION_VIDEO_EXT','mp4');
 define('MOTION_TEMP_DIR','/tmp/motion');
 define('MOTION_VIDEO_EXT_RAW','avi');
 
-define('RCLONE_BIN','/home/dan/software/rclone-v1.27-linux-amd64/rclone');
+define('RCLONE_BIN','/home/pi/software/rclone-v1.27-linux-arm/rclone');
 
 ?>

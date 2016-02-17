@@ -1,19 +1,22 @@
 #!/bin/bash
 
-export APACHE_DIR="/var/www/html/svvpa/www/"		#comprobar valores en motion.conf!!!
+export SVVPA_DIR="/var/www/svvpa/"
+
+export APACHE_DIR=${SVVPA_DIR}"www/"		#comprobar valores en motion.conf!!!
 export APACHE_PORT="9999"
 
-export RCLONE_BIN="/home/dan/software/rclone-v1.27-linux-amd64/rclone"
-export RCLONE_CONFIG="/home/pi/.rclone.conf"
+export RCLONE_BIN="/home/pi/software/rclone-v1.27-linux-arm/rclone"
+export RCLONE_CONFIG=${SVVPA_DIR}"config/rclone.conf"
+export GSREAD_JSON=${SVVPA_DIR}"config/gspread.json"
 
 export FFMPEG_BIN="/usr/local/bin/ffmpeg"
 
 export DUCKDNS_DOMAIN="svvpa"
 export DUCKDNS_TOKEN="b4d602f7-a21f-442d-a8da-a6bff50795f3"
-export CURRENT_IP_PATH=${APACHE_DIR}"bin/"
+export CURRENT_IP_PATH=${SVVPA_DIR}"bin/"
 export CURRENT_IP_FILE="current_ip.txt"
 
-export MOTION_DIR="motion"
+export MOTION_DIR=${APACHE_DIR}"motion"
 export MOTION_IMAGE_EXT="jpg"
 export MOTION_VIDEO_EXT="mp4"
 export MOTION_VIDEO_EXT_RAW="avi"
@@ -27,5 +30,5 @@ export SMPT_PORT="587"
 export SMPT_USER="svvpaec@gmail.com"
 export SMPT_PASS="elojoquetodolove"
 
-export GSREAD_JSON="/home/pi/svvpa-81b7a04fc4c2.json" 
+ 
 
