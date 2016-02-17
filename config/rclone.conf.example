@@ -1,0 +1,6 @@
+[google]
+type = drive
+client_id = 
+client_secret = 
+token = {"access_token":"XXXXX","token_type":"Bearer","refresh_token":"1/XXXX","expiry":"2016-02-12T18:02:48.547385896+01:00"}
+
