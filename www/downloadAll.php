@@ -1,5 +1,5 @@
 <?php
-require_once(CONFIG_DIR . 'CONSTANTS.php');
+require_once('CONSTANTS.php');
 
 function endsWith($haystack, $needle) {
 	$length = strlen($needle);
