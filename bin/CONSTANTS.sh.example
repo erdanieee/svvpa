@@ -15,7 +15,7 @@ export RCLONE_CONFIG=${CONFIG_DIR}"rclone.conf"
 export GSREAD_JSON=${CONFIG_DIR}"gspread.json"
 
 export DUCKDNS_DOMAIN="svvpa"
-export DUCKDNS_TOKEN="b4d602f7-a21f-442d-a8da-a6bff50795f3"
+export DUCKDNS_TOKEN="XXX"
 export CURRENT_IP_FILE=${CONFIG_DIR}"current_ip.txt"
 
 export MOTION_IMAGE_EXT="jpg"
@@ -24,12 +24,12 @@ export MOTION_VIDEO_EXT_RAW="avi"
 
 export FREE_DISK_PERCENT_THRESHOLD=5
 
-export EMAIL_ADDR="erdanieee@gmail.com"
-export EMAIL_FROM="SVVPA@elcarabo.com"
+export EMAIL_ADDR="XXX@aaa.com"
+export EMAIL_FROM="XXX@gmail.com"
 export SMPT_SERVER="smtp.gmail.com"
 export SMPT_PORT="587"
-export SMPT_USER="svvpaec@gmail.com"
-export SMPT_PASS="elojoquetodolove"
+export SMPT_USER="XXX@gmail.com"
+export SMPT_PASS="XXX"
 
  
 

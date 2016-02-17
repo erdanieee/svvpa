@@ -2,7 +2,7 @@
 
 #define user/pass MYSQL. Debe tener permisos SELECT
 define("MYSQL_USER","web");
-define("MYSQL_PASS", "readSensors");
+define("MYSQL_PASS", "XXXX");
 define('MYSQL_DB', "svvpa");
 define('MYSQL_SERVER','localhost');
 
