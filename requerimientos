@@ -1,11 +1,17 @@
 ###################################
 ### INSTALACIÓN DE DEPENDENCIAS	###
 ###################################
-sudo apt-get install git motion apache2 mysql-server php5 php5-mysql bc
-sudo pip install --upgrade oauth2client PyOpenSSL gspread
-rclone 
+* sudo apt-get install git motion apache2 mysql-server php5 php5-mysql bc build-essential python-dev
+* sudo pip install --upgrade oauth2client PyOpenSSL gspread
+* Adafruit_Python_DHT
+	- git clone https://github.com/adafruit/Adafruit_Python_DHT.git
+	- sudo python setup.py install
+* Adafruit_Python_BMP
+	- git clone https://github.com/adafruit/Adafruit_Python_BMP.git
+	- sudo python setup.py install
+* rclone 
 	- http://downloads.rclone.org/rclone-current-linux-arm.zip
-ffmpeg (probar a usar avconv que está en los repositorios [libav-tools])
+* ffmpeg (probar a usar avconv que está en los repositorios [libav-tools])
 	- compilación en la RPi (see http://owenashurst.com/?p=242)
 		* es necesario modificar el archivo autogen.sh de libaacplus para que no falle al no encontrar libtool (debe ser libtoolize)
 			
