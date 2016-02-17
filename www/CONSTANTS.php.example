@@ -8,9 +8,9 @@ define('MYSQL_SERVER','localhost');
 
 define('SVVPA_DIR',	'/var/www/svvpa/');
 define('BIN_DIR',		SVVPA_DIR.'bin/');
-define('CONFIG_DIR',SVVPA_DIR.'config');
+define('CONFIG_DIR',SVVPA_DIR.'config/');
 define('APACHE_DIR',SVVPA_DIR.'www/');
-define('MOTION_DIR',APACHE_DIR.'motion');
+define('MOTION_DIR',APACHE_DIR.'motion/');
 
 define('MOTION_IMAGE_EXT','jpg');
 define('MOTION_VIDEO_EXT','mp4');

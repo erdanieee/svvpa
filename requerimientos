@@ -1,8 +1,8 @@
 ###################################
 ### INSTALACIÓN DE DEPENDENCIAS	###
 ###################################
-* sudo apt-get install git motion apache2 mysql-server php5 php5-mysql bc build-essential python-dev
-* sudo pip install --upgrade oauth2client PyOpenSSL gspread
+* sudo apt-get install git motion apache2 mysql-server php5 php5-mysql bc build-essential python-dev python-smbus
+* sudo pip install --upgrade oauth2client PyOpenSSL gspread 
 * Adafruit_Python_DHT
 	- git clone https://github.com/adafruit/Adafruit_Python_DHT.git
 	- sudo python setup.py install
