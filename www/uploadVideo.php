@@ -27,7 +27,7 @@ require_once('CONSTANTS.php');
 		ob_flush();
 		flush();
 		echo '<pre>';
-		system(RCLONE_BIN . ' --config '. RCLONE_CONFIG .' copy ' . MOTION_DIR . $id . "." . MOTION_VIDEO.EXT . " google:SVVPA/videos 2>&1", $out2);
+		system(RCLONE_BIN . ' --config '. RCLONE_CONFIG .' copy ' . MOTION_DIR . $id . "." . MOTION_VIDEO_EXT . " google:SVVPA/videos 2>&1", $out2);
 		echo '</pre>';
 		echo '<br>';	
 		if ($out1==0 && $out2==0){
