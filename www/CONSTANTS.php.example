@@ -18,5 +18,6 @@ define('MOTION_TEMP_DIR','/tmp/motion');
 define('MOTION_VIDEO_EXT_RAW','avi');
 
 define('RCLONE_BIN','/home/pi/software/rclone-v1.27-linux-arm/rclone');
+define('RCLONE_CONFIG',CONFIG_DIR.'rclone.conf');
 
 ?>
