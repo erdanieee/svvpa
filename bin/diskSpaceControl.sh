@@ -1,5 +1,5 @@
 #!/bin/bash
 
-source ../bin/CONSTANTS.sh
+source ${CONFIG_DIR}CONSTANTS.sh
 
 python _diskSpaceControl.py
