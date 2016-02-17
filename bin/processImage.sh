@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source CONSTANTS.sh
+source ../bin/CONSTANTS.sh
 
 fileIn=$1
 dirOut=${APACHE_DIR}${MOTION_DIR}

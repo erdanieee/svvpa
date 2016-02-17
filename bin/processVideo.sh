@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source CONSTANTS.sh
+source ../bin/CONSTANTS.sh
 
 fileIn=$1
 dirOut=$2

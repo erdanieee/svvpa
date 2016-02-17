@@ -1,5 +1,5 @@
 <?php
-require_once('CONSTANTS.php');
+require_once('../config/CONSTANTS.php');
 
 $image = MOTION_DIR . '/' . htmlspecialchars($_GET["n"]) . '.' . MOTION_IMAGE_EXT;
 $video = MOTION_DIR . '/' . htmlspecialchars($_GET["n"]) . '.' . MOTION_VIDEO_EXT;
