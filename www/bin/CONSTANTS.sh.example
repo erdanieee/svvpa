@@ -4,6 +4,8 @@ export APACHE_DIR="/var/www/html/svvpa/www/"		#comprobar valores en motion.conf!
 export APACHE_PORT="9999"
 
 export RCLONE_BIN="/home/dan/software/rclone-v1.27-linux-amd64/rclone"
+export RCLONE_CONFIG="/home/pi/.rclone.conf"
+
 export FFMPEG_BIN="/usr/local/bin/ffmpeg"
 
 export DUCKDNS_DOMAIN="svvpa"

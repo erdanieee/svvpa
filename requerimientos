@@ -23,7 +23,7 @@ ffmpeg (probar a usar avconv que está en los repositorios [libav-tools])
 ################################
 ### MODIFICACIÓN DE FICHEROS ###
 ################################
-* copiar archivos www a la ruta default de apache2
+* copiar archivos www a la ruta default de apache2 (/var/www/)
 * copiar ~/.rclone.conf
 * copiar svvpa-81b7a04fc4c2.json para gspread
 * copiar CONSTANTS.php.example a CONSTANTS.php y modificar a criterio
