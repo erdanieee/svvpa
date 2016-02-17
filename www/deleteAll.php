@@ -1,5 +1,5 @@
 <?php
-require_once('../config/CONSTANTS.php');
+require_once(CONFIG_DIR . 'CONSTANTS.php');
 
 function endsWith($haystack, $needle) {
 	$length = strlen($needle);
@@ -15,7 +15,7 @@ $type	= htmlspecialchars($_GET["t"]);	#all to delete all files in motion directo
 foreach (new DirectoryIterator(MOTION_DIR) as $fileInfo) {
 	if(!$fileInfo->isDot() && ($type=="all" ||  endsWith($fileInfo->getFilename(), $type))){
 		try {
-			unlink(MOTION_DIR . '/' . $fileInfo->getBasename());
+			unlink(MOTION_DIR . $fileInfo->getBasename());
 		} catch (Exception $e) {}
 	}
 }

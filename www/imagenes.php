@@ -1,8 +1,7 @@
 <?php
-require_once('../config/CONSTANTS.php');
+require_once(CONFIG_DIR . 'CONSTANTS.php');
 
 $filesByName = array();
-$path = MOTION_DIR;
 $meses = [
 "01" => "Enero",
 "02" => "Febrero",
@@ -28,7 +27,7 @@ function endsWith($haystack, $needle) {
 
 
 
-foreach (new DirectoryIterator($path) as $fileInfo) {
+foreach (new DirectoryIterator(MOTION_DIR) as $fileInfo) {
 	if(!$fileInfo->isDot() && ( endsWith($fileInfo->getFilename(),'.' . MOTION_IMAGE_EXT))){
 		$file = $fileInfo->getBasename('.' . MOTION_IMAGE_EXT);
 		list($y, $m, $d, $H, $M, $S, $p, $n, $J, $w, $h) = split ("_", $file);
@@ -131,8 +130,8 @@ arsort($filesByName);
 						#echo "<section class=\"box\">";	
 						echo "<span class=\"image fit\">";
 						echo "<a href=\"view.php?n=".$file["name"]."\">";	
-						if (file_exists (MOTION_DIR . "/" . $name . "." . MOTION_IMAGE_EXT)){
-							echo "<img src=\"$path/$name." . MOTION_IMAGE_EXT . "\"/>";
+						if (file_exists (MOTION_DIR . $name . "." . MOTION_IMAGE_EXT)){
+							echo "<img src=\"".MOTION_DIR."$name." . MOTION_IMAGE_EXT . "\"/>";
 						} else{
 							echo "<img width=\"50%\" src=\"images/video.jpg\" />";
 						}

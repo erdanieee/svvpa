@@ -1,5 +1,5 @@
 <?php
-	require_once('../config/CONSTANTS.php');
+	require_once(CONFIG_DIR . 'CONSTANTS.php');
 
 	function endsWith($haystack, $needle) {
 		$length = strlen($needle);
@@ -30,11 +30,11 @@
 	foreach (new DirectoryIterator(MOTION_DIR) as $fileInfo) {
 		if(!$fileInfo->isDot()){
 			if(endsWith($fileInfo->getFilename(), '.' . MOTION_IMAGE_EXT)){
-				$motionImages[] = MOTION_DIR . "/" . $fileInfo->getFilename();
+				$motionImages[] = MOTION_DIR . $fileInfo->getFilename();
 			}elseif(endsWith($fileInfo->getFilename(), '.' . MOTION_VIDEO_EXT)){
-				$motionVideos[] = MOTION_DIR . "/" . $fileInfo->getFilename();
+				$motionVideos[] = MOTION_DIR . $fileInfo->getFilename();
 			}else{
-				$motionOthers[] = MOTION_DIR . "/" . $fileInfo->getFilename();
+				$motionOthers[] = MOTION_DIR . $fileInfo->getFilename();
 			}
 		}	
 	}
@@ -211,7 +211,7 @@
 									</tr>
 									<tr>
 										<td>Temperatura RPI</td>
-										<td><?php system('./bin/readInternalTemp.sh');?>ºC</td>
+										<td><?php system(BIN_DIR.'readInternalTemp.sh');?>ºC</td>
 										<td><a href="/sensors.php?h=0,1,4" class="button icon small fa-eye">ver</a></td>
 									</tr>
 								</tbody>

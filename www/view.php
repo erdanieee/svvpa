@@ -1,5 +1,5 @@
 <?php 
-	require_once('../config/CONSTANTS.php');
+	require_once(CONFIG_DIR . 'CONSTANTS.php');
 
 	$meses = [
 		"01" => "Enero",
@@ -15,7 +15,6 @@
 		"11" => "Noviembre",
 		"12" => "Diciembre"];	
 	$name = htmlspecialchars($_GET["n"]);
-	$path = MOTION_DIR;
 	list($y, $m, $d, $H, $M, $S, $p, $n, $J, $w, $h) = split ("_", $name);
 ?>
 
@@ -45,23 +44,23 @@
 		<div class="container">				
 			<div class="12u 12u$(medium)">							
 				<?php
-				$isImage=file_exists (MOTION_DIR . "/" . $name . "." . MOTION_IMAGE_EXT);
-				$isVideo=file_exists (MOTION_DIR . "/" . $name . "." . MOTION_VIDEO_EXT);
+				$isImage=file_exists (MOTION_DIR . $name . "." . MOTION_IMAGE_EXT);
+				$isVideo=file_exists (MOTION_DIR . $name . "." . MOTION_VIDEO_EXT);
 
 				echo "<h3>$d $meses[$m] $y</h3>";
 				echo "<span class=\"image fit\">";
 				if ($isVideo && $isImage){
-					echo "<video width=\"100%\" controls poster=\"$path/$name.".MOTION_IMAGE_EXT."\" preload=\"none\" autoplay>";
-					echo "<source src=\"$path/$name.".MOTION_VIDEO_EXT."\" type=\"video/mp4\">";
+					echo "<video width=\"100%\" controls poster=\"".MOTION_DIR."$name.".MOTION_IMAGE_EXT."\" preload=\"none\" autoplay>";
+					echo "<source src=\"".MOTION_DIR."$name.".MOTION_VIDEO_EXT."\" type=\"video/mp4\">";
 					echo "</video>";
 
 				} elseif ($isVideo){
 					echo "<video width=\"100%\" controls preload=\"none\" autoplay>";
-					echo "<source src=\"$path/$name.".MOTION_VIDEO_EXT."\" type=\"video/mp4\">";
+					echo "<source src=\"".MOTION_DIR."$name.".MOTION_VIDEO_EXT."\" type=\"video/mp4\">";
 					echo "</video>";
 
 				} elseif ($isImage){
-					echo "<img src=\"$path/$name.".MOTION_IMAGE_EXT."\" />";
+					echo "<img src=\"".MOTION_DIR."$name.".MOTION_IMAGE_EXT."\" />";
 				}
 
 				echo "</span>";

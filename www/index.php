@@ -1,5 +1,5 @@
 <?php 
-require_once('../config/CONSTANTS.php'); 
+require_once(CONFIG_DIR . 'CONSTANTS.php'); 
 ?>
 
 <!DOCTYPE html>
@@ -76,11 +76,10 @@ require_once('../config/CONSTANTS.php');
 						return (substr($haystack, -$length) === $needle);
 					}
 
-					$path = MOTION_DIR;
 
 					$filesByName	= array();
 					$filesByChange= array();
-					foreach (new DirectoryIterator($path) as $fileInfo) {
+					foreach (new DirectoryIterator(MOTION_DIR) as $fileInfo) {
 						if(!$fileInfo->isDot() && endsWith($fileInfo->getFilename(),'.' . MOTION_VIDEO_EXT)){
 							$file =  $fileInfo->getBasename('.' . MOTION_VIDEO_EXT);
 							list($y, $m, $d, $H, $M, $S, $p, $n, $J, $w, $h) = split ("_", $file);
@@ -121,12 +120,12 @@ require_once('../config/CONSTANTS.php');
 						#echo "<h5>$name</h5>";
 						echo "<div class=\"12u$\">";
 						echo "<span class=\"image fit\">";
-						if(file_exists ("$path/" . $name . "." . MOTION_IMAGE_EXT)){
-							echo "<video width=\"100%\" controls poster=\"$path/$name." . MOTION_IMAGE_EXT . "\" preload=\"none\">";
+						if(file_exists (MOTION_DIR . $name . "." . MOTION_IMAGE_EXT)){
+							echo "<video width=\"100%\" controls poster=\"".MOTION_DIR."$name." . MOTION_IMAGE_EXT . "\" preload=\"none\">";
 						}else{
 							echo "<video width=\"100%\" controls preload=\"none\">";
 						}
-						echo "<source src=\"$path/$name." . MOTION_VIDEO_EXT . "\" type=\"video/mp4\">";
+						echo "<source src=\"".MOTION_DIR."$name." . MOTION_VIDEO_EXT . "\" type=\"video/mp4\">";
 						echo "</video></span></div>";
 
 						echo "<ul class=\"actions\">";
@@ -171,12 +170,12 @@ require_once('../config/CONSTANTS.php');
 						echo "<h5>$fecha $hora</h5>";								
 						echo "<div class=\"12u$\">";
 						echo "<span class=\"image fit\">";
-						if(file_exists ("motion/".$name.".".MOTION_IMAGE_EXT)){
-							echo "<video width=\"100%\" controls poster=\"$path/$name.".MOTION_IMAGE_EXT."\" preload=\"none\">";
+						if(file_exists (MOTION_DIR.$name.".".MOTION_IMAGE_EXT)){
+							echo "<video width=\"100%\" controls poster=\"".MOTION_DIR."$name.".MOTION_IMAGE_EXT."\" preload=\"none\">";
 						}else{
 							echo "<video width=\"100%\" controls preload=\"none\">";
 						}
-						echo "<source src=\"$path/$name.".MOTION_VIDEO_EXT."\" type=\"video/mp4\">";
+						echo "<source src=\"".MOTION_DIR."$name.".MOTION_VIDEO_EXT."\" type=\"video/mp4\">";
 						echo "</video></span></div>";
 						echo "<ul class=\"actions\">";
 						echo "<li><a href=\"download.php/?n=$name.".MOTION_VIDEO_EXT."\" class=\"button icon fa-download\">Descargar</a></li>";
@@ -225,7 +224,7 @@ require_once('../config/CONSTANTS.php');
 							</tr>
 							<tr>
 								<td>Temperatura RPI</td>
-								<td><?php system('./bin/readInternalTemp.sh');?>ºC</td>
+								<td><?php system(BIN_DIR.'readInternalTemp.sh');?>ºC</td>
 							</tr>
 						</tbody>
 					</table>

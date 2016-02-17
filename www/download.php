@@ -1,7 +1,7 @@
 <?php
-require_once('../config/CONSTANTS.php');
+require_once(CONFIG_DIR . 'CONSTANTS.php');
 
-$file = MOTION_DIR . '/' . htmlspecialchars($_GET["n"]);
+$file = MOTION_DIR . htmlspecialchars($_GET["n"]);
 
 if (! $file) {
 	die('file not found'); //Or do something 

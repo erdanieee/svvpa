@@ -1,22 +1,23 @@
 #!/bin/bash
 
 export SVVPA_DIR="/var/www/svvpa/"
-
-export APACHE_DIR=${SVVPA_DIR}"www/"		#comprobar valores en motion.conf!!!
+export APACHE_DIR=${SVVPA_DIR}"www/"
+export MOTION_DIR=${APACHE_DIR}"motion"
+export BIN_DIR=${SVVPA_DIR}"bin/"
+export CONFIG_DIR=${SVVPA_DIR}"config/"
+		
 export APACHE_PORT="9999"
 
 export RCLONE_BIN="/home/pi/software/rclone-v1.27-linux-arm/rclone"
-export RCLONE_CONFIG=${SVVPA_DIR}"config/rclone.conf"
-export GSREAD_JSON=${SVVPA_DIR}"config/gspread.json"
-
 export FFMPEG_BIN="/usr/local/bin/ffmpeg"
+
+export RCLONE_CONFIG=${CONFIG_DIR}"rclone.conf"
+export GSREAD_JSON=${CONFIG_DIR}"gspread.json"
 
 export DUCKDNS_DOMAIN="svvpa"
 export DUCKDNS_TOKEN="b4d602f7-a21f-442d-a8da-a6bff50795f3"
-export CURRENT_IP_PATH=${SVVPA_DIR}"bin/"
-export CURRENT_IP_FILE="current_ip.txt"
+export CURRENT_IP_FILE=${CONFIG_DIR}"current_ip.txt"
 
-export MOTION_DIR=${APACHE_DIR}"motion"
 export MOTION_IMAGE_EXT="jpg"
 export MOTION_VIDEO_EXT="mp4"
 export MOTION_VIDEO_EXT_RAW="avi"

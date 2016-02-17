@@ -1,5 +1,5 @@
 <?php
-require_once('../config/CONSTANTS.php');
+require_once(CONFIG_DIR . 'CONSTANTS.php');
 
 function endsWith($haystack, $needle) {
 	$length = strlen($needle);
@@ -22,7 +22,7 @@ $zipname = '/tmp/imagenes_' . date("d-m-Y", time()) . '.zip';
 $zip 		 = new ZipArchive;
 $zip->open($zipname, ZipArchive::CREATE);
 foreach ($files as $file) {
-	$zip->addFile(MOTION_DIR . '/'.$file);
+	$zip->addFile(MOTION_DIR . $file);
 }
 $zip->close();
 
