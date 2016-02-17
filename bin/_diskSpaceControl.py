@@ -82,7 +82,7 @@ def main(argv=None):
 	config.dictConfig(LOGGING)
 
 	try:
-		working_dir = str(os.environ['APACHE_DIR']+os.environ['MOTION_DIR'])
+		working_dir = str(os.environ['MOTION_DIR'])
 		percent_threshold = float(os.environ['FREE_DISK_PERCENT_THRESHOLD'])
 		extension = ("."+os.environ['MOTION_VIDEO_EXT'], "."+os.environ['MOTION_VIDEO_EXT_RAW'], "."+os.environ['MOTION_IMAGE_EXT'])
 

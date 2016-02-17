@@ -3,7 +3,6 @@
 source ../bin/CONSTANTS.sh
 
 fileIn=$1
-dirOut=${APACHE_DIR}${MOTION_DIR}
 
 if [[ $# -eq 1 ]]
 then
@@ -15,14 +14,14 @@ then
 		exit 1
 	fi
 
-	mkdir -p $dirOut 2>/dev/null
+	mkdir -p ${MOTION_DIR} 2>/dev/null
 
 	#send file by email
 	./_sendEmailImage.py $fileIn
 
 	#move file to www
 	chmod 775 $fileIn
-	mv $fileIn $dirOut
+	mv $fileIn ${MOTION_DIR}
 
 else
 	logger "$0 ERROR! Invalid number of arguments: $#"
