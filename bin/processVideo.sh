@@ -3,9 +3,8 @@
 source CONSTANTS.sh
 
 fileIn=$1
-dirOut=$2
 
-if [[ $# -eq 2 ]]
+if [[ $# -eq 1 ]]
 then
 	logger "$(basename $0) DEBUG $@"	
 
@@ -15,10 +14,10 @@ then
 		exit 1
 	fi
 
-	mdir -p $dirOut 2>/dev/null
+	mdir -p ${MOTION_DIR} 2>/dev/null
 
-	fileOut=${dirOut}"/"$(basename $fileIn)
-	fileOut=${fileOut/.${MOTION_IMAGE_EXT}/.${MOTION_VIDEO_EXT}}
+	fileOut=${MOTION_DIR}$(basename $fileIn)
+	fileOut=${fileOut/.${MOTION_VIDEO_EXT_RAW}/.${MOTION_VIDEO_EXT}}
 	#TODO: usar avconv (see http://www.thehelloworldprogram.com/web-development/encode-video-and-audio-for-html5-with-avconv/)
 	${FFMPEG_BIN} -i $fileIn -preset ultrafast -y ${fileOut}	
 
