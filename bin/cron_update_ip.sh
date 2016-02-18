@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source CONSTANTS.sh
+source $(dirname $0)/CONSTANTS.sh
 
 echo "Updating svvpa.duckdns.org"
 echo url="https://www.duckdns.org/update?domains=${DUCKDNS_DOMAIN}&token=${DUCKDNS_TOKEN}&ip=" | curl -k -K -

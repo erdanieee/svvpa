@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source CONSTANTS.sh
+source $(dirname $0)/CONSTANTS.sh
 
 fileIn=$1
 
