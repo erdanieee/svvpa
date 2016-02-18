@@ -25,7 +25,8 @@
 					<h2>Vista en directo</h2>
 				</header>
 				<section>
-					<img width="100%" src="<?php echo 'http://'.$_SERVER['HTTP_HOST'].':8081'; ?>" >
+					<img width="50%" src="<?php echo 'http://'.$_SERVER['HTTP_HOST'].':8081'; ?>" >
+					<img width="50%" src="<?php echo 'http://'.$_SERVER['HTTP_HOST'].':8082'; ?>" >
 				</section>
 			</div>
 		</section>
