@@ -36,17 +36,13 @@ def main(argv):
 		print "open sheet"
 		wks = gc.open("test").sheet1
 		print "append row"
-		wks.append_row([datetime, getValue(cpuTemp), getValue(bmp180Temp), getValue(bmp180Pres), getValue(dht22Temp), getValue(dht22Hr)])
+		wks.append_row([datetime, cpuTemp, bmp180Temp, bmp180Pres, dht22Temp, dht22Hr])
 
 		print "DONE!"
 
 	else:
 		print "USAGE " + argv[0] + " <CPU Temp> <BMP180 Temp> <BMP180 Pres> <DHT22 Temp> <DHT22 HR>"
 
-def getValue(a):
-	if a == "NULL" or a=="null":
-		a = "nan"
-	return a.replace(".",",")
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv))
