@@ -14,7 +14,7 @@ then
 		exit 1
 	fi
 
-	mdir -p ${MOTION_DIR} 2>/dev/null
+	mkdir -p ${MOTION_DIR} 2>/dev/null
 
 	fileOut=${MOTION_DIR}$(basename $fileIn)
 	fileOut=${fileOut/.${MOTION_VIDEO_EXT_RAW}/.${MOTION_VIDEO_EXT}}

@@ -34,17 +34,15 @@
 * copiar svvpa-81b7a04fc4c2.json para gspread
 * copiar CONSTANTS.php.example a CONSTANTS.php y modificar a criterio
 * copiar CONSTANTS.sh.example a CONSTANTS.sh y modificar a criterio
-
-* Comprobar los paths de las funciones on_picture_save, on_movie_start, on_movie_end del fichero /etc/motion/motion.conf
+* modificar /etc/default/motion para que se inicie motion on startup
+* Comprobar los paths de los scripts "on_evento" del fichero /etc/motion/motion.conf
 * modificar archivo sudoers para que se pueda apagar y cambiar hora sin meter clave de sudo o sin sudo
-	- modificar sudoers (sudo no pide clave)
-		* sudo visudo 
-		* pi ALL = NOPASSWD: /sbin/shutdown
-		* pi ALL = NOPASSWD: /sbin/date
 	- Añadir SUID a shutdown (no necesita sudo)
 		* sudo chmod u+s /sbin/shutdown
 		* sudo chmod u+s /sbin/date
-
+	- ó modificar sudoers (sudo no pide clave)
+		* sudo visudo 
+		* www-data ALL = NOPASSWD: /sbin/shutdown, /sbin/date
 * proteger página con password
 	- sudo htpasswd -c /etc/apache2/pwd user
 	- Modificar el directorio de /etc/apache2/apache2.conf para que incluya:
@@ -52,4 +50,4 @@
     * AuthName "Restricted Access"
     * AuthUserFile /etc/apache2/pwd
     * Require user svvpa
-
+* Crear directorio motion (ver CONSTANTS para la ubicación) que pertenezca a www-data y motion con permisos 774
