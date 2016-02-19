@@ -22,7 +22,7 @@ $zipname = '/tmp/imagenes_' . date("d-m-Y", time()) . '.zip';
 $zip 		 = new ZipArchive;
 $zip->open($zipname, ZipArchive::CREATE);
 foreach ($files as $file) {
-	$zip->addFile(MOTION_DIR . $file);
+	$zip->addFile(MOTION_DIR . $file, $file);
 }
 $zip->close();
 
