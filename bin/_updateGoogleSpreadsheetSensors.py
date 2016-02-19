@@ -36,7 +36,7 @@ def main(argv):
 		print "open sheet"
 		wks = gc.open("test").sheet1
 		print "append row"
-		wks.append_row([datetime, getValue(cpuTemp), getValue(bmp180Temp), getValue(bmp180Pres), getValue(dht22Temp), getValue(dht22Hr]))
+		wks.append_row([datetime, getValue(cpuTemp), getValue(bmp180Temp), getValue(bmp180Pres), getValue(dht22Temp), getValue(dht22Hr)])
 
 		print "DONE!"
 
