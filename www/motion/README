@@ -1,0 +1,8 @@
+# %Y = year, %m = month, %d = date,
+# %H = hour, %M = minute, %S = second,
+# %v = event, %q = frame number, %t = thread (camera) number,
+# %D = changed pixels, %N = noise level,
+# %i and %J = width and height of motion area,
+# %K and %L = X and Y coordinates of motion center
+
+%Y_%m_%d_%H_%M_%S_%D_%N_%i_%J_%K_%L_%t

@@ -30,7 +30,7 @@ function endsWith($haystack, $needle) {
 foreach (new DirectoryIterator(MOTION_DIR) as $fileInfo) {
 	if(!$fileInfo->isDot() && ( endsWith($fileInfo->getFilename(),'.' . MOTION_IMAGE_EXT))){
 		$file = $fileInfo->getBasename('.' . MOTION_IMAGE_EXT);
-		list($y, $m, $d, $H, $M, $S, $p, $n, $J, $w, $h) = split ("_", $file);
+		list($y, $m, $d, $H, $M, $S, $p, $n, $J, $w, $h, $t) = split ("_", $file);
 		$key= $y . $m . $d . $H . $M . $S;
 
 		$filesByName[] = array(
