@@ -20,7 +20,7 @@ then
 	./_sendEmailImage.py $fileIn
 
 	#move file to www
-	chmod 775 $fileIn
+	chmod 664 $fileIn
 	mv $fileIn ${MOTION_DIR}
 
 else

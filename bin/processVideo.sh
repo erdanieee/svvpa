@@ -27,7 +27,7 @@ then
 		exit 1
 	fi
 
-	chmod 666 $fileOut
+	chmod 664 $fileOut
 	rm -f $fileIn 
 
 else
