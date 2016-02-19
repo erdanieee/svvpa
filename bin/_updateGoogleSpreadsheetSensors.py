@@ -44,7 +44,7 @@ def main(argv):
 		print "USAGE " + argv[0] + " <CPU Temp> <BMP180 Temp> <BMP180 Pres> <DHT22 Temp> <DHT22 HR>"
 
 def getValue(a):
-	if a == "NULL":
+	if a == "NULL" or a=="null":
 		a = "nan"
 	return a.replace(".",",")
 
