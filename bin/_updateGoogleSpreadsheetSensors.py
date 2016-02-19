@@ -12,18 +12,18 @@ from oauth2client.client import SignedJwtAssertionCredentials
 def main(argv):
 	if len(argv) >= 6:
 		datetime	= time.strftime("%Y/%m/%d %H:%M:%S")
-		cpuTemp		= getValue(argv[1])
-		bmp180Temp= getValue(argv[2])
-		bmp180Pres= getValue(argv[3])
-		dht22Temp	= getValue(argv[4])
-		dht22Hr		= getValue(argv[5])
+		cpuTemp		= argv[1]
+		bmp180Temp= argv[2]
+		bmp180Pres= argv[3]
+		dht22Temp	= argv[4]
+		dht22Hr		= argv[5]
 
 		print "Date: " + datetime
-		print "CPU Temp: " + str(cpuTemp)
-		print "BMP180 Temp: " + str(bmp180Temp)
-		print "BMP180 Press: " + str(bmp180Pres)
-		print "DHT22 Temp: "  + str(dht22Temp)
-		print "DHT22 HR: "  + str(dht22Hr)
+		print "CPU Temp: " + cpuTemp
+		print "BMP180 Temp: " + bmp180Temp
+		print "BMP180 Press: " + bmp180Pres
+		print "DHT22 Temp: "  + dht22Temp
+		print "DHT22 HR: "  + dht22Hr
 		print 
 
 		print "load json and credentials"
@@ -36,7 +36,7 @@ def main(argv):
 		print "open sheet"
 		wks = gc.open("test").sheet1
 		print "append row"
-		wks.append_row([datetime, cpuTemp, bmp180Temp, bmp180Pres, dht22Temp, dht22Hr])
+		wks.append_row([datetime, getValue(cpuTemp), getValue(bmp180Temp), getValue(bmp180Pres), getValue(dht22Temp), getValue(dht22Hr]))
 
 		print "DONE!"
 
@@ -44,12 +44,9 @@ def main(argv):
 		print "USAGE " + argv[0] + " <CPU Temp> <BMP180 Temp> <BMP180 Pres> <DHT22 Temp> <DHT22 HR>"
 
 def getValue(a):
-	r=float('nan')
-	try:
-		r=float(a)
-	except:
-		pass
-	return r
+	if a == "NULL":
+		a = "nan"
+	return a.replace(".",",")
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv))
