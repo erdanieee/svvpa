@@ -37,7 +37,7 @@ def main(argv):
 	server.starttls()
 	server.ehlo()
 	server.login(os.environ['SMPT_USER'],os.environ['SMPT_PASS'])
-	server.sendmail(os.environ['EMAIL_FROM'], os.environ['EMAIL_ADDR'], msg.as_string())
+	server.sendmail(msg['From'], msg['To'].split(","), msg.as_string())
 	server.close()
 
 
