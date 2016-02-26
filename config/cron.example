@@ -1,0 +1,5 @@
+# m h  dom mon dow   command
+43 6,13 * * * /var/www/svvpa/bin/cron_update_ip.sh
+*/30 * * * * /var/www/svvpa/bin/cron_updateVnstats.sh
+*/10 * * * * /var/www/svvpa/bin/cron_updateSensors.sh
+

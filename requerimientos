@@ -1,7 +1,7 @@
 ###################################
 ### INSTALACIÓN DE DEPENDENCIAS	###
 ###################################
-* sudo apt-get install git motion apache2 mysql-server php5 php5-mysql bc build-essential python-dev python-smbus
+* sudo apt-get install git motion apache2 mysql-server php5 php5-mysql bc build-essential python-dev python-smbus vnstat
 * sudo pip install --upgrade oauth2client PyOpenSSL gspread 
 * Adafruit_Python_DHT
 	- git clone https://github.com/adafruit/Adafruit_Python_DHT.git
@@ -36,13 +36,12 @@
 * copiar CONSTANTS.sh.example a CONSTANTS.sh y modificar a criterio
 * modificar /etc/default/motion para que se inicie motion on startup
 * Comprobar los paths de los scripts "on_evento" del fichero /etc/motion/motion.conf
-* modificar archivo sudoers para que se pueda apagar y cambiar hora sin meter clave de sudo o sin sudo
-	- Añadir SUID a shutdown (no necesita sudo)
-		* sudo chmod u+s /sbin/shutdown
-		* sudo chmod u+s /sbin/date
-	- ó modificar sudoers (sudo no pide clave)
-		* sudo visudo 
-		* www-data ALL = NOPASSWD: /sbin/shutdown, /sbin/date
+* modificar archivo sudoers para que se pueda apagar y cambiar hora sin meter clave de sudo:
+	- sudo visudo
+	- User_Alias SVVPAWEB = www-data
+	- User_Alias CRONUSER = pi
+	- SVVPAWEB ALL = NOPASSWD: /sbin/shutdown, /sbin/date, /usr/bin/vnstat
+	- CRONUSER ALL = NOPASSWD: ALL
 * proteger página con password
 	- sudo htpasswd -c /etc/apache2/pwd user
 	- Modificar el directorio de /etc/apache2/apache2.conf para que incluya:
