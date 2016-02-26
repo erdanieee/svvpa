@@ -10,17 +10,19 @@ from email.mime.text import MIMEText
 from email.MIMEImage import MIMEImage
 from email.mime.multipart import MIMEMultipart
 
-html        = """\
+
+html = """\
 <html>
-  <head></head>
-  <body>
-    <h3>Movimiento detectado</h3>
-    <p>S.V.V.P.A. (XXIPXX) ha detectado un nuevo movimiento en E.C. Adjunto a este mensaje se incluye el fotograma más representativo.</p>
-    <p>Si el vídeo es interesante y deseas guardarlo en Google Drive haz <a href="http://svvpa.duckdns.org:9999/uploadVideo.php?id=XXIDXX">click aquí</a>. Recuerda que el vídeo puede tardar unos minutos en subir y que este disponible en la nube.</p>
-   <p>Puedes ver las capturas guardadas anteriormente en <a href="https://drive.google.com/folderview?id=0Bwse_WnehFNKT2I3N005YmlYMms&usp=sharing">este enlace</a>.</p>			 
-  </body>
+	<head></head>
+	<body>
+		<h3>Movimiento detectado</h3>
+		<p>S.V.V.P.A. 2.0 ha detectado un nuevo movimiento en E.C. {datetime}. Adjunto a este mensaje se incluye el fotograma más representativo.</p>
+		<p>Si el vídeo es interesante y deseas guardarlo en Google Drive, haz <a href="http://{dom}.duckdns.org:{port}/uploadVideo.php?id={id}">click aquí</a>. Al abrir esa página en un navegador, SVVPA inicia la subida del vídeo y muestra una web con el progreso. <b>No</b> es necesario dejar la página abierta hasta que termine; puedes cerrarla, cerrar el navegador o incluso apagar tu máquina sin que interfiera el proceso. Recuerda que, dependiendo del tamaño del vídeo, este proceso puede tardar varios minutos.</p>
+	 	<p>Puedes ver las capturas guardadas anteriormente en <a href="https://drive.google.com/folderview?id=0Bwse_WnehFNKT2I3N005YmlYMms&usp=sharing">este enlace</a>.</p>
+		<p>Para acceder <b>de forma remota</b> a SVVPA visita <a href="http://{dom}.duckdns.org:{port}">http://{dom}.duckdns.org:{port}</a> o <a href="http://{ip}:{port}">http://{ip}:{port}</a>.	El consumo de datos hasta ahora ha sido de {datos}Mb de los {datosMensuales}Mb mensuales que incluye la tarifa.		 
+	</body>
 </html>
-"""
+			"""
 
 def main(argv): 
 	if len(sys.argv) >= 2:
@@ -43,8 +45,8 @@ def main(argv):
 			msg['Subject'] = 'Movimiento detectado ' + datetime
 			msg.preamble = 'Movimiento detectado' + datetime
 
-			# Attach html
-			msg.attach(MIMEText(html.replace("XXIDXX",os.path.basename(image).split(".")[0]).replace("XXIPXX",get_ip()), 'html', 'utf-8'))
+			# Attach html						
+			msg.attach(MIMEText(html.format(ip=get_ip(), datetime=datetime, dom=os.environ['DUCKDNS_DOMAIN'], port=os.environ['APACHE_PORT'], id=os.path.basename(image).split(".")[0], datos=get_datos(), datosMensuales=os.environ['DATOS_MENSUALES']), 'html', 'utf-8'))
 
 			#attach image
 			fp=open(image,'rb')
@@ -77,6 +79,10 @@ def get_ip():
 	finally:
 		fp.close()
 	return data
+
+def get_datos():
+	ret = os.popen(os.environ['BIN_DIR'] + "getInternetUsage.sh").readlines()
+	return ret[0]
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv))
