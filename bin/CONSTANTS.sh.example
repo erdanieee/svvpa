@@ -25,7 +25,7 @@ export MOTION_VIDEO_EXT_RAW="avi"
 
 export FREE_DISK_PERCENT_THRESHOLD=5
 
-export EMAIL_ADDR="XXX@aaa.com"
+export EMAIL_ADDR="XXX@aaa.com,ZYZ@bbb.com"
 export EMAIL_FROM="XXX@gmail.com"
 export SMPT_SERVER="smtp.gmail.com"
 export SMPT_PORT="587"
