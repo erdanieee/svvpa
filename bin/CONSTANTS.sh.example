@@ -39,3 +39,6 @@ export MYSQL_DB="svvpa"
 export VNSTAT_INTERFACE="eth0"
 export DATOS_MENSUALES="100"
 
+export GMAIL_ACCOUNT_ALIAS="svvpaec+CMD@gmail.com"
+
+export REMOTE_ACCESS="0"
