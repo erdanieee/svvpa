@@ -17,7 +17,7 @@ then
 	mkdir -p ${MOTION_DIR} 2>/dev/null
 
 	#send file by email
-	./_sendEmailImage.py $fileIn
+	python _sendEmailImage.py $fileIn
 
 	#move file to www
 	chmod 664 $fileIn

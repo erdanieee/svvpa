@@ -8,10 +8,10 @@ function getGoogleSpVal(){ r="nan"; if [[ "$1" ]]; then r="$1"; fi; echo ${r/\./
 
 cd ${BIN_DIR}
 
-cpuTemp="$(sudo ./readInternalTemp.sh)"
-bmp180Pres="$(sudo ./_readBmp180Press.py)"
-bmp180Temp="$(sudo ./_readBmp180Temp.py)"
-dht22Val="$(sudo ./_readDht22HrTemp.py)"
+cpuTemp="$(sudo python readInternalTemp.sh)"
+bmp180Pres="$(sudo python _readBmp180Press.py)"
+bmp180Temp="$(sudo python _readBmp180Temp.py)"
+dht22Val="$(sudo python _readDht22HrTemp.py)"
 dht22Temp="$(echo $dht22Val|awk '{print $1}')"
 dht22Hr="$(echo $dht22Val|awk '{print $2}')"
 
@@ -20,5 +20,5 @@ echo $sqlStm
 
 mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo $sqlStm)
 
-./_updateGoogleSpreadsheetSensors.py $(getGoogleSpVal $cpuTemp) $(getGoogleSpVal $bmp180Temp) $(getGoogleSpVal $bmp180Pres) $(getGoogleSpVal $dht22Temp) $(getGoogleSpVal $dht22Hr)
+python _updateGoogleSpreadsheetSensors.py $(getGoogleSpVal $cpuTemp) $(getGoogleSpVal $bmp180Temp) $(getGoogleSpVal $bmp180Pres) $(getGoogleSpVal $dht22Temp) $(getGoogleSpVal $dht22Hr)
 
