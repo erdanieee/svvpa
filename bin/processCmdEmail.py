@@ -3,10 +3,9 @@
 
 import sys, os
 import re
-import gmail_client as c
-import gmail as g
 import subprocess as p
-
+import gmail_sender as g
+import gmail as c
 
 
 def cmd_help(a):

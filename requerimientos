@@ -14,6 +14,12 @@
 * ffmpeg (probar a usar avconv que está en los repositorios [libav-tools])
 	- compilación en la RPi (see http://owenashurst.com/?p=242)
 		* es necesario modificar el archivo autogen.sh de libaacplus para que no falle al no encontrar libtool (debe ser libtoolize)
+* instalar la versión modificada de gmail-sender que está en el directorio bin
+	- sudo python setup.py install
+* instalar la API de gmail de https://github.com/charlierguo/gmail
+	- git clone https://github.com/charlierguo/gmail
+	- cd gmail
+	- sudo python setup.py install
 			
 
 
