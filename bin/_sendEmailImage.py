@@ -17,12 +17,23 @@ html = """\
 	<body>
 		<h3>Movimiento detectado</h3>
 		<p>S.V.V.P.A. 2.0 ha detectado un nuevo movimiento en E.C. {datetime}. Adjunto a este mensaje se incluye el fotograma más representativo.</p>
-		<p>Si el vídeo es interesante y deseas guardarlo en Google Drive, haz <a href="http://{dom}.duckdns.org:{port}/uploadVideo.php?id={id}">click aquí</a>. Al abrir esa página en un navegador, SVVPA inicia la subida del vídeo y muestra una web con el progreso. <b>No</b> es necesario dejar la página abierta hasta que termine; puedes cerrarla, cerrar el navegador o incluso apagar tu máquina sin que interfiera el proceso. Recuerda que, dependiendo del tamaño del vídeo, este proceso puede tardar varios minutos.</p>
+		<p>Si el vídeo es interesante y deseas guardarlo en Google Drive, haz <a href="http://{dom}.duckdns.org:{port}/uploadVideo.php?id={id}">click aquí</a>. Al abrir esa página en un navegador, SVVPA inicia la subida del vídeo y muestra una web con el progreso. <b>No</b> es necesario dejar la página abierta hasta que termine; puedes cerrarla, cerrar el navegador o incluso apagar tu máquina sin que interfiera el proceso. Recuerda que, en función del tamaño del vídeo, este proceso puede tardar varios minutos.</p>
 	 	<p>Puedes ver las capturas guardadas anteriormente en <a href="https://drive.google.com/folderview?id=0Bwse_WnehFNKT2I3N005YmlYMms&usp=sharing">este enlace</a>.</p>
 		<p>Para acceder <b>de forma remota</b> a SVVPA visita <a href="http://{dom}.duckdns.org:{port}">http://{dom}.duckdns.org:{port}</a> o <a href="http://{ip}:{port}">http://{ip}:{port}</a>.	El consumo de datos hasta ahora ha sido de {datos}Mb de los {datosMensuales}Mb mensuales que incluye la tarifa.		 
 	</body>
 </html>
-			"""
+			""" if os.environ['REMOTE_ACCESS'] else """\
+<html>
+	<head></head>
+	<body>
+		<h3>Movimiento detectado</h3>
+		<p>S.V.V.P.A. 2.0 ha detectado un nuevo movimiento en E.C. {datetime}. Adjunto a este mensaje se incluye el fotograma más representativo.</p>
+		<p>Si el vídeo es interesante y deseas guardarlo en Google Drive, haz <a href="mailto:{email}?subject=CMD_SVVPA GUARDAR_EN_GOOGLE_DRIVE {id}">click aquí</a> para enviar enviar un email con el comando correspondiente. Recuerda que, en función del tamaño del vídeo, el este proceso puede tardar varios minutos.</p>
+	 	<p>Puedes ver las capturas guardadas anteriormente en <a href="https://drive.google.com/folderview?id=0Bwse_WnehFNKT2I3N005YmlYMms&usp=sharing">este enlace</a>.</p>
+		<p>El consumo de datos hasta ahora ha sido de {datos}Mb de los {datosMensuales}Mb mensuales que incluye la tarifa.		 
+	</body>
+</html>
+"""
 
 def main(argv): 
 	if len(sys.argv) >= 2:
@@ -42,8 +53,8 @@ def main(argv):
 			msg = MIMEMultipart()
 			msg['To'] = os.environ['EMAIL_ADDR']
 			msg['From'] = os.environ['EMAIL_FROM']
-			msg['Subject'] = 'Movimiento detectado ' + datetime
-			msg.preamble = 'Movimiento detectado' + datetime
+			msg['Subject'] = 'Movimiento detectado (Código:' + os.path.basename(image) + ')
+			msg.preamble = 'Movimiento detectado (Código:' + os.path.basename(image) + ')
 
 			# Attach html	
 			msg.attach(MIMEText(html.format(ip=get_ip(), 
@@ -52,7 +63,9 @@ def main(argv):
 																			port=os.environ['APACHE_PORT'], 
 																			id=os.path.basename(image).split(".")[0], 
 																			datos=get_datos(), 
-																			datosMensuales=os.environ['DATOS_MENSUALES']), 'html', 'utf-8'))
+																			datosMensuales=os.environ['DATOS_MENSUALES']
+																			email=os.environ['GMAIL_ACCOUNT_ALIAS'])
+													, 'html', 'utf-8'))
 
 			#attach image
 			fp=open(image,'rb')
