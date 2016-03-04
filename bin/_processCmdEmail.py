@@ -6,10 +6,21 @@ import re
 import subprocess as proc
 import gmail_sender as gsender
 import gmail as greader
+import datetime
+
+
+#define email labels
+CMD_SVVPA	= 'CMD_SVVPA'
+CMD_OK		= 'CMD_OK'
+CMD_WORKING	= 'CMD_WORKING'
+CMD_TIMEOUT	= 'CMD_TIMEOUT'
+CMD_ERROR	= 'CMD_ERROR'
+
+
 
 
 def cmd_help(a=None):	
-	msg1 = gsender.Message(	
+	msg = gsender.Message(	
 		subject = u"Ayuda CMD_SVVPA",
 		to			= os.environ['EMAIL_ADDR'],
 		#	text		= u"Éste es el cuerpo del mensaje en texto plano",
@@ -30,7 +41,7 @@ def cmd_help(a=None):
 	'''.format(correo=os.environ['GMAIL_ACCOUNT_ALIAS']))
 
 	s = gsender.GMail(os.environ['SMPT_USER'], os.environ['SMPT_PASS'])
-	s.send(msg1)
+	s.send(msg)
 	s.close()
 
 
@@ -91,7 +102,7 @@ def cmd_lifeCam(args):
 
 
 def main(args):
-	re_subject = re.compile('CMD_SVVPA (?P<cmd>\w+) (?P<args>.*)')
+	re_subject = re.compile('CMD_SVVPA[ ]+(?P<cmd>\w+)[ ]*(?P<args>.*)')
 	CMD_SVVPA={
 		'AYUDA' 									: cmd_help,
 		'GUARDAR_EN_GOOGLE_DRIVE'	: cmd_saveFile,
@@ -100,38 +111,48 @@ def main(args):
 		'REINICIAR' 							: cmd_reboot		
 		}
 
-	g = greader.login(os.environ['SMPT_USER'], os.environ['SMPT_PASS'])
-	emails =  g.mailbox('CMD_SVVPA').mail(prefetch=True,unread=True,to=os.environ['GMAIL_ACCOUNT_ALIAS'])
+	g 		 = greader.login(os.environ['SMPT_USER'], os.environ['SMPT_PASS'])
+	emails = g.mailbox('CMD_SVVPA').mail(prefetch=True,unread=True)#,to=os.environ['GMAIL_ACCOUNT_ALIAS'])
 	
 	for e in emails:
-		if e.has_label('procesando'):
-			#TODO: comprobar que no lleva mucho tiempo procesándose?
-			print "El email ya se está procesado"
-			continue
+		if e.has_label(CMD_WORKING):
+			#TODO: comprobar que no lleva mucho tiempo procesándose
+			d=e.sent_at
+			n=datetime.datetime.now()
+			if (n-d).days > 0:
+				print "El comando lleva más de un día sin terminar de procesarse. Se va a intentar procesar de nuevo"
+				e.add_label(CMD_TIMEOUT)
+				e.remove_label(CMD_WORKING)
+			else:
+				print "El email ya se está procesado"
 	
 		else:
 			r = re_subject.search(e.subject)
+			print "Asunto: " + e.subject
 
-			if r and CMD_SVVPA.has_key(r.group('cmd')):
-				print "Comando recibido: " + r.group('cmd') + " " + r.group('args')
+			if r and CMD_SVVPA.has_key(r.group('cmd')):				
+				print "Comando: \"" + r.group('cmd') + "\""
+				print "Argumentos: \"" + r.group('args') + "\""
 				try:
 					print "Procesando email"
-					#e.add_label('procesando')
+					#e.add_label(CMD_WORKING)
 					CMD_SVVPA[r.group('cmd')](r.group('args'))
 					print "OK"
-					#e.add_label('OK')			
+					#e.add_label(CMD_OK)			
 				
 				except Exception, ex:
 					print "Ha ocurrido el siguiente error al procesar el comando:"					
 					print ex
-					#e.add_label('CMD_ERROR')
+					#e.add_label(CMD_ERROR)
 					#TODO: enviar email de error?
 		
 				#e.read()
 					
 			else:
-				e.add_label('CMD_ERROR')
-				e.read()
+				print "Error en el comando "
+#				e.add_label(CMD_ERROR)
+#				e.read()
+		
 
 	g.logout()	
 
@@ -155,13 +176,13 @@ emails =  greader.inbox().mail(prefetch=True, unread=True, to=os.environ['SMPT_U
 
 #print "Emails no leidos"
 for e in emails:
-if e.has_label('procesando'):
+if e.has_label(CMD_WORKING):
 	procesando.append(e)
 
-if e.has_label('procesado'):
+if e.has_label(CMD_WORKING):
 	procesado.append(e)
 
-if e.has_label('error'):
+if e.has_label(CMD_ERROR):
 	error.append(e)
 
 print "Emails procesandose"
