@@ -2,7 +2,7 @@
 ### INSTALACIÓN DE DEPENDENCIAS	###
 ###################################
 * sudo apt-get install git motion apache2 mysql-server php5 php5-mysql bc build-essential python-dev python-smbus vnstat
-* sudo pip install --upgrade oauth2client PyOpenSSL gspread 
+* sudo pip install --upgrade oauth2client PyOpenSSL gspread zipfile
 * Adafruit_Python_DHT
 	- git clone https://github.com/adafruit/Adafruit_Python_DHT.git
 	- sudo python setup.py install
@@ -56,3 +56,11 @@
     * AuthUserFile /etc/apache2/pwd
     * Require user svvpa
 * Crear directorio motion (ver CONSTANTS para la ubicación) que pertenezca a www-data y motion con permisos 774
+
+
+
+#############
+### OTROS ###
+#############
+* Añadir clave privada en servidor remoto para hacer SSH reverso sin password
+

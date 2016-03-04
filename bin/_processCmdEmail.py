@@ -7,6 +7,8 @@ import subprocess as proc
 import gmail_sender as gsender
 import gmail as greader
 import datetime
+import zipfile
+import zlib
 
 
 #define email labels
@@ -58,8 +60,8 @@ def cmd_saveFile(eventId):
 		raise Exception('{0}: No se encuentra la imagen del evento! Comprueba que has escrito correctamente el identificador del evento'.format(imageFile))	
 	if not os.path.isfile(videoFile):
 		raise Exception('No se encuentra el vídeo del evento! Es posible que aún se esté procesando. Por favor, inténtalo de nuevo más tarde')
-#	if len(eventId.split("_")) < 12:
-#		raise Exception('Error en el identificador del evento "{0}". Recuerda que el identificador son 12 números separados por guiones bajos'.format(eventId))
+	if len(eventId.split("_")) < 12:
+		raise Exception('Error en el identificador del evento "{0}". Recuerda que el identificador son 12 números separados por guiones bajos'.format(eventId))
 
 	try:
 		print "Enviando imagen"
@@ -91,14 +93,39 @@ def cmd_saveFile(eventId):
 	s.send(msg)
 	s.close()
 
-def cmd_status(args):
-	return a
+
+def cmd_status(args):	
+	zipFileName='/tmp/log_' + datetime.datetime.now().strftime("%Y%m%d%H%M%S") + '.zip'	
+	cmds={'DF' 			: 'df -h',
+			'DMESG' 		: 'dmesg',
+			'TOP' 		: 'top -b -n 1',
+			'PS' 			: 'ps aux',
+			'MOTION'		: 'service motion status',
+			'APACHE' 	: 'service motion apache2',
+			'CPU_TEMP' 	: './readInternalTemp.sh'}
+	
+	zf = zipfile.ZipFile(zipFileName, mode='w')
+	for cmdLabel in cmds:
+		f='/tmp/LOG_' + cmdLabel + '.txt'				
+		proc.call(cmds[cmdLabel] + ' 2>&1|tee ' + f, shell=True)
+		zf.write(f, compress_type=zipfile.ZIP_DEFLATED)
+				
+	zf.close()
+	s 	 = gsender.GMail(os.environ['SMPT_USER'], os.environ['SMPT_PASS'])
+	msg = gsender.Message(	subject 		= u"Estado del sistema",
+									to 		 	= os.environ['EMAIL_ADDR'],
+									text 			= u"Adjunto se envían diferentes logs del estado del sistema",
+									attachments	= [zipFileName])
+	s.send(msg)
+	s.close()	
+
 
 def cmd_reboot(args):
-	return a
+	return args
+
 
 def cmd_lifeCam(args):
-	return a
+	return args
 
 
 def main(args):
