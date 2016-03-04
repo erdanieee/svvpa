@@ -12,15 +12,6 @@ import zlib
 import md5
 
 
-#define email labels
-CMD_SVVPA	= 'CMD_SVVPA'
-CMD_OK		= 'CMD_OK'
-CMD_WORKING	= 'CMD_WORKING'
-CMD_TIMEOUT	= 'CMD_TIMEOUT'
-CMD_ERROR	= 'CMD_ERROR'
-
-
-
 
 def cmd_help(a=None):	
 	msg = gsender.Message(	
@@ -35,10 +26,10 @@ def cmd_help(a=None):
 					<p>SVVPA tiene la capacidad de recibir comandos a través de correo electrónico. Para enviar un comando, manda un email a <a href="mailto:{correo}">{correo}</a> cuyo asunto contenga <i>CMD_SVVPA COMANDO ARG1 ARG2 ARG3 ... ARGn</i>, siendo <i>COMANDO</i> el comando que se desea ejecutar y <i>ARGi</i> los argumentos si fueran requeridos por el comando (Ej: CMD_SVVPA AYUDA). Los comandos disponibles por el momento son:
 					<ul>
 						<li><b>AYUDA</b> - Envía este email con la ayuda de los comandos disponibles. <a href="mailto:{correo}?subject=CMD_SVVPA AYUDA">Ver ejemplo</a></li>	
-						<li><b>GUARDAR_EN_GOOGLE_DRIVE codigoDelEvento</b> - Guarda en google drive la imagen y el vídeo que corresponde al evento con código <i>codigoDelEvento</i>. El código del evento se puede obtener del asunto del email que se envía automáticamente cuando se detecta un movimiento. <a href="mailto:{correo}?subject=CMD_SVVPA GUARDAR_EN_GOOGLE_DRIVE 2016_01_02_15_30_13_12332_123_543_23_5543_12">Ver ejemplo</a></li>
+						<li><b>GUARDAR_Ecd /Library/WebServer/Documents/N_GOOGLE_DRIVE codigoDelEvento</b> - Guarda en google drive la imagen y el vídeo que corresponde al evento con código <i>codigoDelEvento</i>. El código del evento se puede obtener del asunto del email que se envía automáticamente cuando se detecta un movimiento. <a href="mailto:{correo}?subject=CMD_SVVPA GUARDAR_EN_GOOGLE_DRIVE 2016_01_02_15_30_13_12332_123_543_23_5543_12">Ver ejemplo</a></li>
 						<li><b>ESTADO_DEL_SISTEMA</b> - Envía información sobre SVVP como el espacio disponible, la temperatura de la CPU, registro de eventos del sistema, ... <a href="mailto:{correo}?subject=CMD_SVVPA ESTADO_DEL_SISTEMA">Ver ejemplo</a></li>
 						<li><b>REINICIAR</b> - Reinicia el sistema. El reinicio tarda aproximádamente 1 minuto. <a href="mailto:{correo}?subject=CMD_SVVPA REINICIAR">Ver ejemplo</a></li>
-						<li><b>APAGAR</b> - Apaga el sistema. Cuando se envía este comando, SVVPA envía un email de confirmación que debe ser respondido para que se apague correctamente SVVPA. Atención: Una vez apagado el sistema, solo se puede volver a iniciar desactivando y activando físicamente el mini-interruptor que está junto a las baterías. Asegúrate de no ejecutar <b>NUNCA</b> este comando cuando estés fuera de E.C. </li>
+						<li><b>APAGAR</b> - Apaga el sistema. Cuando se envía este comando, SVVPA responde con un correo de confirmación. Para apagar correctamente SVVPA se debe responder al correo de confirmación sin modificar el asunto. Atención: Una vez apagado el sistema, solo se puede volver a iniciar desactivando y activando físicamente el mini-interruptor que está junto a las baterías. Asegúrate de no ejecutar <b>NUNCA</b> este comando cuando estés fuera de E.C. <a href="mailto:{correo}?subject=CMD_SVVPA APAGAR">Ver ejemplo</a></li>
 					</ul>							
 				</body>
 			</html>
@@ -109,7 +100,7 @@ def cmd_status(args):
 	
 	zf = zipfile.ZipFile(zipFileName, mode='w')
 	for cmdLabel in cmds:
-		f='/tmp/LOG_' + cmdLabel + '.txt'				
+		f='/tmp/LOG_' + cmdLabel + '.txt'						
 		proc.call(cmds[cmdLabel] + ' 2>&1|tee ' + f, shell=True)
 		zf.write(f, compress_type=zipfile.ZIP_DEFLATED)
 				
@@ -119,13 +110,14 @@ def cmd_status(args):
 	msg = gsender.Message(	subject 		= u"Información del sistema",
 									to 		 	= os.environ['EMAIL_ADDR'],
 									sender		= os.environ['GMAIL_ACCOUNT_ALIAS'],
-									text 			= u"Adjunto se envían los logs del más relevantes del sistema",
+									text 			= u"Adjunto se envían los logs más relevantes del sistema",
 									attachments	= [zipFileName])
 	s.send(msg)
 	s.close()	
 
 
 def cmd_reboot(args):
+	print "Reiniciando el sistema"
 	s 	 = gsender.GMail(os.environ['SMPT_USER'], os.environ['SMPT_PASS'])
 	msg = gsender.Message(	subject 		= u"Reinicio del sistema",
 									to 		 	= os.environ['EMAIL_ADDR'],
@@ -147,7 +139,8 @@ def cmd_shutdown(args):
 		msg = gsender.Message(	subject 		= u"Confirmación de apagado requerida: CMD_SVVPA APAGAR {0}".format(get_shutdownConfirmCode()),
 										to 		 	= os.environ['EMAIL_ADDR'],
 										sender		= os.environ['GMAIL_ACCOUNT_ALIAS'],
-										text 			= u"Se va a proceder a apagar el sistema. Recuerda que una vez apagado, solo se puede volver a iniciar desactivando y activando físicamente el mini-interruptor que está junto a las baterías. Si estás seguro de que es ésto lo que quieres hacer, responde a este email sin modificar el asunto.")
+										html 			= u'''
+											<html><body><h4>¿Confirmar apagado?</h4><p>Se va a proceder a apagar el sistema. Recuerda que una vez apagado,  <ins>solo</ins> se puede volver a iniciar desactivando y activando físicamente el mini-interruptor que está junto a las baterías.</p> <p>Si realmente quieres apagar el sistema <b>responde a este email <mark>sin modificar</mark> el asunto</b>.</p></body></html>''')
 		s.send(msg)
 		s.close()
 	
@@ -163,7 +156,7 @@ def cmd_shutdown(args):
 			msg = gsender.Message(	subject 		= u"Código de apagado erróneo",
 											to 		 	= os.environ['EMAIL_ADDR'],
 											sender		= os.environ['GMAIL_ACCOUNT_ALIAS'],
-											text 			= u"El código de confirmación utilizado para apagar el sistema es inválido. Recuerda que los códigos caducan en una hora")
+											text 			= u"El código de confirmación utilizado para apagar el sistema es inválido. Recuerda que los códigos caducan en una hora y no se pueden reutilizar.")
 			s.send(msg)
 			s.close()
 
@@ -173,19 +166,63 @@ def get_shutdownConfirmCode():
 	return md5.new(datetime.datetime.now().strftime("%Y%m%d") + 'CMD_SVVPA').hexdigest()
 
 
-def main(args):
-	re_subject = re.compile('CMD_SVVPA[ ]+(?P<cmd>\w+)[ ]*(?P<args>.*)')
-	CMD_SVVPA={
+#ssh -CfNR a servidor túnel
+def cmd_openReverseSsh(args):
+	print "Abriendo servicio ssh reserso en servidor {0}"
+	return True
+
+
+#start/stop/delay motion
+def cmd_motionDetection(args):
+	
+	return True
+
+
+#start/stop apache2
+def cmd_webService(args):
+	return True
+
+
+
+
+
+
+
+
+#define email labels
+CMD_SVVPA	= 'CMD_SVVPA'
+CMD_OK		= 'CMD_OK'
+CMD_WORKING	= 'CMD_WORKING'
+CMD_TIMEOUT	= 'CMD_TIMEOUT'
+CMD_ERROR	= 'CMD_ERROR'
+
+
+
+#Define los comandos disponibles
+CMD_SVVPA={
 		'AYUDA' 							: cmd_help,
 		'GUARDAR_EN_GOOGLE_DRIVE'	: cmd_saveFile,
 		'ESTADO_DEL_SISTEMA' 		: cmd_status,
+		'ACTIVAR_GESTION_REMOTA' 	: cmd_openReverseSsh,
+		'DETECTAR_MOVIMIENTO' 		: cmd_motionDetection,
+		'SERVIDOR_WEB'					: cmd_webService, 
 #		'VISTA_EN_DIRECTO' 			: cmd_lifeView,	#Configurar motion para que guarde una captura periódica que se sobreescriba, y enviar dicho archivo
 		'REINICIAR' 					: cmd_reboot,
 		'APAGAR'							: cmd_shutdown		
 		}
 
+
+
+
+
+
+
+def main(args):
+	re_subject = re.compile('CMD_SVVPA[ ]+(?P<cmd>\w+)[ ]*(?P<args>.*)')
+	
+
 	g 		 = greader.login(os.environ['SMPT_USER'], os.environ['SMPT_PASS'])
-	emails = g.mailbox('CMD_SVVPA').mail(prefetch=True,unread=True,to=os.environ['GMAIL_ACCOUNT_ALIAS'])
+	emails = g.mailbox('CMD_SVVPA').mail(prefetch=True,unread=True)#,to=os.environ['GMAIL_ACCOUNT_ALIAS'])
 	
 	for e in emails:
 		if e.has_label(CMD_WORKING):
@@ -200,8 +237,8 @@ def main(args):
 				print "El email ya se está procesado"
 	
 		else:
-			r = re_subject.search(e.subject)
-			print "Asunto: " + e.subject
+			print "Asunto: " + e.subject			
+			r = re_subject.search(e.subject)			
 
 			if r and CMD_SVVPA.has_key(r.group('cmd')):				
 				print "Comando: \"" + r.group('cmd') + "\""
@@ -228,10 +265,17 @@ def main(args):
 				e.read()
 					
 			else:
-				print "Error en el comando "
+				print "La sintaxis del comando no es correcta"
 				e.add_label(CMD_ERROR)
 				e.read()
-		
+				s 	 = gsender.GMail(os.environ['SMPT_USER'], os.environ['SMPT_PASS'])
+				msg = gsender.Message(	subject 		= u"Error en comando",
+												to 		 	= os.environ['EMAIL_ADDR'],
+												text			= u'Se envió el comando "{0}" pero la sintaxis no es correcta. Para ver los comando disponibles envía el comando "CMD_SVVPA AYUDA" a {1}.'''.format(r.group('cmd'), os.environ['GMAIL_ACCOUNT_ALIAS'])
+												html 			= u'''
+												<html><body><h3>La sintaxis del comando enviado no es correcta</h3><p>Se envió el comando "{0}" pero la sintaxis no es correcta.</p> <p>Para ver los comando disponibles envía el comando de ayuda haciendo <a href="mailto:{1}?subject=CMD_SVVPA AYUDA">click aquí</a>.</p></body></html>'''.format(r.group('cmd'), os.environ['GMAIL_ACCOUNT_ALIAS']))
+				s.send(msg)
+				s.close()
 
 	g.logout()	
 
