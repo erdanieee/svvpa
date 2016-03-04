@@ -1,5 +1,14 @@
 #!/bin/bash
 
+version="659edda4efed9d02a90dc51dfe164445"
+vv=$(egrep export $0|cut -f 1 -d "="|md5sum|awk '{print $1}')
+if [[ ! $version -eq $vv ]]
+then
+	echo "Error!!! El archivo de configuración está obsoleto"
+	exit 1
+fi
+
+
 export SVVPA_DIR="/var/www/svvpa/"
 export APACHE_DIR=${SVVPA_DIR}"www/"
 export MOTION_DIR=${APACHE_DIR}"motion"
