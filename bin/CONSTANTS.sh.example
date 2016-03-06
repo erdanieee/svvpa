@@ -1,11 +1,12 @@
 #!/bin/bash
 
-version="659edda4efed9d02a90dc51dfe164445"
-vv=$(egrep export $0|cut -f 1 -d "="|md5sum|awk '{print $1}')
-if [[ ! $version -eq $vv ]]
+#comprueba que no se está usando un archivo de configuración obsoleto
+v_example=$(egrep export CONSTANTS.sh.example|cut -f 1 -d "="|md5sum|awk '{print $1}')
+v_local=$(egrep export $BASH_SOURCE|cut -f 1 -d "="|md5sum|awk '{print $1}')
+if [[ ! $v_local -eq $v_example ]]
 then
-	echo "Error!!! El archivo de configuración está obsoleto"
-	exit 1
+        echo "Error!!! El archivo de configuración está obsoleto"
+        exit 1
 fi
 
 
