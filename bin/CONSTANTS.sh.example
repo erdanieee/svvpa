@@ -6,7 +6,7 @@ v_local=$(egrep export $BASH_SOURCE|cut -f 1 -d "="|md5sum|awk '{print $1}')
 if [[ ! $v_local -eq $v_example ]]
 then
         echo "Error!!! El archivo de configuración está obsoleto"
-        exit 1
+        return
 fi
 
 
