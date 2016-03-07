@@ -62,6 +62,6 @@
 #############
 ### OTROS ###
 #############
-* Añadir clave privada en servidor remoto para hacer SSH reverso sin password
+* Añadir clave privada en servidor remoto para hacer SSH reverso sin password (para comando email SSH remoto)
 * Añadir a crontab los comandos "cron_*" del directorio bin
 * Añadir a rc.local los comando "startup_*" del directorio bin
