@@ -57,4 +57,4 @@ export SSH_REMOTE_SERVER="xxx.yyy.zzz.com"
 export SSH_REMOTE_USER="user1"
 export SSH_REMOTE_PORT="2222"
 export SSH_REMOTE_TUNEL_PORT="9876"
-
+export SSH_REMOTE_TIMEOUT=10800		#seconds

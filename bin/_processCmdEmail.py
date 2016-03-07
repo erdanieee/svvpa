@@ -10,7 +10,10 @@ import datetime
 import zipfile
 import zlib
 import md5
+import time
 
+
+DEBUG=True
 
 
 def cmd_help(a=None):	
@@ -169,11 +172,40 @@ def get_shutdownConfirmCode():
 #ssh -CfNR a servidor túnel
 def cmd_openReverseSsh(args):
 	print "Abriendo servicio ssh reserso en servidor {0}".format(os.environ['SSH_REMOTE_SERVER'])
-	proc.call('ssh -p {port} -fCNR {tunelPort}:localhost:22 {user}@{server}'.format(
-		port 			= os.environ['SSH_REMOTE_PORT']),
-		tunelPort	= os.environ['SSH_REMOTE_TUNEL_PORT']),
-		user			= os.environ['SSH_REMOTE_USER']),
-		server		= os.environ['SSH_REMOTE_SERVER']))
+	try:
+		timeout=int(os.environ['SSH_REMOTE_TIMEOUT'])
+		p = proc.Popen('ssh -p {port} -CNR {tunelPort}:localhost:22 {user}@{server}'.format( 
+			port = os.environ['SSH_REMOTE_PORT'], 
+			tunelPort	= os.environ['SSH_REMOTE_TUNEL_PORT'],	
+			user = os.environ['SSH_REMOTE_USER'], 
+			server = os.environ['SSH_REMOTE_SERVER']), shell=True)
+		print p.pid
+		s	= gsender.GMail(os.environ['SMPT_USER'], os.environ['SMPT_PASS'])
+		msg = gsender.Message(	subject 		= u"Servicio SSH abierto",
+											to 		 		= os.environ['EMAIL_ADDR'],
+											sender		= os.environ['GMAIL_ACCOUNT_ALIAS'],
+											text 			= u"Se ha abierto el servicio SSH en el puerto {0} del servidor {1}. El servicio estará activo {2} minutos".format(os.environ['SSH_REMOTE_TUNEL_PORT'],os.environ['SSH_REMOTE_SERVER'], timeout/60))
+		s.send(msg)
+		s.close()
+
+		t=0
+		step=1
+		while not p.poll() and t<timeout:
+			time.sleep(step)
+			t+=step
+	
+	finally:
+		print "Cerrando servicio SSH"
+		s	= gsender.GMail(os.environ['SMPT_USER'], os.environ['SMPT_PASS'])
+		msg = gsender.Message(	subject 		= u"Servicio SSH cerrado",
+											to 		 		= os.environ['EMAIL_ADDR'],
+											sender		= os.environ['GMAIL_ACCOUNT_ALIAS'],
+											text 			= u"Se ha cerrado el servicio SSH.")
+		s.send(msg)
+		s.close()
+		p.terminate()		
+
+
 	return True
 
 
@@ -251,15 +283,15 @@ def main(args):
 				print "Argumentos: \"" + r.group('args') + "\""
 				try:
 					print "Procesando email"
-					e.add_label(CMD_WORKING)
+					e.add_label(CMD_WORKING) if not DEBUG else None
 					CMD_SVVPA[r.group('cmd')](r.group('args'))
 					print "OK"
-					e.add_label(CMD_OK)			
+					e.add_label(CMD_OK) if not DEBUG else None			
 				
 				except Exception, ex:
 					print "Ha ocurrido el siguiente error al procesar el comando:"					
 					print ex
-					e.add_label(CMD_ERROR)
+					e.add_label(CMD_ERROR) if not DEBUG else None
 					#Envia email con el error
 					s 	 = gsender.GMail(os.environ['SMPT_USER'], os.environ['SMPT_PASS'])
 					msg = gsender.Message(	subject 		= u"Error al procesar el comando {0}".format(r.group('cmd')),
@@ -268,7 +300,7 @@ def main(args):
 					s.send(msg)
 					s.close()
 		
-				e.read()
+				e.read() if not DEBUG else None
 					
 			else:
 				print "La sintaxis del comando no es correcta"
@@ -277,7 +309,7 @@ def main(args):
 				s 	 = gsender.GMail(os.environ['SMPT_USER'], os.environ['SMPT_PASS'])
 				msg = gsender.Message(	subject 		= u"Error en comando",
 												to 		 	= os.environ['EMAIL_ADDR'],
-												text			= u'Se envió el comando "{0}" pero la sintaxis no es correcta. Para ver los comando disponibles envía el comando "CMD_SVVPA AYUDA" a {1}.'''.format(r.group('cmd'), os.environ['GMAIL_ACCOUNT_ALIAS'])
+												text			= u'Se envió el comando "{0}" pero la sintaxis no es correcta. Para ver los comando disponibles envía el comando "CMD_SVVPA AYUDA" a {1}.'.format(r.group('cmd'), os.environ['GMAIL_ACCOUNT_ALIAS']),
 												html 			= u'''
 												<html><body><h3>La sintaxis del comando enviado no es correcta</h3><p>Se envió el comando "{0}" pero la sintaxis no es correcta.</p> <p>Para ver los comando disponibles envía el comando de ayuda haciendo <a href="mailto:{1}?subject=CMD_SVVPA AYUDA">click aquí</a>.</p></body></html>'''.format(r.group('cmd'), os.environ['GMAIL_ACCOUNT_ALIAS']))
 				s.send(msg)
