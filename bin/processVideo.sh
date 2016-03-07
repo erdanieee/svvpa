@@ -16,8 +16,8 @@ then
 
 	mkdir -p ${MOTION_DIR} 2>/dev/null
 
-	fileOut=${MOTION_DIR}$(basename $fileIn)
-	fileOut=${fileOut/.${MOTION_VIDEO_EXT_RAW}/.${MOTION_VIDEO_EXT}}
+	fileIn=${MOTION_TEMPORAL_DIR}$(basename $fileIn)
+	fileOut=${MOTION_DIR}${fileOut/\.${MOTION_VIDEO_EXT_RAW}/\.${MOTION_VIDEO_EXT}}
 	#TODO: usar avconv (see http://www.thehelloworldprogram.com/web-development/encode-video-and-audio-for-html5-with-avconv/)
 	${FFMPEG_BIN} -i $fileIn -preset ultrafast -y ${fileOut}	
 
