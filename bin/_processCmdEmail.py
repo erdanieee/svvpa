@@ -28,11 +28,13 @@ def cmd_help(a=None):
 					<h3>Ayuda del control remoto de SVVPA mediante emails</h3>
 					<p>SVVPA tiene la capacidad de recibir comandos a través de correo electrónico. Para enviar un comando, manda un email a <a href="mailto:{correo}">{correo}</a> cuyo asunto contenga <i>CMD_SVVPA COMANDO ARG1 ARG2 ARG3 ... ARGn</i>, siendo <i>COMANDO</i> el comando que se desea ejecutar y <i>ARGi</i> los argumentos si fueran requeridos por el comando (Ej: CMD_SVVPA AYUDA). Los comandos disponibles por el momento son:
 					<ul>
-						<li><b>AYUDA</b> - Envía este email con la ayuda de los comandos disponibles. <a href="mailto:{correo}?subject=CMD_SVVPA AYUDA">Ver ejemplo</a></li>	
-						<li><b>GUARDAR_Ecd /Library/WebServer/Documents/N_GOOGLE_DRIVE codigoDelEvento</b> - Guarda en google drive la imagen y el vídeo que corresponde al evento con código <i>codigoDelEvento</i>. El código del evento se puede obtener del asunto del email que se envía automáticamente cuando se detecta un movimiento. <a href="mailto:{correo}?subject=CMD_SVVPA GUARDAR_EN_GOOGLE_DRIVE 2016_01_02_15_30_13_12332_123_543_23_5543_12">Ver ejemplo</a></li>
-						<li><b>ESTADO_DEL_SISTEMA</b> - Envía información sobre SVVP como el espacio disponible, la temperatura de la CPU, registro de eventos del sistema, ... <a href="mailto:{correo}?subject=CMD_SVVPA ESTADO_DEL_SISTEMA">Ver ejemplo</a></li>
-						<li><b>REINICIAR</b> - Reinicia el sistema. El reinicio tarda aproximádamente 1 minuto. <a href="mailto:{correo}?subject=CMD_SVVPA REINICIAR">Ver ejemplo</a></li>
+						<li><b>AYUDA</b> - Envía este email para recordarte los comandos disponibles y cómo usarlos. <a href="mailto:{correo}?subject=CMD_SVVPA AYUDA">Ver ejemplo</a></li>	
+						<li><b>GUARDAR_EN_GOOGLE_DRIVE codigoDelEvento</b> - Guarda en google drive la imagen y el vídeo que corresponde al evento con código <i>codigoDelEvento</i>. El código del evento se puede obtener del asunto del email que se envía automáticamente cuando se detecta un movimiento. <a href="mailto:{correo}?subject=CMD_SVVPA GUARDAR_EN_GOOGLE_DRIVE 2016_01_02_15_30_13_12332_123_543_23_5543_12">Ver ejemplo</a></li>
+						<li><b>ESTADO_DEL_SISTEMA</b> - Envía un email con información sobre SVVP, como el espacio disponible, la temperatura de la CPU, el registro de eventos del sistema, ... <a href="mailto:{correo}?subject=CMD_SVVPA ESTADO_DEL_SISTEMA">Ver ejemplo</a></li>
+						<li><b>REINICIAR</b> - Reinicia el sistema. Este comando es útil cuando algo no está funcionando correctamente. El reinicio tarda aproximádamente 1 minuto. <a href="mailto:{correo}?subject=CMD_SVVPA REINICIAR">Ver ejemplo</a></li>
 						<li><b>APAGAR</b> - Apaga el sistema. Cuando se envía este comando, SVVPA responde con un correo de confirmación. Para apagar correctamente SVVPA se debe responder al correo de confirmación sin modificar el asunto. Atención: Una vez apagado el sistema, solo se puede volver a iniciar desactivando y activando físicamente el mini-interruptor que está junto a las baterías. Asegúrate de no ejecutar <b>NUNCA</b> este comando cuando estés fuera de E.C. <a href="mailto:{correo}?subject=CMD_SVVPA APAGAR">Ver ejemplo</a></li>
+					<li><b>ACTIVAR_GESTION_REMOTA</b> - Abre un puerto en un servidor remoto para realizar un ssh reverso. Esta opción es útil para administrar SVVPA cuando no tiene conexión a internet a través de una IP pública real (ej: conexión 3g). <a href="mailto:{correo}?subject=CMD_SVVPA ACTIVAR_GESTION_REMOTA">Ver ejemplo</a></li>
+					<li><b>DETECTAR_MOVIMIENTO acción tiempo</b> - Comando para iniciar, parar o pausar el servicio de detección de movimiento. Útil cuando estás en E.C. y no deseas ser grabado :). Si la acción es <i>PARAR</i> (<a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO PARAR">Ver ejemplo</a>), el servicio se detiene hasta que se reciba la acción <i>INICIAR</i> (<a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO INICIAR">Ver ejemplo</a>). Si la acción es <i>PAUSAR</i> (<a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO PAUSAR 5H">Ver ejemplo</a>), el servicio se detiene temporalmente. En este último caso se requiere también el argumento <i>tiempo</i>, que determina la pausa en formato <i>nU</i>, siendo <i>n</i> la cantidad, y <i>U</i> la unidad (S, M, H o D para segundos, minutos, horas o días. Ej: 10H para pausar durante 10 horas. 3D para pausar durante 3 días)</li>				
 					</ul>							
 				</body>
 			</html>
@@ -41,6 +43,7 @@ def cmd_help(a=None):
 	s = gsender.GMail(os.environ['SMPT_USER'], os.environ['SMPT_PASS'])
 	s.send(msg)
 	s.close()
+
 
 
 def cmd_saveFile(eventId):
@@ -169,7 +172,7 @@ def get_shutdownConfirmCode():
 	return md5.new(datetime.datetime.now().strftime("%Y%m%d") + 'CMD_SVVPA').hexdigest()
 
 
-#ssh -CfNR a servidor túnel
+#ssh reservo a servidor túnel
 def cmd_openReverseSsh(args):
 	print "Abriendo servicio ssh reserso en servidor {0}".format(os.environ['SSH_REMOTE_SERVER'])
 	try:
@@ -210,7 +213,7 @@ def cmd_openReverseSsh(args):
 
 #start/stop/delay motion
 def cmd_motionDetection(args):
-	regex = re.compile('(?P<action>(SI)|(NO))|(PAUSA[ ]*(?P<time>\d+)(?P<format>[SMHD]))')
+	regex = re.compile('(?P<action>(INICIAR)|(PARAR))|(PAUSAR[ ]*(?P<time>\d+)(?P<format>[SMHD]))')
 
 	mult = {
 		'S' : 1,
@@ -221,11 +224,11 @@ def cmd_motionDetection(args):
 
 	r = regex.search(args)
 	if r:
-		if r.group('action') == "SI":
+		if r.group('action') == "INICIAR":
 			print "Iniciando servicio"
 			proc.call('sudo service motion restart',shell=True)
 			return
-		elif r.group('action') == "NO":
+		elif r.group('action') == "PARAR":
 			print "Parando servicio"
 			proc.call('sudo service motion stop',shell=True)
 			return
@@ -251,9 +254,6 @@ def cmd_motionDetection(args):
 		raise Exception(e)
 
 
-#start/stop apache2
-def cmd_webService(args):
-	return True
 
 
 
@@ -278,7 +278,6 @@ CMD_SVVPA={
 		'ESTADO_DEL_SISTEMA' 		: cmd_status,
 		'ACTIVAR_GESTION_REMOTA' 	: cmd_openReverseSsh,
 		'DETECTAR_MOVIMIENTO' 		: cmd_motionDetection,
-		'SERVIDOR_WEB'					: cmd_webService, 
 #		'VISTA_EN_DIRECTO' 			: cmd_lifeView,	#Configurar motion para que guarde una captura periódica que se sobreescriba, y enviar dicho archivo
 		'REINICIAR' 					: cmd_reboot,
 		'APAGAR'							: cmd_shutdown		
