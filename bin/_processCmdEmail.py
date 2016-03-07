@@ -168,8 +168,14 @@ def get_shutdownConfirmCode():
 
 #ssh -CfNR a servidor túnel
 def cmd_openReverseSsh(args):
-	print "Abriendo servicio ssh reserso en servidor {0}"
+	print "Abriendo servicio ssh reserso en servidor {0}".format(os.environ['SSH_REMOTE_SERVER'])
+	proc.call('ssh -p {port} -fCNR {tunelPort}:localhost:22 {user}@{server}'.format(
+		port 			= os.environ['SSH_REMOTE_PORT']),
+		tunelPort	= os.environ['SSH_REMOTE_TUNEL_PORT']),
+		user			= os.environ['SSH_REMOTE_USER']),
+		server		= os.environ['SSH_REMOTE_SERVER']))
 	return True
+
 
 
 #start/stop/delay motion

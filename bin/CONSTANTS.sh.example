@@ -52,3 +52,9 @@ export DATOS_MENSUALES="100"
 export GMAIL_ACCOUNT_ALIAS="svvpaec+CMD@gmail.com"
 
 export REMOTE_ACCESS="0"
+
+export SSH_REMOTE_SERVER="xxx.yyy.zzz.com"
+export SSH_REMOTE_USER="user1"
+export SSH_REMOTE_PORT="2222"
+export SSH_REMOTE_TUNEL_PORT="9876"
+
