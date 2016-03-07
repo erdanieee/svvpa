@@ -206,14 +206,49 @@ def cmd_openReverseSsh(args):
 		p.terminate()		
 
 
-	return True
-
 
 
 #start/stop/delay motion
 def cmd_motionDetection(args):
-	
-	return True
+	regex = re.compile('(?P<action>(SI)|(NO))|(PAUSA[ ]*(?P<time>\d+)(?P<format>[SMHD]))')
+
+	mult = {
+		'S' : 1,
+		'M'	: 60,
+		'H'	: 3600,
+		'D'	: 86400
+	}
+
+	r = regex.search(args)
+	if r:
+		if r.group('action') == "SI":
+			print "Iniciando servicio"
+			proc.call('sudo service motion restart',shell=True)
+			return
+		elif r.group('action') == "NO":
+			print "Parando servicio"
+			proc.call('sudo service motion stop',shell=True)
+			return
+		else:
+			try:
+				timeout=int(r.group('time')*mult[r.group('format')])
+				print "Pausado servicio %s segundos" % timeout
+				proc.call('sudo service motion stop',shell=True)				
+				step=1
+				t=0
+				while t<timeout:
+					time.sleep(step)
+					t+=step
+				
+			finally:
+				print "Reanudando servicio"
+				proc.call('sudo service motion start',shell=True)
+			return
+
+	else:
+		e="Error en el formato del comando.\nAcción:{0}\nPeriodo:{1}".format(r.group('action'), r.group('time'))
+		print e
+		raise Exception(e)
 
 
 #start/stop apache2
