@@ -3,7 +3,7 @@
 #comprueba que no se está usando un archivo de configuración obsoleto
 v_example=$(egrep export CONSTANTS.sh.example|cut -f 1 -d "="|md5sum|awk '{print $1}')
 v_local=$(egrep export $BASH_SOURCE|cut -f 1 -d "="|md5sum|awk '{print $1}')
-if [[ ! $v_local -eq $v_example ]]
+if [[ ! "$v_local" == "$v_example" ]]
 then
         echo "Error!!! El archivo de configuración está obsoleto"
         return
