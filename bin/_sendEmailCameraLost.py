@@ -22,7 +22,7 @@ html        = """\
 """
 
 def main(argv): 
-
+	print "enviando email"
 	# Construct email
 	msg = MIMEText(html.replace("XXIPXX",get_ip()), 'html', 'utf-8')
 	msg['To'] = os.environ['EMAIL_ADDR']
