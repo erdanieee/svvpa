@@ -11,3 +11,5 @@ CONSTANTS.php
 CONSTANTS.sh
 gspread.json
 rclone.conf
+svvpa.log
+logrotate.state

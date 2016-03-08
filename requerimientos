@@ -56,6 +56,7 @@
     * AuthUserFile /etc/apache2/pwd
     * Require user svvpa
 * Crear directorio motion (ver CONSTANTS para la ubicación) que pertenezca a www-data y motion con permisos 774
+* Modificar config/svvpa convenientemente y moverlo a /etc/logrotate.d/
 
 
 
