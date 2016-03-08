@@ -17,6 +17,7 @@ DEBUG=True
 
 
 def cmd_help(a=None):	
+	print "[{}] {}: Enviando mensaje de ayuda".format(datetime.datetime.now(), __file__)
 	msg = gsender.Message(	
 		subject = u"Ayuda CMD_SVVPA",
 		to			= os.environ['EMAIL_ADDR'],
@@ -47,6 +48,7 @@ def cmd_help(a=None):
 
 
 def cmd_saveFile(eventId):
+	print "[{}] {}: Guardando archivos {} en google drive".format(datetime.datetime.now(), __file__, eventId)
 	errorMsg=""
 	imageFile = os.environ['MOTION_DIR'] +  eventId + "." + os.environ['MOTION_IMAGE_EXT']
 	videoFile = os.environ['MOTION_DIR'] +  eventId + "." + os.environ['MOTION_VIDEO_EXT']
@@ -56,23 +58,28 @@ def cmd_saveFile(eventId):
 	videoCmd = os.environ['RCLONE_BIN'] + " --config " + os.environ['RCLONE_CONFIG'] + " copy " + videoFile + " google:SVVPA/imagenes 2>&1 |tee " + videoLogFile
 
 	if not os.path.isfile(imageFile):
+		print "[{}] {}: ERROR! No se encuentra la imagen {}.".format(datetime.datetime.now(), __file__, imageFile)
 		raise Exception('{0}: No se encuentra la imagen del evento! Comprueba que has escrito correctamente el identificador del evento'.format(imageFile))	
 	if not os.path.isfile(videoFile):
-		raise Exception('No se encuentra el vídeo del evento! Es posible que aún se esté procesando. Por favor, inténtalo de nuevo más tarde')
+		print "[{}] {}: ERROR! No se encuentra el vídeo {}".format(datetime.datetime.now(), __file__, videoFile)
+		raise Exception('{0}: No se encuentra el vídeo del evento! Es posible que aún se esté procesando. Por favor, inténtalo de nuevo más tarde'.format(videoFile))
 	if len(eventId.split("_")) < 12:
+		print "[{}] {}: ERROR! El identificador del evento ({}) tiene menos de 12 tokens".format(datetime.datetime.now(), __file__, eventId)
 		raise Exception('Error en el identificador del evento "{0}". Recuerda que el identificador son 12 números separados por guiones bajos'.format(eventId))
 
 	try:
-		print "Enviando imagen"
+		print "[{}] {}: Subiendo imagen a google drive".format(datetime.datetime.now(), __file__)
 		imageCmdResult = proc.call(imageCmd, shell=True)
 	except Exception as e:
+		print "[{}] {}: ERROR! Error al subir la imagen a google drive: {}".format(datetime.datetime.now(), __file__, repr(e))
 		errorMsg+='Error al enviar la imagen a google drive.\n' + str(e) + '\n'
 		#raise type(e)('Error al enviar el archivo a google drive.\n' + str(e) + '\n' + imageCmd)
 
 	try:
-		print "Enviando vídeo"
+		print "[{}] {}: Subiendo vídeo a google drive".format(datetime.datetime.now(), __file__)
 		videoCmdResult = proc.call(videoCmd, shell=True)
 	except Exception as e:
+		print "[{}] {}: ERROR! Error al subir el vídeo a google drive: {}".format(datetime.datetime.now(), __file__, repr(e))
 		errorMsg+='Error al enviar el vídeo a google drive.\n' + str(e) + '\n'
 	
 	if imageCmdResult or videoCmdResult or errorMsg:
@@ -84,6 +91,7 @@ def cmd_saveFile(eventId):
 		asunto=u"Transferencia correcta (" +  eventId + ")"
 		texto=u"La imagen y el vídeo se han subido correctamente a google drive"
 	
+	print "[{}] {}: Enviando email con el resultado de la transacción".format(datetime.datetime.now(), __file__)
 	s 	 = gsender.GMail(os.environ['SMPT_USER'], os.environ['SMPT_PASS'])
 	msg = gsender.Message(	subject 		= asunto,
 									to 		 	= os.environ['EMAIL_ADDR'],
@@ -95,6 +103,7 @@ def cmd_saveFile(eventId):
 
 
 def cmd_status(args):	
+	print "[{}] {}: Recopilando datos del sistema".format(datetime.datetime.now(), __file__)
 	zipFileName='/tmp/log_' + datetime.datetime.now().strftime("%Y%m%d%H%M%S") + '.zip'	
 	cmds={'DF' 			: 'df -h',
 			'DMESG' 		: 'dmesg',
@@ -112,6 +121,7 @@ def cmd_status(args):
 				
 	zf.close()
 
+	print "[{}] {}: Enviando email con los logs del sistema".format(datetime.datetime.now(), __file__)
 	s 	 = gsender.GMail(os.environ['SMPT_USER'], os.environ['SMPT_PASS'])
 	msg = gsender.Message(	subject 		= u"Información del sistema",
 									to 		 	= os.environ['EMAIL_ADDR'],
@@ -123,7 +133,7 @@ def cmd_status(args):
 
 
 def cmd_reboot(args):
-	print "Reiniciando el sistema"
+	print "[{}] {}: Reiniciando el sistema".format(datetime.datetime.now(), __file__)
 	s 	 = gsender.GMail(os.environ['SMPT_USER'], os.environ['SMPT_PASS'])
 	msg = gsender.Message(	subject 		= u"Reinicio del sistema",
 									to 		 	= os.environ['EMAIL_ADDR'],
@@ -140,7 +150,7 @@ def cmd_reboot(args):
 def cmd_shutdown(args):
 	#primera vuelta
 	if not args:
-		print "Enviando confirmación de apagado"
+		print "[{}] {}: Enviando código de confirmación de apagado".format(datetime.datetime.now(), __file__)
 		s 	 = gsender.GMail(os.environ['SMPT_USER'], os.environ['SMPT_PASS'])
 		msg = gsender.Message(	subject 		= u"Confirmación de apagado requerida: CMD_SVVPA APAGAR {0}".format(get_shutdownConfirmCode()),
 										to 		 	= os.environ['EMAIL_ADDR'],
@@ -153,11 +163,11 @@ def cmd_shutdown(args):
 	#confirmación
 	else:	
 		if args == get_shutdownConfirmCode():
-			print "Apagando el sistema"
+			print "[{}] {}: Código de confirmación de apagado aceptado. Apagando el sistema".format(datetime.datetime.now(), __file__)
 			proc.call('sudo /sbin/shutdown -r now', shell=True)
 
 		else:
-			print "Código de confirmación erróneo"
+			print "[{}] {}: ERROR! Código de confirmación de apagado erróneo".format(datetime.datetime.now(), __file__)
 			s 	 = gsender.GMail(os.environ['SMPT_USER'], os.environ['SMPT_PASS'])
 			msg = gsender.Message(	subject 		= u"Código de apagado erróneo",
 											to 		 	= os.environ['EMAIL_ADDR'],
@@ -174,7 +184,7 @@ def get_shutdownConfirmCode():
 
 #ssh reservo a servidor túnel
 def cmd_openReverseSsh(args):
-	print "Abriendo servicio ssh reserso en servidor {0}".format(os.environ['SSH_REMOTE_SERVER'])
+	print "[{}] {}: Abriendo servicio ssh reverso en servidor {}".format(datetime.datetime.now(), __file__, os.environ['SSH_REMOTE_SERVER'])
 	try:
 		timeout=int(os.environ['SSH_REMOTE_TIMEOUT'])
 		p = proc.Popen('ssh -p {port} -CNR {tunelPort}:localhost:22 {user}@{server}'.format( 
@@ -182,7 +192,6 @@ def cmd_openReverseSsh(args):
 			tunelPort	= os.environ['SSH_REMOTE_TUNEL_PORT'],	
 			user = os.environ['SSH_REMOTE_USER'], 
 			server = os.environ['SSH_REMOTE_SERVER']), shell=True)
-		print p.pid
 		s	= gsender.GMail(os.environ['SMPT_USER'], os.environ['SMPT_PASS'])
 		msg = gsender.Message(	subject 		= u"Servicio SSH abierto",
 											to 		 		= os.environ['EMAIL_ADDR'],
@@ -198,7 +207,7 @@ def cmd_openReverseSsh(args):
 			t+=step
 	
 	finally:
-		print "Cerrando servicio SSH"
+		print "[{}] {}: Cerrando servicio SSH".format(datetime.datetime.now(), __file__)
 		s	= gsender.GMail(os.environ['SMPT_USER'], os.environ['SMPT_PASS'])
 		msg = gsender.Message(	subject 		= u"Servicio SSH cerrado",
 											to 		 		= os.environ['EMAIL_ADDR'],
@@ -225,17 +234,17 @@ def cmd_motionDetection(args):
 	r = regex.search(args)
 	if r:
 		if r.group('action') == "INICIAR":
-			print "Iniciando servicio"
+			print "[{}] {}: Iniciando servicio MOTION".format(datetime.datetime.now(), __file__)
 			proc.call('sudo service motion restart',shell=True)
 			return
 		elif r.group('action') == "PARAR":
-			print "Parando servicio"
+			print "[{}] {}: Parando servicio MOTION".format(datetime.datetime.now(), __file__)
 			proc.call('sudo service motion stop',shell=True)
 			return
 		else:
 			try:
 				timeout=int(r.group('time')*mult[r.group('format')])
-				print "Pausado servicio %s segundos" % timeout
+				print "[{}] {}: Pausando servicio MOTION durante {} segundos".format(datetime.datetime.now(), __file__, timeout)
 				proc.call('sudo service motion stop',shell=True)				
 				step=1
 				t=0
@@ -244,13 +253,13 @@ def cmd_motionDetection(args):
 					t+=step
 				
 			finally:
-				print "Reanudando servicio"
+				print "[{}] {}: Reanudando servicio MOTION".format(datetime.datetime.now(), __file__)
 				proc.call('sudo service motion start',shell=True)
 			return
 
 	else:
-		e="Error en el formato del comando.\nAcción:{0}\nPeriodo:{1}".format(r.group('action'), r.group('time'))
-		print e
+		e="Error en el formato del comando MOTION.\nAcción:{0}\nPeriodo:{1}".format(r.group('action'), r.group('time'))
+		print "[{}] {}: ERROR! {}".format(datetime.datetime.now(), __file__, e)
 		raise Exception(e)
 
 
@@ -302,29 +311,26 @@ def main(args):
 			d=e.sent_at
 			n=datetime.datetime.now()
 			if (n-d).days > 0:
-				print "El comando lleva más de un día sin terminar de procesarse. Se va a intentar procesar de nuevo."
+				print "[{}] {}: El comando '{}' lleva más de un día sin terminar de procesarse. Se va a intentar procesar de nuevo".format(datetime.datetime.now(), __file__, e.subject)
 				e.add_label(CMD_TIMEOUT)
 				e.remove_label(CMD_WORKING)
 			else:
-				print "El email ya se está procesado"
+				print "[{}] {}: El comando '{}' ya se está procesando".format(datetime.datetime.now(), __file__, e.subject)
 	
 		else:
-			print "Asunto: " + e.subject			
+			print "[{}] {}: Procesando comando '{}'".format(datetime.datetime.now(), __file__, e.subject)
 			r = re_subject.search(e.subject)			
 
 			if r and CMD_SVVPA.has_key(r.group('cmd')):				
-				print "Comando: \"" + r.group('cmd') + "\""
-				print "Argumentos: \"" + r.group('args') + "\""
 				try:
-					print "Procesando email"
+					print "[{}] {}: Ejecutando comando '{}'".format(datetime.datetime.now(), __file__, r.group('cmd'))
 					e.add_label(CMD_WORKING) if not DEBUG else None
 					CMD_SVVPA[r.group('cmd')](r.group('args'))
-					print "OK"
+					print "[{}] {}: Comando '{}' ejecutado correctamente".format(datetime.datetime.now(), __file__, r.group('cmd'))
 					e.add_label(CMD_OK) if not DEBUG else None			
 				
 				except Exception, ex:
-					print "Ha ocurrido el siguiente error al procesar el comando:"					
-					print ex
+					print "[{}] {}: ERROR! Ha ocurrido el error '{}' al procesar el comando '{}'".format(datetime.datetime.now(), __file__, repr(ex), r.group('cmd'))
 					e.add_label(CMD_ERROR) if not DEBUG else None
 					#Envia email con el error
 					s 	 = gsender.GMail(os.environ['SMPT_USER'], os.environ['SMPT_PASS'])
@@ -337,7 +343,7 @@ def main(args):
 				e.read() if not DEBUG else None
 					
 			else:
-				print "La sintaxis del comando no es correcta"
+				print "[{}] {}: ERROR! La sintaxis del comando '{}' no es correcta.".format(datetime.datetime.now(), __file__,r.group('cmd'))
 				e.add_label(CMD_ERROR)
 				e.read()
 				s 	 = gsender.GMail(os.environ['SMPT_USER'], os.environ['SMPT_PASS'])

@@ -21,8 +21,8 @@ html        = """\
 </html>
 """
 
-def main(argv): 
-	print "enviando email"
+def main(argv):
+	print "[{}] {}: Enviando email de pérdida de señal de cámara".format(datetime.datetime.now(), __file__)
 	# Construct email
 	msg = MIMEText(html.replace("XXIPXX",get_ip()), 'html', 'utf-8')
 	msg['To'] = os.environ['EMAIL_ADDR']

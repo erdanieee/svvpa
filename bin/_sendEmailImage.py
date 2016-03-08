@@ -9,6 +9,7 @@ import urllib
 from email.mime.text import MIMEText
 from email.MIMEImage import MIMEImage
 from email.mime.multipart import MIMEMultipart
+import datetime as dat
 
 
 html = """\
@@ -37,6 +38,7 @@ html = """\
 
 def main(argv): 
 	if len(sys.argv) >= 2:
+		print "[{}] {}: Enviando email con la captura".format(dat.datetime.now(), __file__)
 		if os.path.exists(sys.argv[1]):
 			image 	 = sys.argv[1]
 			tk	  	 = os.path.basename(image).split("_")
@@ -84,10 +86,10 @@ def main(argv):
 
 
 		else:
-			print "ERROR: file " + sys.argv[1] + " not found!"
+			print "[{}] {}: ERROR! No se encuentra el archivo {}".format(dat.datetime.now(), __file__,sys.argv[1])
 		
 	else:
-		print "USAGE: " + sys.argv[0] + " <image>"
+		print "[{}] {}: ERROR! Número inválido de argumentos".format(dat.datetime.now(), __file__)
 		
 
 def get_ip():

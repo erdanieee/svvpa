@@ -6,3 +6,4 @@ source $(dirname $0)/CONSTANTS.sh
 exec &> >(tee -a $LOG_FILE})
 
 ${VNSTAT_BIN} --dumpdb -i ${VNSTAT_INTERFACE}|egrep 'm;0'|awk -F";" '{print $4+$5}'
+
