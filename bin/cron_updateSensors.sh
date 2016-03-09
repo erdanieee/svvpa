@@ -2,7 +2,7 @@
 
 
 source $(dirname $0)/CONSTANTS.sh
-exec &> >(tee -a {$LOG_FILE})
+touch ${LOG_FILE}; exec &> >(tee -a ${LOG_FILE})
 
 function getMysqlVal(){ r="NULL"; if [[ "$1" ]]; then r="'$1'"; fi; echo $r; }
 function getGoogleSpVal(){ r="nan"; if [[ "$1" ]]; then r="$1"; fi; echo ${r/\./\,}; }

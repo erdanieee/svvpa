@@ -1,7 +1,7 @@
 #!/bin/bash
 
 source $(dirname $0)/CONSTANTS.sh
-exec &> >(tee -a {$LOG_FILE})
+touch ${LOG_FILE}; exec &> >(tee -a ${LOG_FILE})
 
 fileIn=$1
 
