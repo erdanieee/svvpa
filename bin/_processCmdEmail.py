@@ -112,7 +112,8 @@ def cmd_status(args):
 			'PS' 			: 'ps aux',
 			'MOTION'		: 'service motion status',
 			'APACHE' 	: 'service motion apache2',
-			'CPU_TEMP' 	: './readInternalTemp.sh'}
+			'CPU_TEMP' 	: './readInternalTemp.sh',
+			'SVVPA_LOG'	: 'cat ' + os.environ['LOG_FILE']}
 	
 	zf = zipfile.ZipFile(zipFileName, mode='w')
 	for cmdLabel in cmds:
