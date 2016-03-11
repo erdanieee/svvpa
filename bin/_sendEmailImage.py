@@ -82,7 +82,7 @@ def get_ip():
 	return data
 
 def get_datos():
-	ret = os.popen(os.environ['BIN_DIR'] + "getInternetUsage.sh").readlines()
+	ret = os.popen(os.environ['BIN_DIR'] + "_getInternetUsage.sh").readlines()
 	return ret[0]
 
 if __name__ == "__main__":

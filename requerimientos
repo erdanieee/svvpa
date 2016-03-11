@@ -65,4 +65,7 @@
 #############
 * Añadir clave privada en servidor remoto para hacer SSH reverso sin password (para comando email SSH remoto)
 * Añadir a crontab los comandos "cron_*" del directorio bin
-* Añadir a rc.local los comando "startup_*" del directorio bin
+* Añadir servicio SVVPA-startup-shutdown-notification a /etc/init.d
+	- cd /etc/init.d
+	- sudo ln -s /var/www/svvpa/bin/SVVPA-startup-shutdown-notification.sh SVVPA-startup-shutdown-notification
+	- sudo update-rc.d SVVPA-startup-shutdown-notification defaults 99

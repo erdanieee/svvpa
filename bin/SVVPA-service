@@ -1,37 +1,236 @@
 #!/bin/bash
 
-link=$(readlink $0)
+### BEGIN INIT INFO
+# Provides:          SVVPA-service
+# Required-Start:    $remote_fs $syslog $network
+# Required-Stop:     $remote_fs $syslog $network
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# X-Interactive:     false
+# Short-Description: Controla las acciones a realizar por SVVPA
+# Description:       Servicio para controlar SVVPA. Este script está pensado para ser llamado con el comando "sudo service SVVPA-service args". Para ello, se debe crear previamente un link en "/etc/ini.d" y ejecutar el comando "sudo update-rc.d SVVPA-service defaults 99"
+### END INIT INFO
 
+
+
+function getMysqlVal(){ r="NULL"; if [[ "$1" ]]; then r="'$1'"; fi; echo $r; }
+function getGoogleSpVal(){ r="nan"; if [[ "$1" ]]; then r="$1"; fi; echo ${r/\./\,}; }
+
+
+. /lib/lsb/init-functions
+
+#comprueba si se llama directamente el ejecutable o se hace a través de un link (/etc/inid.d) para que se encuentren correctamente los demás archivos del directorio ${BIN_DIR}
+link=$(readlink $0)
 if [[ "${link}" ]]
 then	
-	path=$(dirname $link)
-	cd $path	
+	path=$(dirname $link)		
 else
 	path=$(dirname $0)
 fi
 
-
-source ${path}/CONSTANTS.sh
+cd $path
+source CONSTANTS.sh
 touch ${LOG_FILE}; exec &> >(tee -a ${LOG_FILE})
 
 
 cd ${BIN_DIR}
 case $1 in
-	stop)
+	# Apagar servicio. Se ejecuta automáticamente por Linux cuando se apaga el sistema (init 0 1 6)
+	stop|notify_shutdown)
+		echo "[$(date)] $0: Servicio '$1': El sistema se está apagando"
 		python _sendEmailShutdown.py
 		RETVAL=$?
 	;;
- 
-	start)
+
+	# Encender servicio. Se ejecuta automáticamente por Linux cuando se inicia el sistema (init 2 3 4 5)
+	start|notify_startup)
+		echo "[$(date)] $0: Servicio '$1': El sistema se está arrancando"
 		python _sendEmailStartup.py
 		RETVAL=$?
 	;;
+
+	# Comprueba estado de MOTION
+	status)
+		service motion status
+		service apache2 status
+	;;
 	
+	# Este comando se llama cuando MOTION no puede acceder a la cámara. Se ejecuta cuando se activa el envento 'on_camera_lost' del archivo de configuración motion.conf
 	camera_lost)
+		echo "[$(date)] $0: Servicio '$1': La conexión con la cámara se ha perdido"
 		python _sendEmailCameraLost.py
 		RETVAL=$?
 	;;
- 
+
+	# Se comprueba si hay nuevos comandos email y los ejecuta si son correctos. Este servicio debe ser llamado frecuentemente utilizando cron
+	check_cmd_email)
+		echo "[$(date)] $0: Servicio '$1': Se está comprobando si hay nuevos commandos email"
+		python _processCmdEmail.py
+		RETVAL=$?
+ 	;;
+	
+	# Actualiza el tráfico de internet por la tarjeta. Este servicio debe ser llamada al menos cada hora desde cron
+	update_vnstats)
+		echo "[$(date)] $0: Servicio '$1': Actualizando tráfico en ${VNSTAT_INTERFACE}"
+		sudo ${VNSTAT_BIN} -u -i ${VNSTAT_INTERFACE}
+		RETVAL=$?
+	;;
+
+	# Comprueba el espacio en disco disponible, y si es menor de un límite prefijado, borra vídeos antiguos. Este comando se llama desde MOTION cuando se activa el envento 'on_movie_start' 
+	check_disk_space)
+		echo "[$(date)] $0: Servicio '$1': Comprobación de espacio en disco"
+		python _diskSpaceControl.py
+    	RETVAL=$?
+	;;
+
+
+	# Actualiza la IP en duckdns.org y en google drive. Este comando es útil cuando SVVPA tiene acceso desde el exterior (IP pública real), pero no tiene IP fija. Si se desea actualizar, debería llamarse tras cada reconexión o un par de veces al día desde cron
+	update_ip)
+		echo "[$(date)] $0: Servicio '$1': Actualizando IP"
+		echo "[$(date)] $0: Updating svvpa.duckdns.org"
+		echo url="https://www.duckdns.org/update?domains=${DUCKDNS_DOMAIN}&token=${DUCKDNS_TOKEN}&ip=" | curl -k -K -
+		r1=$?
+		echo
+
+		echo "[$(date)] $0: Saving ip to $(basename ${CURRENT_IP_FILE})"
+		ip=$(wget "http://ipecho.net/plain" -qO -)
+		r2=$?
+
+		if [[ $r2 -eq 0 ]]
+		then
+		  echo "[$(date)] $0: OK"
+		else
+		  echo "[$(date)] $0: ERROR!"
+		fi
+
+
+		echo "[$(date)] $0: Uploading IP file to Google Drive"
+		echo "http://${DUCKDNS_DOMAIN}.duckdns.org:${APACHE_PORT}" > ${CURRENT_IP_FILE} 
+		echo "http://$ip:${APACHE_PORT}" >> ${CURRENT_IP_FILE}
+		${RCLONE_BIN} --config ${RCLONE_CONFIG} copy ${CURRENT_IP_FILE} google:SVVPA/ 2>&1
+		r3=$?
+
+		if [[ $r1 -eq 0 && $r2 -eq 0  && $r3 -eq 0 ]]
+		then
+		  echo
+		  echo "[$(date)] $0: Ip actualizada correctamente. Este servidor se puede acceder desde $(cat ${CURRENT_IP_FILE})"
+			RETVAL=0	
+		else
+		  echo "[$(date)] $0: Hubo errores. Por favor, revisa los parámetros y si los sitios web están funcionando"
+		  RETVAL=1		
+		fi
+	;;
+	
+
+	# Actualiza MYSQL y la hoja de cálculo de google drive con los datos de los sensores. Este comando está pensado para ser llamado desde cron
+	update_sensors)
+		echo "[$(date)] $0: Servicio '$1': Actualizando sensores"
+		cpuTemp="$(sudo ./_readInternalTemp.sh)"
+		bmp180Pres="$(sudo python _readBmp180Press.py)"
+		bmp180Temp="$(sudo python _readBmp180Temp.py)"
+		dht22Val="$(sudo python _readDht22HrTemp.py)"
+		dht22Temp="$(echo $dht22Val|awk '{print $1}')"
+		dht22Hr="$(echo $dht22Val|awk '{print $2}')"
+
+		sqlStm=$(echo "insert into sensors (CPU_temp, BMP180_temp, BMP180_press, DHT22_temp, DHT22_HR) values ($(getMysqlVal $cpuTemp), $(getMysqlVal $bmp180Temp), $(getMysqlVal $bmp180Pres), $(getMysqlVal $dht22Temp), $(getMysqlVal $dht22Hr))")
+		echo -e "[$(date)] $0: Insertando valores en la base de datos\n$sqlStm"
+
+		mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo $sqlStm)
+		r1=$?
+
+		echo "[$(date)] $0: enviando datos a google drive"
+		python _updateGoogleSpreadsheetSensors.py $(getGoogleSpVal $cpuTemp) $(getGoogleSpVal $bmp180Temp) $(getGoogleSpVal $bmp180Pres) $(getGoogleSpVal $dht22Temp) $(getGoogleSpVal $dht22Hr)
+		r2=$?
+
+		RETVAL=1
+		if [[ $r1 -eq 0 && $r2 -eq 0 ]]
+		then
+			RETVAL=0		
+		fi
+	;;
+
+
+	# Procesa la imagen capturada desde MOTION. Este commando está pensado para ser llamado desde el envento 'on_picture_save' de MOTION
+	process_image)
+		echo "[$(date)] $0: Servicio '$1': Procesando imagen"
+		fileIn=$2
+
+		if [[ $# -gt 1 ]]
+		then
+			if [[ ! -e $fileIn || ! -f $fileIn ]]
+			then
+				echo "[$(date)] $0: ERROR! Archivo de origen no existe o es un directorio: $fileIn"
+				RETVAL=1
+				return
+			fi
+
+			mkdir -p ${MOTION_DIR} 2>/dev/null
+
+			#send file by email
+			echo "[$(date)] $0: enviando imagen por email"
+			python _sendEmailImage.py $fileIn
+			r1=$?		
+	
+			#move file to www
+			echo "[$(date)] $0: Moviendo $fileIn a ${MOTION_DIR}"
+			chmod 664 $fileIn
+			mv $fileIn ${MOTION_DIR}$(basename $fileIn)
+			r2=$?
+
+			RETVAL=1
+			if [[ $r1 -eq 0 && $r2 -eq 0 ]]
+			then
+				RETVAL=0		
+			fi
+	
+		else
+			echo "[$(date)] $0: ERROR! Invalid number of arguments: $#"
+			RETVAL=1
+			return
+		fi
+	;;
+
+
+	# Procesa el vídeo capturado desde MOTION. Este commando está pensado para ser llamado desde el envento 'on_movie_end' de MOTION
+	process_video)
+		echo "[$(date)] $0: Servicio '$1': Procesando video"
+		fileIn=$2
+
+		if [[ $# -gt 1 ]]
+		then
+			if [[ ! -e $fileIn || ! -f $fileIn ]]
+			then
+				echo "[$(date)] $0: ERROR! Archivo de origen no existe o es un directorio: $fileIn"
+				RETVAL=1
+				return
+			fi
+
+			mkdir -p ${MOTION_DIR} 2>/dev/null
+
+			echo "[$(date)] $0: Convirtiendo vídeo a formato .${MOTION_VIDEO_EXT}"
+			fileOut=${MOTION_DIR}${fileIn/\.${MOTION_VIDEO_EXT_RAW}/\.${MOTION_VIDEO_EXT}}
+			#TODO: usar avconv (see http://www.thehelloworldprogram.com/web-development/encode-video-and-audio-for-html5-with-avconv/)
+			${FFMPEG_BIN} -i $fileIn -preset ultrafast -y ${fileOut}	
+			RETVAL=$?
+
+			if [[ ! -e $fileOut || ! -f $fileOut ]]
+			then
+				echo "[$(date)] $0: ERROR! La conversión del archivo $fileIn ha fallado"
+				RETVAL=1
+				return
+			fi
+
+			echo "[$(date)] $0: borrando vídeo original"
+			chmod 664 $fileOut
+			rm -f $fileIn 	
+
+		else
+			echo "[$(date)] $0: ERROR! Invalid number of arguments: $#"
+			RETVAL=1			
+		fi
+	;;
+	
+
 	*)
  		echo "[$(date)] $0: Comando '$1' no reconocido"	
 		RETVAL=99
