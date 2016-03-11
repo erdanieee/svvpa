@@ -5,17 +5,18 @@ import sys
 import os
 import time
 import datetime
+import gmail_sender as gsender
 
 
 def main(argv):
 	print "[{}] {}: Enviando email de pérdida de señal de cámara".format(datetime.datetime.now(), __file__)
-	
+	s   = gsender.GMail(os.environ['SMPT_USER'], os.environ['SMPT_PASS'])
 	msg = gsender.Message(	
-								subject = u"No se puede acceder a la cámara",
+								subject = u'No se puede acceder a la cámara',
 								to 		 	= os.environ['EMAIL_ADDR'],
 								sender	= os.environ['GMAIL_ACCOUNT_ALIAS'],
-								text 		= u"Se ha perido la señal con la cámara. Si el problema persiste trata de reiniciar SVVPA",
-								html		=	"""\
+								text 		= u'Se ha perido la señal con la cámara. Si el problema persiste trata de reiniciar SVVPA',
+								html		=	u'''\
 <html>
   <head></head>
   <body>
@@ -25,7 +26,7 @@ def main(argv):
 <p>Si aun así no funciona, avisa a Er Danié para que trate de indagar en el problema.</p> 
   </body>
 </html>
-""")
+''')
 
 	s.send(msg)
 	s.close()	
