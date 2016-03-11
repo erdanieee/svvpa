@@ -259,7 +259,7 @@ def cmd_motionDetection(args):
 			return
 
 	else:
-		e="Error en el formato del comando MOTION.\nAcción:{0}\nPeriodo:{1}".format(r.group('action'), r.group('time'))
+		e="Error en el formato del comando DETECTAR_MOVIMIENTO."
 		print "[{}] {}: ERROR! {}".format(datetime.datetime.now(), __file__, e)
 		raise Exception(e)
 
@@ -291,7 +291,7 @@ CMD_SVVPA={
 		'ACTIVAR_GESTION_REMOTA' 	: cmd_openReverseSsh,
 		'DETECTAR_MOVIMIENTO' 		: cmd_motionDetection,
 #		'VISTA_EN_DIRECTO' 			: cmd_lifeView,	#Configurar motion para que guarde una captura periódica que se sobreescriba, y enviar dicho archivo
-		'ACTUALIZAR_REPOSITORIO'	: cmd_updateRepository
+		'ACTUALIZAR_REPOSITORIO'	: cmd_updateRepository,
 		'REINICIAR' 					: cmd_reboot,
 		'APAGAR'							: cmd_shutdown		
 		}
