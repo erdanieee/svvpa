@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+
 import sys, os
 import gmail_sender as gsender
 import datetime
