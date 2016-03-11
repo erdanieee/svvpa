@@ -1,6 +1,6 @@
 # m h  dom mon dow   command
-43 6,13 * * * sleep 15;/var/www/svvpa/bin/cron_update_ip.sh
-*/30 * * * * sleep 20; /var/www/svvpa/bin/cron_updateVnstats.sh
-*/10 * * * * sleep 25; /var/www/svvpa/bin/cron_updateSensors.sh
-*/3  * * * * sleep 35; /var/www/svvpa/bin/cron_processCmdEmail.sh
+43 6,13 * * * sleep 15; service SVVPA-service update_ip
+*/30 * * * * sleep 20; service SVVPA-service update_vnstats
+*/10 * * * * sleep 25; service SVVPA-service update_sensors
+*/3  * * * * sleep 35; service SVVPA-service check_cmd_email
 

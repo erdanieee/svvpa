@@ -42,25 +42,40 @@ case $1 in
 		RETVAL=$?
 	;;
 
+
+
+
 	# Encender servicio. Se ejecuta automáticamente por Linux cuando se inicia el sistema (init 2 3 4 5)
 	start|notify_startup)
 		echo "[$(date)] $0: Servicio '$1': El sistema se está arrancando"
 		python _sendEmailStartup.py
 		RETVAL=$?
 	;;
+	
+
+
+
+
+	# Este comando se llama cuando MOTION no puede acceder a la cámara. Se ejecuta cuando se activa el envento 'on_camera_lost' del archivo de configuración motion.conf
+	notify_camera_lost)
+		echo "[$(date)] $0: Servicio '$1': La conexión con la cámara se ha perdido"
+		python _sendEmailCameraLost.py
+		RETVAL=$?
+	;;
+
+
+
+
 
 	# Comprueba estado de MOTION
 	status)
 		service motion status
 		service apache2 status
 	;;
-	
-	# Este comando se llama cuando MOTION no puede acceder a la cámara. Se ejecuta cuando se activa el envento 'on_camera_lost' del archivo de configuración motion.conf
-	camera_lost)
-		echo "[$(date)] $0: Servicio '$1': La conexión con la cámara se ha perdido"
-		python _sendEmailCameraLost.py
-		RETVAL=$?
-	;;
+
+
+
+
 
 	# Se comprueba si hay nuevos comandos email y los ejecuta si son correctos. Este servicio debe ser llamado frecuentemente utilizando cron
 	check_cmd_email)
@@ -69,12 +84,9 @@ case $1 in
 		RETVAL=$?
  	;;
 	
-	# Actualiza el tráfico de internet por la tarjeta. Este servicio debe ser llamada al menos cada hora desde cron
-	update_vnstats)
-		echo "[$(date)] $0: Servicio '$1': Actualizando tráfico en ${VNSTAT_INTERFACE}"
-		sudo ${VNSTAT_BIN} -u -i ${VNSTAT_INTERFACE}
-		RETVAL=$?
-	;;
+
+
+
 
 	# Comprueba el espacio en disco disponible, y si es menor de un límite prefijado, borra vídeos antiguos. Este comando se llama desde MOTION cuando se activa el envento 'on_movie_start' 
 	check_disk_space)
@@ -82,6 +94,22 @@ case $1 in
 		python _diskSpaceControl.py
     	RETVAL=$?
 	;;
+
+
+
+
+
+
+	# Actualiza el tráfico de internet por la tarjeta. Este servicio debe ser llamada al menos cada hora desde cron
+	update_vnstats)
+		echo "[$(date)] $0: Servicio '$1': Actualizando tráfico en ${VNSTAT_INTERFACE}"
+		sudo ${VNSTAT_BIN} -u -i ${VNSTAT_INTERFACE}
+		RETVAL=$?
+	;;
+
+
+
+
 
 
 	# Actualiza la IP en duckdns.org y en google drive. Este comando es útil cuando SVVPA tiene acceso desde el exterior (IP pública real), pero no tiene IP fija. Si se desea actualizar, debería llamarse tras cada reconexión o un par de veces al día desde cron
@@ -122,6 +150,10 @@ case $1 in
 	;;
 	
 
+
+
+
+
 	# Actualiza MYSQL y la hoja de cálculo de google drive con los datos de los sensores. Este comando está pensado para ser llamado desde cron
 	update_sensors)
 		echo "[$(date)] $0: Servicio '$1': Actualizando sensores"
@@ -148,6 +180,11 @@ case $1 in
 			RETVAL=0		
 		fi
 	;;
+
+
+
+
+
 
 
 	# Procesa la imagen capturada desde MOTION. Este commando está pensado para ser llamado desde el envento 'on_picture_save' de MOTION
@@ -191,6 +228,11 @@ case $1 in
 	;;
 
 
+
+
+
+
+
 	# Procesa el vídeo capturado desde MOTION. Este commando está pensado para ser llamado desde el envento 'on_movie_end' de MOTION
 	process_video)
 		echo "[$(date)] $0: Servicio '$1': Procesando video"
@@ -231,6 +273,10 @@ case $1 in
 	;;
 	
 
+
+
+
+	# Error en el comando...
 	*)
  		echo "[$(date)] $0: Comando '$1' no reconocido"	
 		RETVAL=99

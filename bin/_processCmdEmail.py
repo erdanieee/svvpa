@@ -110,8 +110,7 @@ def cmd_status(args):
 			'DMESG' 		: 'dmesg',
 			'TOP' 		: 'top -b -n 1',
 			'PS' 			: 'ps aux',
-			'MOTION'		: 'service motion status',
-			'APACHE' 	: 'service motion apache2',
+			'SERVICES'	: 'service SVVPA-service status',
 			'CPU_TEMP' 	: './readInternalTemp.sh',
 			'SVVPA_LOG'	: 'cat ' + os.environ['LOG_FILE']}
 	
