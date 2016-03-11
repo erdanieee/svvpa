@@ -35,23 +35,27 @@ def files_to_delete(rootfolder, extension):
 def free_space_up_to(free_percent_required, rootfolder, extension):
 	file_list = files_to_delete(rootfolder, extension)
 
-	while file_list:
-		if get_percent_free_disk_space(rootfolder) >= free_percent_required:
-			print "[{}] {}: Espacio mínimo alcanzado. No se borrarán más archivos.".format(datetime.datetime.now(), __file__)
+	while get_percent_free_disk_space(rootfolder) <= free_percent_required:
+		if file_list:
+			file = file_list.pop()
+			print "[{}] {}: eliminando archivo {}".format(datetime.datetime.now(), __file__, file)
+			os.remove(file)    			
+		
+		else:
+			print "[{}] {}: No se puede liberar más espacio porque no quedan imágenes o vídeos que se puedan borrar".format(datetime.datetime.now(), __file__)
 			return
-		file = file_list.pop()
-		print "[{}] {}: eliminando archivo {}".format(datetime.datetime.now(), __file__, file)
-		os.remove(file)    
 
-	print "[{}] {}: No se puede liberar más espacio porque no quedan imágenes o vídeos que se puedan borrar".format(datetime.datetime.now(), __file__)
+	
+	print "[{}] {}: Espacio libre ({:.0f}%) es mayor que el mínimo requerido ({:.0f}%). No se borrarán más archivos.".format(datetime.datetime.now(), __file__, get_percent_free_disk_space(rootfolder), free_percent_required)
+	return
+
+	
 
 
 
 
 
 def main(argv=None): 
-	config.dictConfig(LOGGING)
-
 	try:
 		working_dir = str(os.environ['MOTION_DIR'])
 		percent_threshold = float(os.environ['FREE_DISK_PERCENT_THRESHOLD'])
