@@ -1,0 +1,41 @@
+#!/bin/bash
+
+link=$(readlink $0)
+
+if [[ "${link}" ]]
+then	
+	path=$(dirname $link)
+	cd $path	
+else
+	path=$(dirname $0)
+fi
+
+
+source ${path}/CONSTANTS.sh
+touch ${LOG_FILE}; exec &> >(tee -a ${LOG_FILE})
+
+
+cd ${BIN_DIR}
+case $1 in
+	stop)
+		python _sendEmailShutdown.py
+		RETVAL=$?
+	;;
+ 
+	start)
+		python _sendEmailStartup.py
+		RETVAL=$?
+	;;
+	
+	camera_lost)
+		python _sendEmailCameraLost.py
+		RETVAL=$?
+	;;
+ 
+	*)
+ 		echo "[$(date)] $0: Comando '$1' no reconocido"	
+		RETVAL=99
+	esac
+
+exit ${RETVAL}
+
