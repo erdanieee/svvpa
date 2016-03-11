@@ -17,7 +17,7 @@ function getMysqlVal(){ r="NULL"; if [[ "$1" ]]; then r="'$1'"; fi; echo $r; }
 function getGoogleSpVal(){ r="nan"; if [[ "$1" ]]; then r="$1"; fi; echo ${r/\./\,}; }
 
 
-. /lib/lsb/init-functions
+#. /lib/lsb/init-functions
 
 #comprueba si se llama directamente el ejecutable o se hace a través de un link (/etc/inid.d) para que se encuentren correctamente los demás archivos del directorio ${BIN_DIR}
 link=$(readlink $0)
@@ -69,6 +69,7 @@ case $1 in
 
 	# Comprueba estado de MOTION
 	status)
+		echo "[$(date)] $0: Servicio '$1': Comprobando estado de los servicios requeridos por SVVPA"
 		service motion status
 		service apache2 status
 	;;
@@ -90,7 +91,7 @@ case $1 in
 
 	# Comprueba el espacio en disco disponible, y si es menor de un límite prefijado, borra vídeos antiguos. Este comando se llama desde MOTION cuando se activa el envento 'on_movie_start' 
 	check_disk_space)
-		echo "[$(date)] $0: Servicio '$1': Comprobación de espacio en disco"
+		echo "[$(date)] $0: Servicio '$1': Comprobación de espacio libre en disco"
 		python _diskSpaceControl.py
     	RETVAL=$?
 	;;
@@ -116,9 +117,8 @@ case $1 in
 	update_ip)
 		echo "[$(date)] $0: Servicio '$1': Actualizando IP"
 		echo "[$(date)] $0: Updating svvpa.duckdns.org"
-		echo url="https://www.duckdns.org/update?domains=${DUCKDNS_DOMAIN}&token=${DUCKDNS_TOKEN}&ip=" | curl -k -K -
+		echo url="https://www.duckdns.org/update?domains=${DUCKDNS_DOMAIN}&token=${DUCKDNS_TOKEN}&ip=" | curl -s -k -K -
 		r1=$?
-		echo
 
 		echo "[$(date)] $0: Saving ip to $(basename ${CURRENT_IP_FILE})"
 		ip=$(wget "http://ipecho.net/plain" -qO -)
@@ -140,7 +140,6 @@ case $1 in
 
 		if [[ $r1 -eq 0 && $r2 -eq 0  && $r3 -eq 0 ]]
 		then
-		  echo
 		  echo "[$(date)] $0: Ip actualizada correctamente. Este servidor se puede acceder desde $(cat ${CURRENT_IP_FILE})"
 			RETVAL=0	
 		else
