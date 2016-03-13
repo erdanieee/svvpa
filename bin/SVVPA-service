@@ -2,8 +2,8 @@
 
 ### BEGIN INIT INFO
 # Provides:          SVVPA-service
-# Required-Start:    $remote_fs $syslog $network
-# Required-Stop:     $remote_fs $syslog $network
+# Required-Start:    $local_fs $remote_fs $syslog $network $motion
+# Required-Stop:     $remote_fs
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
 # X-Interactive:     false
