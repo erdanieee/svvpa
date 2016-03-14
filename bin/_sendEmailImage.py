@@ -41,11 +41,9 @@ def main(argv):
 			datetime = ""
 			
 			if len(tk)>=12:
-				datetime = "el " + tk[0] +"/"+ tk[1] +"/"+ tk[2]
-										" a las "+ tk[3] +":"+ tk[4] +":"+ tk[5]
+				datetime = "el " + tk[0] +"/"+ tk[1] +"/"+ tk[2] + " a las "+ tk[3] +":"+ tk[4] +":"+ tk[5]
 			else:
-				datetime = "el " + time.strftime("%Y/%m/%d") + 
-										" aproximadamente a las " + time.strftime("%H:%M:%S")			
+				datetime = "el " + time.strftime("%Y/%m/%d") + " aproximadamente a las " + time.strftime("%H:%M:%S")			
 
 			msg = gsender.Message(	
 				subject 		= u"Movimiento detectado (Código: {})".format(os.path.basename(image)),
