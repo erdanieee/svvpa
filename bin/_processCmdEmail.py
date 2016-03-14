@@ -188,7 +188,7 @@ def cmd_openReverseSsh(args):
 	print "[{}] {}: Abriendo servicio ssh reverso en servidor {}".format(datetime.datetime.now(), __file__, os.environ['SSH_REMOTE_SERVER'])
 	try:
 		timeout=int(os.environ['SSH_REMOTE_TIMEOUT'])
-		pid = proc.Popen('ssh -p {port} -fCNR {tunelPort}:localhost:22 {user}@{server}; echo $$'.format( 
+		pid = proc.check_output('ssh -p {port} -fCNR {tunelPort}:localhost:22 {user}@{server} 2>&1 >/dev/null; echo $$'.format( 
 			port = os.environ['SSH_REMOTE_PORT'], 
 			tunelPort	= os.environ['SSH_REMOTE_TUNEL_PORT'],	
 			user = os.environ['SSH_REMOTE_USER'], 
@@ -203,7 +203,7 @@ def cmd_openReverseSsh(args):
 
 		t=0
 		step=1
-		while os.path.isdir("/proc/"+str(pid)) and t<timeout:
+		while os.path.isdir("/proc/"+pid) and t<timeout:
 			time.sleep(step)
 			t+=step
 	
@@ -216,7 +216,7 @@ def cmd_openReverseSsh(args):
 											text 			= u"Se ha cerrado el servicio SSH.")
 		s.send(msg)
 		s.close()
-		os.kill(pid, signal.SIGKILL)		
+		os.kill(int(pid), signal.SIGKILL)		
 
 
 
