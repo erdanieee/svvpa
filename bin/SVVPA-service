@@ -38,7 +38,7 @@ case $1 in
 	# Apagar servicio. Se ejecuta automáticamente por Linux cuando se apaga el sistema (init 0 1 6)
 	stop|notify_shutdown)
 		echo "[$(date)] $0: Servicio '$1': El sistema se está apagando"
-		python _sendEmailShutdown.py
+		python -u _sendEmailShutdown.py
 		RETVAL=$?
 	;;
 
@@ -48,7 +48,7 @@ case $1 in
 	# Encender servicio. Se ejecuta automáticamente por Linux cuando se inicia el sistema (init 2 3 4 5)
 	start|notify_startup)
 		echo "[$(date)] $0: Servicio '$1': El sistema se está arrancando"
-		python _sendEmailStartup.py
+		python -u _sendEmailStartup.py
 		RETVAL=$?
 	;;
 	
@@ -59,7 +59,7 @@ case $1 in
 	# Este comando se llama cuando MOTION no puede acceder a la cámara. Se ejecuta cuando se activa el envento 'on_camera_lost' del archivo de configuración motion.conf
 	notify_camera_lost)
 		echo "[$(date)] $0: Servicio '$1': La conexión con la cámara se ha perdido"
-		python _sendEmailCameraLost.py
+		python -u _sendEmailCameraLost.py
 		RETVAL=$?
 	;;
 
@@ -81,7 +81,7 @@ case $1 in
 	# Se comprueba si hay nuevos comandos email y los ejecuta si son correctos. Este servicio debe ser llamado frecuentemente utilizando cron
 	check_cmd_email)
 		echo "[$(date)] $0: Servicio '$1': Se está comprobando si hay nuevos commandos email"
-		python _processCmdEmail.py
+		python -u _processCmdEmail.py
 		RETVAL=$?
  	;;
 	
@@ -92,7 +92,7 @@ case $1 in
 	# Comprueba el espacio en disco disponible, y si es menor de un límite prefijado, borra vídeos antiguos. Este comando se llama desde MOTION cuando se activa el envento 'on_movie_start' 
 	check_disk_space)
 		echo "[$(date)] $0: Servicio '$1': Comprobación de espacio libre en disco"
-		python _diskSpaceControl.py
+		python -u _diskSpaceControl.py
     	RETVAL=$?
 	;;
 
@@ -170,7 +170,7 @@ case $1 in
 		r1=$?
 
 		echo "[$(date)] $0: enviando datos a google drive"
-		python _updateGoogleSpreadsheetSensors.py $(getGoogleSpVal $cpuTemp) $(getGoogleSpVal $bmp180Temp) $(getGoogleSpVal $bmp180Pres) $(getGoogleSpVal $dht22Temp) $(getGoogleSpVal $dht22Hr)
+		python -u _updateGoogleSpreadsheetSensors.py $(getGoogleSpVal $cpuTemp) $(getGoogleSpVal $bmp180Temp) $(getGoogleSpVal $bmp180Pres) $(getGoogleSpVal $dht22Temp) $(getGoogleSpVal $dht22Hr)
 		r2=$?
 
 		RETVAL=1
@@ -203,12 +203,13 @@ case $1 in
 
 				#send file by email
 				echo "[$(date)] $0: enviando imagen por email"
-				python _sendEmailImage.py $fileIn
+				python -u _sendEmailImage.py $fileIn
 				r1=$?		
 	
 				#move file to www
 				echo "[$(date)] $0: Moviendo $fileIn a ${MOTION_DIR}"
-				chmod 664 $fileIn
+				sudo chmod 664 $fileIn
+				sudo chown www-data:pi $fileIn
 				mv $fileIn ${MOTION_DIR}$(basename $fileIn)
 				r2=$?
 
@@ -247,9 +248,10 @@ case $1 in
 				mkdir -p ${MOTION_DIR} 2>/dev/null
 
 				echo "[$(date)] $0: Convirtiendo vídeo a formato .${MOTION_VIDEO_EXT}"
-				fileOut=${MOTION_DIR}${fileIn/\.${MOTION_VIDEO_EXT_RAW}/\.${MOTION_VIDEO_EXT}}
+				fileOutName=$( basename ${fileIn/\.${MOTION_VIDEO_EXT_RAW}/\.${MOTION_VIDEO_EXT}} )
+				fileOut=${MOTION_DIR}${fileOutName}
 				#TODO: usar avconv (see http://www.thehelloworldprogram.com/web-development/encode-video-and-audio-for-html5-with-avconv/)
-				${FFMPEG_BIN} -i $fileIn -preset ultrafast -y ${fileOut}	
+				sudo ${FFMPEG_BIN} -i $fileIn -preset ultrafast -y ${fileOut}	
 				RETVAL=$?
 
 				if [[ ! -e $fileOut || ! -f $fileOut ]]
@@ -259,8 +261,9 @@ case $1 in
 
 				else
 					echo "[$(date)] $0: borrando vídeo original"
-					chmod 664 $fileOut
-					rm -f $fileIn 	
+					sudo chmod 664 $fileOut
+					sudo chown www-data:pi $fileOut 
+					sudo rm -f $fileIn 	
 				fi
 			fi
 
