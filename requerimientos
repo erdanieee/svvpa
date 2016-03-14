@@ -69,3 +69,13 @@
 	- cd /etc/init.d
 	- sudo ln -s /var/www/svvpa/bin/SVVPA-startup-shutdown-notification.sh SVVPA-startup-shutdown-notification
 	- sudo update-rc.d SVVPA-startup-shutdown-notification defaults 99
+
+
+################
+### OPCIONAL ###
+################
+* autocompletar el servicio SVVPA-service. Para ello:
+	- crear alias en .bashrc
+		alias svvpa="service SVVPA-service"
+	- ln -s /var/www/svvpa/config/svvpa.bash.completion /etc/bash_completion.d/svvpa
+	- al escribir svvpa y doble tab se completa con los servicios disponibles
