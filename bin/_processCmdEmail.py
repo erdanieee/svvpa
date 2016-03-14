@@ -56,24 +56,24 @@ def cmd_saveFile(eventId):
 	imageLogFile = "/tmp/" +  eventId + "_IMAGEN.log"
 	videoLogFile = "/tmp/" +  eventId + "_VIDEO.log"
 	imageCmd = os.environ['RCLONE_BIN'] + " --config " + os.environ['RCLONE_CONFIG'] + " copy " + imageFile + " google:SVVPA/imagenes 2>&1 |tee " + imageLogFile
-	videoCmd = os.environ['RCLONE_BIN'] + " --config " + os.environ['RCLONE_CONFIG'] + " copy " + videoFile + " google:SVVPA/imagenes 2>&1 |tee " + videoLogFile
+	videoCmd = os.environ['RCLONE_BIN'] + " --config " + os.environ['RCLONE_CONFIG'] + " copy " + videoFile + " google:SVVPA/videos 2>&1 |tee " + videoLogFile
 
 	if not os.path.isfile(imageFile):
 		print "[{}] {}: ERROR! No se encuentra la imagen {}.".format(datetime.datetime.now(), __file__, imageFile)
-		raise Exception('{0}: No se encuentra la imagen del evento! Comprueba que has escrito correctamente el identificador del evento'.format(imageFile))	
+		raise Exception(u'{0}: No se encuentra la imagen del evento! Comprueba que has escrito correctamente el identificador del evento'.format(imageFile))	
 	if not os.path.isfile(videoFile):
 		print "[{}] {}: ERROR! No se encuentra el vídeo {}".format(datetime.datetime.now(), __file__, videoFile)
-		raise Exception('{0}: No se encuentra el vídeo del evento! Es posible que aún se esté procesando. Por favor, inténtalo de nuevo más tarde'.format(videoFile))
+		raise Exception(u'{0}: No se encuentra el vídeo del evento! Es posible que aún se esté procesando. Por favor, inténtalo de nuevo más tarde'.format(videoFile))
 	if len(eventId.split("_")) < 12:
 		print "[{}] {}: ERROR! El identificador del evento ({}) tiene menos de 12 tokens".format(datetime.datetime.now(), __file__, eventId)
-		raise Exception('Error en el identificador del evento "{0}". Recuerda que el identificador son 12 números separados por guiones bajos'.format(eventId))
+		raise Exception(u'Error en el identificador del evento "{0}". Recuerda que el identificador son 12 números separados por guiones bajos'.format(eventId))
 
 	try:
 		print "[{}] {}: Subiendo imagen a google drive".format(datetime.datetime.now(), __file__)
 		imageCmdResult = proc.call(imageCmd, shell=True)
 	except Exception as e:
 		print "[{}] {}: ERROR! Error al subir la imagen a google drive: {}".format(datetime.datetime.now(), __file__, repr(e))
-		errorMsg+='Error al enviar la imagen a google drive.\n' + str(e) + '\n'
+		errorMsg+=u'Error al enviar la imagen a google drive.\n' + str(e) + '\n'
 		#raise type(e)('Error al enviar el archivo a google drive.\n' + str(e) + '\n' + imageCmd)
 
 	try:
@@ -81,7 +81,7 @@ def cmd_saveFile(eventId):
 		videoCmdResult = proc.call(videoCmd, shell=True)
 	except Exception as e:
 		print "[{}] {}: ERROR! Error al subir el vídeo a google drive: {}".format(datetime.datetime.now(), __file__, repr(e))
-		errorMsg+='Error al enviar el vídeo a google drive.\n' + str(e) + '\n'
+		errorMsg+=u'Error al enviar el vídeo a google drive.\n' + str(e) + '\n'
 	
 	if imageCmdResult or videoCmdResult or errorMsg:
 		print "Transferencia con errores"
@@ -306,24 +306,25 @@ def main(args):
 	re_subject = re.compile('CMD_SVVPA[ ]+(?P<cmd>\w+)[ ]*(?P<args>.*)')
 	
 
-	g 		 = greader.login(os.environ['SMPT_USER'], os.environ['SMPT_PASS'])
+	g  = greader.login(os.environ['SMPT_USER'], os.environ['SMPT_PASS'])
 	emails = g.mailbox('CMD_SVVPA').mail(prefetch=True,unread=True)#,to=os.environ['GMAIL_ACCOUNT_ALIAS'])
 	
 	for e in emails:
+		subject = e.subject.replace("\r\n","")
 		if e.has_label(CMD_WORKING):
 			#Comprueba que no lleva mucho tiempo procesándose
 			d=e.sent_at
 			n=datetime.datetime.now()
 			if (n-d).days > 0:
-				print "[{}] {}: El comando '{}' lleva más de un día sin terminar de procesarse. Se va a intentar procesar de nuevo".format(datetime.datetime.now(), __file__, e.subject)
+				print "[{}] {}: El comando '{}' lleva más de un día sin terminar de procesarse. Se va a intentar procesar de nuevo".format(datetime.datetime.now(), __file__, subject)
 				e.add_label(CMD_TIMEOUT)
 				e.remove_label(CMD_WORKING)
 			else:
-				print "[{}] {}: El comando '{}' ya se está procesando".format(datetime.datetime.now(), __file__, e.subject)
+				print "[{}] {}: El comando '{}' ya se está procesando".format(datetime.datetime.now(), __file__, subject)
 	
 		else:
-			print "[{}] {}: Procesando comando '{}'".format(datetime.datetime.now(), __file__, e.subject)
-			r = re_subject.search(e.subject)			
+			print "[{}] {}: Procesando comando '{}'".format(datetime.datetime.now(), __file__, subject)
+			r = re_subject.search(subject)			
 
 			if r and CMD_SVVPA.has_key(r.group('cmd')):				
 				try:
