@@ -70,8 +70,8 @@ case $1 in
 	# Comprueba estado de MOTION
 	check_services)
 		echo "[$(date)] $0: Servicio '$1': Comprobando estado de los servicios requeridos por SVVPA"
-		/usr/sbin/service motion status
-		/usr/sbin/service apache2 status
+		sudo /usr/sbin/service motion status
+		sudo /usr/sbin/service apache2 status
 	;;
 
 
