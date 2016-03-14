@@ -259,11 +259,11 @@ case $1 in
 				echo "[$(date)] $0: ERROR! La conversión del archivo $fileIn ha fallado"
 				RETVAL=1
 				return
+			else
+				echo "[$(date)] $0: borrando vídeo original"
+				chmod 664 $fileOut
+				rm -f $fileIn 	
 			fi
-
-			echo "[$(date)] $0: borrando vídeo original"
-			chmod 664 $fileOut
-			rm -f $fileIn 	
 
 		else
 			echo "[$(date)] $0: ERROR! Invalid number of arguments: $#"
