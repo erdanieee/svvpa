@@ -12,7 +12,7 @@ fi
 
 export SVVPA_DIR="/var/www/svvpa/"
 export APACHE_DIR=${SVVPA_DIR}"www/"
-export MOTION_DIR=${APACHE_DIR}"motion"
+export MOTION_DIR=${APACHE_DIR}"motion/"
 export BIN_DIR=${SVVPA_DIR}"bin/"
 export CONFIG_DIR=${SVVPA_DIR}"config/"
 		
