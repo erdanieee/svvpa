@@ -13,7 +13,7 @@ import md5
 import time
 
 
-DEBUG=True
+DEBUG=False
 
 
 def cmd_help(a=None):	
@@ -33,7 +33,7 @@ def cmd_help(a=None):
 						<li><b>GUARDAR_EN_GOOGLE_DRIVE codigoDelEvento</b> - Guarda en google drive la imagen y el vídeo que corresponde al evento con código <i>codigoDelEvento</i>. El código del evento se puede obtener del asunto del email que se envía automáticamente cuando se detecta un movimiento. <a href="mailto:{correo}?subject=CMD_SVVPA GUARDAR_EN_GOOGLE_DRIVE 2016_01_02_15_30_13_12332_123_543_23_5543_12">Ver ejemplo</a></li>
 						<li><b>ESTADO_DEL_SISTEMA</b> - Envía un email con información sobre SVVP, como el espacio disponible, la temperatura de la CPU, el registro de eventos del sistema, ... <a href="mailto:{correo}?subject=CMD_SVVPA ESTADO_DEL_SISTEMA">Ver ejemplo</a></li>
 					<li><b>DETECTAR_MOVIMIENTO acción tiempo</b> - Comando para iniciar, parar o pausar el servicio de detección de movimiento. Útil cuando estás en E.C. y no deseas ser grabado :). Si la acción es <i>PARAR</i> (<a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO PARAR">Ver ejemplo</a>), el servicio se detiene hasta que se reciba la acción <i>INICIAR</i> (<a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO INICIAR">Ver ejemplo</a>). Si la acción es <i>PAUSAR</i> (<a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO PAUSAR 5H">Ver ejemplo</a>), el servicio se detiene temporalmente. En este último caso se requiere también el argumento <i>tiempo</i>, que determina la pausa en formato <i>nU</i>, siendo <i>n</i> la cantidad, y <i>U</i> la unidad (S, M, H o D para segundos, minutos, horas o días. Ej: 10H para pausar durante 10 horas. 3D para pausar durante 3 días)</li>	
-					<li><b>ACTUALIZAR_REPOSITORIO</b> - Actualiza el repositorio Github de SVVPA. <a href="mailto:{correo}?subject=CMD_SVVPA ACTUALIZAR_SVVPA">Ver ejemplo</a></li>
+					<li><b>ACTUALIZAR_REPOSITORIO</b> - Actualiza el repositorio Github de SVVPA. <a href="mailto:{correo}?subject=CMD_SVVPA ACTUALIZAR_REPOSITORIO">Ver ejemplo</a></li>
 					<li><b>ACTIVAR_GESTION_REMOTA</b> - Abre un puerto en un servidor remoto para realizar un ssh reverso. Esta opción es útil para administrar SVVPA cuando no tiene conexión a internet a través de una IP pública real (ej: conexión 3g). <a href="mailto:{correo}?subject=CMD_SVVPA ACTIVAR_GESTION_REMOTA">Ver ejemplo</a></li>
 					<li><b>REINICIAR</b> - Reinicia el sistema. Este comando es útil cuando algo no está funcionando correctamente. El reinicio tarda aproximádamente 1 minuto. <a href="mailto:{correo}?subject=CMD_SVVPA REINICIAR">Ver ejemplo</a></li>
 					<li><b>APAGAR</b> - Apaga el sistema. Cuando se envía este comando, SVVPA responde con un correo de confirmación. Para apagar correctamente SVVPA se debe responder al correo de confirmación sin modificar el asunto. Atención: Una vez apagado el sistema, solo se puede volver a iniciar desactivando y activando físicamente el mini-interruptor que está junto a las baterías. Asegúrate de no ejecutar <b>NUNCA</b> este comando cuando estés fuera de E.C. <a href="mailto:{correo}?subject=CMD_SVVPA APAGAR">Ver ejemplo</a></li>
@@ -110,8 +110,8 @@ def cmd_status(args):
 			'DMESG' 		: 'dmesg',
 			'TOP' 		: 'top -b -n 1',
 			'PS' 			: 'ps aux',
-			'SERVICES'	: 'service SVVPA-service status',
-			'CPU_TEMP' 	: './readInternalTemp.sh',
+			'SERVICES'	: '/usr/sbin/service SVVPA-service check_services',
+			'CPU_TEMP' 	: os.environ['BIN_DIR']+'_readInternalTemp.sh',
 			'SVVPA_LOG'	: 'cat ' + os.environ['LOG_FILE']}
 	
 	zf = zipfile.ZipFile(zipFileName, mode='w')
@@ -153,7 +153,7 @@ def cmd_shutdown(args):
 	if not args:
 		print "[{}] {}: Enviando código de confirmación de apagado".format(datetime.datetime.now(), __file__)
 		s 	 = gsender.GMail(os.environ['SMPT_USER'], os.environ['SMPT_PASS'])
-		msg = gsender.Message(	subject 		= u"Confirmación de apagado requerida: CMD_SVVPA APAGAR {0}".format(get_shutdownConfirmCode()),
+		msg = gsender.Message(	subject 		= u"Confirmar apagado: CMD_SVVPA APAGAR {0}".format(get_shutdownConfirmCode()),
 										to 		 	= os.environ['EMAIL_ADDR'],
 										sender		= os.environ['GMAIL_ACCOUNT_ALIAS'],
 										html 			= u'''
@@ -188,7 +188,7 @@ def cmd_openReverseSsh(args):
 	print "[{}] {}: Abriendo servicio ssh reverso en servidor {}".format(datetime.datetime.now(), __file__, os.environ['SSH_REMOTE_SERVER'])
 	try:
 		timeout=int(os.environ['SSH_REMOTE_TIMEOUT'])
-		p = proc.Popen('ssh -p {port} -CNR {tunelPort}:localhost:22 {user}@{server}'.format( 
+		pid = proc.Popen('ssh -p {port} -fCNR {tunelPort}:localhost:22 {user}@{server}; echo $$'.format( 
 			port = os.environ['SSH_REMOTE_PORT'], 
 			tunelPort	= os.environ['SSH_REMOTE_TUNEL_PORT'],	
 			user = os.environ['SSH_REMOTE_USER'], 
@@ -203,7 +203,7 @@ def cmd_openReverseSsh(args):
 
 		t=0
 		step=1
-		while not p.poll() and t<timeout:
+		while os.path.isdir("/proc/"+str(pid)) and t<timeout:
 			time.sleep(step)
 			t+=step
 	
@@ -216,7 +216,7 @@ def cmd_openReverseSsh(args):
 											text 			= u"Se ha cerrado el servicio SSH.")
 		s.send(msg)
 		s.close()
-		p.terminate()		
+		os.kill(pid, signal.SIGKILL)		
 
 
 
