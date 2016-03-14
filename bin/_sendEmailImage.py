@@ -41,7 +41,7 @@ def main(argv):
 			datetime = ""
 			
 			if len(tk)>=12:
-				datetime = "el " + tk[0] +"/"+ tk[1] +"/"+ tk[2] +
+				datetime = "el " + tk[0] +"/"+ tk[1] +"/"+ tk[2]
 										" a las "+ tk[3] +":"+ tk[4] +":"+ tk[5]
 			else:
 				datetime = "el " + time.strftime("%Y/%m/%d") + 
