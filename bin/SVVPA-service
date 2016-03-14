@@ -197,32 +197,31 @@ case $1 in
 			then
 				echo "[$(date)] $0: ERROR! Archivo de origen no existe o es un directorio: $fileIn"
 				RETVAL=1
-				return
-			fi
+			
+			else
+				mkdir -p ${MOTION_DIR} 2>/dev/null
 
-			mkdir -p ${MOTION_DIR} 2>/dev/null
-
-			#send file by email
-			echo "[$(date)] $0: enviando imagen por email"
-			python _sendEmailImage.py $fileIn
-			r1=$?		
+				#send file by email
+				echo "[$(date)] $0: enviando imagen por email"
+				python _sendEmailImage.py $fileIn
+				r1=$?		
 	
-			#move file to www
-			echo "[$(date)] $0: Moviendo $fileIn a ${MOTION_DIR}"
-			chmod 664 $fileIn
-			mv $fileIn ${MOTION_DIR}$(basename $fileIn)
-			r2=$?
+				#move file to www
+				echo "[$(date)] $0: Moviendo $fileIn a ${MOTION_DIR}"
+				chmod 664 $fileIn
+				mv $fileIn ${MOTION_DIR}$(basename $fileIn)
+				r2=$?
 
-			RETVAL=1
-			if [[ $r1 -eq 0 && $r2 -eq 0 ]]
-			then
-				RETVAL=0		
+				RETVAL=1
+				if [[ $r1 -eq 0 && $r2 -eq 0 ]]
+				then
+					RETVAL=0		
+				fi
 			fi
 	
 		else
 			echo "[$(date)] $0: ERROR! Invalid number of arguments: $#"
 			RETVAL=1
-			return
 		fi
 	;;
 
@@ -243,27 +242,27 @@ case $1 in
 			then
 				echo "[$(date)] $0: ERROR! Archivo de origen no existe o es un directorio: $fileIn"
 				RETVAL=1
-				return
+				
+			else
+				mkdir -p ${MOTION_DIR} 2>/dev/null
+
+				echo "[$(date)] $0: Convirtiendo vídeo a formato .${MOTION_VIDEO_EXT}"
+				fileOut=${MOTION_DIR}${fileIn/\.${MOTION_VIDEO_EXT_RAW}/\.${MOTION_VIDEO_EXT}}
+				#TODO: usar avconv (see http://www.thehelloworldprogram.com/web-development/encode-video-and-audio-for-html5-with-avconv/)
+				${FFMPEG_BIN} -i $fileIn -preset ultrafast -y ${fileOut}	
+				RETVAL=$?
+
+				if [[ ! -e $fileOut || ! -f $fileOut ]]
+				then
+					echo "[$(date)] $0: ERROR! La conversión del archivo $fileIn ha fallado"
+					RETVAL=1
+
+				else
+					echo "[$(date)] $0: borrando vídeo original"
+					chmod 664 $fileOut
+					rm -f $fileIn 	
+				fi
 			fi
-
-			mkdir -p ${MOTION_DIR} 2>/dev/null
-
-			echo "[$(date)] $0: Convirtiendo vídeo a formato .${MOTION_VIDEO_EXT}"
-			fileOut=${MOTION_DIR}${fileIn/\.${MOTION_VIDEO_EXT_RAW}/\.${MOTION_VIDEO_EXT}}
-			#TODO: usar avconv (see http://www.thehelloworldprogram.com/web-development/encode-video-and-audio-for-html5-with-avconv/)
-			${FFMPEG_BIN} -i $fileIn -preset ultrafast -y ${fileOut}	
-			RETVAL=$?
-
-			if [[ ! -e $fileOut || ! -f $fileOut ]]
-			then
-				echo "[$(date)] $0: ERROR! La conversión del archivo $fileIn ha fallado"
-				RETVAL=1
-				return
-			fi
-
-			echo "[$(date)] $0: borrando vídeo original"
-			chmod 664 $fileOut
-			rm -f $fileIn 	
 
 		else
 			echo "[$(date)] $0: ERROR! Invalid number of arguments: $#"
