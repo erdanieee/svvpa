@@ -244,7 +244,7 @@ def cmd_motionDetection(args):
 			return
 		else:
 			try:
-				timeout=int(r.group('time')*mult[r.group('format')])
+				timeout=int(r.group('time'))*int(mult[r.group('format')])
 				print "[{}] {}: Pausando servicio MOTION durante {} segundos".format(datetime.datetime.now(), __file__, timeout)
 				proc.call('sudo service motion stop',shell=True)				
 				step=1
