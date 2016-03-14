@@ -6,9 +6,10 @@ import os
 import time
 import datetime as dat
 import gmail_sender as gsender
+import urllib
 
 
-html = """\
+html = u"""\
 <html>
 	<head></head>
 	<body>
@@ -19,7 +20,7 @@ html = """\
 		<p>Para acceder <b>de forma remota</b> a SVVPA visita <a href="http://{dom}.duckdns.org:{port}">http://{dom}.duckdns.org:{port}</a> o <a href="http://{ip}:{port}">http://{ip}:{port}</a>.	El consumo de datos hasta ahora ha sido de {datos}Mb de los {datosMensuales}Mb mensuales que incluye la tarifa.		 
 	</body>
 </html>
-			""" if os.environ['REMOTE_ACCESS'] else """\
+			""" if os.environ['REMOTE_ACCESS'] else u"""\
 <html>
 	<head></head>
 	<body>
@@ -44,7 +45,7 @@ def main(argv):
 				datetime = "el " + tk[0] +"/"+ tk[1] +"/"+ tk[2] + " a las "+ tk[3] +":"+ tk[4] +":"+ tk[5]
 			else:
 				datetime = "el " + time.strftime("%Y/%m/%d") + " aproximadamente a las " + time.strftime("%H:%M:%S")			
-
+			s   = gsender.GMail(os.environ['SMPT_USER'], os.environ['SMPT_PASS'])
 			msg = gsender.Message(	
 				subject 		= u"Movimiento detectado (Código: {})".format(os.path.basename(image)),
 				to 		 			= os.environ['EMAIL_ADDR'],
@@ -56,7 +57,7 @@ def main(argv):
 					port=os.environ['APACHE_PORT'], 
 					id=os.path.basename(image).split(".")[0], 
 					datos=get_datos(), 
-					datosMensuales=os.environ['DATOS_MENSUALES']
+					datosMensuales=os.environ['DATOS_MENSUALES'],
 					email=os.environ['GMAIL_ACCOUNT_ALIAS']),
 				attachments	= [image])
 			s.send(msg)
