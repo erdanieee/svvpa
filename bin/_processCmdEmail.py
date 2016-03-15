@@ -13,39 +13,103 @@ import md5
 import time
 
 
-DEBUG=False
+##############
+### EMAILS ###
+##############
+cmd_help_subject=u"Ayuda CMD_SVVPA"
+cmd_help_text=u"Este correo se ha enviado en formato html, pero parece que tu lector solo permite texto plano. Para ver correctamente el correo activa la opción para visualizar los emails en el formato original."
+cmd_help_html=u'''
+	<html>
+		<body>
+			<h3>Ayuda del control remoto de SVVPA mediante emails</h3>
+			<p>SVVPA tiene la capacidad de recibir comandos a través de correo electrónico. Para enviar un comando, manda un email a <a href="mailto:{correo}">{correo}</a> cuyo asunto contenga <i>CMD_SVVPA COMANDO ARG1 ARG2 ARG3 ... ARGn</i>, siendo <i>COMANDO</i> el comando que se desea ejecutar y <i>ARGi</i> los argumentos si fueran requeridos por el comando (Ej: CMD_SVVPA AYUDA). Los comandos disponibles por el momento son:
+			<ul>
+				<li><b>AYUDA</b> - Envía este email para recordarte los comandos disponibles y cómo usarlos. <a href="mailto:{correo}?subject=CMD_SVVPA AYUDA">Ver ejemplo</a></li>	
+				<li><b>GUARDAR_EN_GOOGLE_DRIVE codigoDelEvento</b> - Guarda en google drive la imagen y el vídeo que corresponde al evento con código <i>codigoDelEvento</i>. El código del evento se puede obtener del asunto del email que se envía automáticamente cuando se detecta un movimiento. <a href="mailto:{correo}?subject=CMD_SVVPA GUARDAR_EN_GOOGLE_DRIVE 2016_01_02_15_30_13_12332_123_543_23_5543_12">Ver ejemplo</a></li>
+				<li><b>ESTADO_DEL_SISTEMA</b> - Envía un email con información sobre SVVP, como el espacio disponible, la temperatura de la CPU, el registro de eventos del sistema, ... <a href="mailto:{correo}?subject=CMD_SVVPA ESTADO_DEL_SISTEMA">Ver ejemplo</a></li>
+			<li><b>DETECTAR_MOVIMIENTO acción tiempo</b> - Comando para iniciar, parar o pausar el servicio de detección de movimiento. Útil cuando estás en E.C. y no deseas ser grabado :). Si la acción es <i>PARAR</i> (<a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO PARAR">Ver ejemplo</a>), el servicio se detiene hasta que se reciba la acción <i>INICIAR</i> (<a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO INICIAR">Ver ejemplo</a>). Si la acción es <i>PAUSAR</i> (<a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO PAUSAR 5H">Ver ejemplo</a>), el servicio se detiene temporalmente. En este último caso se requiere también el argumento <i>tiempo</i>, que determina la pausa en formato <i>nU</i>, siendo <i>n</i> la cantidad, y <i>U</i> la unidad (S, M, H o D para segundos, minutos, horas o días. Ej: 10H para pausar durante 10 horas. 3D para pausar durante 3 días)</li>	
+			<li><b>ACTUALIZAR_REPOSITORIO</b> - Actualiza el repositorio Github de SVVPA. <a href="mailto:{correo}?subject=CMD_SVVPA ACTUALIZAR_REPOSITORIO">Ver ejemplo</a></li>
+			<li><b>ACTIVAR_GESTION_REMOTA</b> - Abre un puerto en un servidor remoto para realizar un ssh reverso. Esta opción es útil para administrar SVVPA cuando no tiene conexión a internet a través de una IP pública real (ej: conexión 3g). <a href="mailto:{correo}?subject=CMD_SVVPA ACTIVAR_GESTION_REMOTA">Ver ejemplo</a></li>
+			<li><b>REINICIAR</b> - Reinicia el sistema. Este comando es útil cuando algo no está funcionando correctamente. El reinicio tarda aproximádamente 1 minuto. <a href="mailto:{correo}?subject=CMD_SVVPA REINICIAR">Ver ejemplo</a></li>
+			<li><b>APAGAR</b> - Apaga el sistema. Cuando se envía este comando, SVVPA responde con un correo de confirmación. Para apagar correctamente SVVPA se debe responder al correo de confirmación sin modificar el asunto. Atención: Una vez apagado el sistema, solo se puede volver a iniciar desactivando y activando físicamente el mini-interruptor que está junto a las baterías. Asegúrate de no ejecutar <b>NUNCA</b> este comando cuando estés fuera de E.C. <a href="mailto:{correo}?subject=CMD_SVVPA APAGAR">Ver ejemplo</a></li>
+			</ul>							
+		</body>
+	</html>
+	'''
+
+'''
+cmd_help_subject=
+cmd_help_text=
+cmd_help_html=
+cmd_help_attachment=
+
+cmd_help_subject=
+cmd_help_text=
+cmd_help_html=
+cmd_help_attachment=
+
+cmd_help_subject=
+cmd_help_text=
+cmd_help_html=
+cmd_help_attachment=
+
+cmd_help_subject=
+cmd_help_text=
+cmd_help_html=
+cmd_help_attachment=
+
+cmd_help_subject=
+cmd_help_text=
+cmd_help_html=
+cmd_help_attachment=
+
+cmd_help_subject=
+cmd_help_text=
+cmd_help_html=
+cmd_help_attachment=
+
+cmd_help_subject=
+cmd_help_text=
+cmd_help_html=
+cmd_help_attachment=
+
+cmd_help_subject=
+cmd_help_text=
+cmd_help_html=
+cmd_help_attachment=
+
+cmd_help_subject=
+cmd_help_text=
+cmd_help_html=
+cmd_help_attachment=
+'''
+
+
+
+
+
+
+
+
+
+
+def notificar_email(subject, text, html, attachment):
+	s 	 = gsender.GMail(os.environ['SMPT_USER'], os.environ['SMPT_PASS'])
+	msg = gsender.Message(	subject 		= subject,
+									to 		 	= os.environ['EMAIL_ADDR'],
+									sender		= os.environ['GMAIL_ACCOUNT_ALIAS'],
+									text 			= text,
+									html			= html,
+									attachments	= attachment)
+	s.send(msg)
+	s.close()	
+	
 
 
 def cmd_help(a=None):	
 	print "[{}] {}: Enviando mensaje de ayuda".format(datetime.datetime.now(), __file__)
-	msg = gsender.Message(	
-		subject = u"Ayuda CMD_SVVPA",
-		to			= os.environ['EMAIL_ADDR'],
-		sender		= os.environ['GMAIL_ACCOUNT_ALIAS'],
-		text		= u"Este correo se ha enviado en formato html, pero parece que tu lector solo permite texto plano. Para ver correctamente el correo activa la opción para visualizar los emails en el formato original.",
-		html		= u'''
-			<html>
-				<body>
-					<h3>Ayuda del control remoto de SVVPA mediante emails</h3>
-					<p>SVVPA tiene la capacidad de recibir comandos a través de correo electrónico. Para enviar un comando, manda un email a <a href="mailto:{correo}">{correo}</a> cuyo asunto contenga <i>CMD_SVVPA COMANDO ARG1 ARG2 ARG3 ... ARGn</i>, siendo <i>COMANDO</i> el comando que se desea ejecutar y <i>ARGi</i> los argumentos si fueran requeridos por el comando (Ej: CMD_SVVPA AYUDA). Los comandos disponibles por el momento son:
-					<ul>
-						<li><b>AYUDA</b> - Envía este email para recordarte los comandos disponibles y cómo usarlos. <a href="mailto:{correo}?subject=CMD_SVVPA AYUDA">Ver ejemplo</a></li>	
-						<li><b>GUARDAR_EN_GOOGLE_DRIVE codigoDelEvento</b> - Guarda en google drive la imagen y el vídeo que corresponde al evento con código <i>codigoDelEvento</i>. El código del evento se puede obtener del asunto del email que se envía automáticamente cuando se detecta un movimiento. <a href="mailto:{correo}?subject=CMD_SVVPA GUARDAR_EN_GOOGLE_DRIVE 2016_01_02_15_30_13_12332_123_543_23_5543_12">Ver ejemplo</a></li>
-						<li><b>ESTADO_DEL_SISTEMA</b> - Envía un email con información sobre SVVP, como el espacio disponible, la temperatura de la CPU, el registro de eventos del sistema, ... <a href="mailto:{correo}?subject=CMD_SVVPA ESTADO_DEL_SISTEMA">Ver ejemplo</a></li>
-					<li><b>DETECTAR_MOVIMIENTO acción tiempo</b> - Comando para iniciar, parar o pausar el servicio de detección de movimiento. Útil cuando estás en E.C. y no deseas ser grabado :). Si la acción es <i>PARAR</i> (<a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO PARAR">Ver ejemplo</a>), el servicio se detiene hasta que se reciba la acción <i>INICIAR</i> (<a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO INICIAR">Ver ejemplo</a>). Si la acción es <i>PAUSAR</i> (<a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO PAUSAR 5H">Ver ejemplo</a>), el servicio se detiene temporalmente. En este último caso se requiere también el argumento <i>tiempo</i>, que determina la pausa en formato <i>nU</i>, siendo <i>n</i> la cantidad, y <i>U</i> la unidad (S, M, H o D para segundos, minutos, horas o días. Ej: 10H para pausar durante 10 horas. 3D para pausar durante 3 días)</li>	
-					<li><b>ACTUALIZAR_REPOSITORIO</b> - Actualiza el repositorio Github de SVVPA. <a href="mailto:{correo}?subject=CMD_SVVPA ACTUALIZAR_REPOSITORIO">Ver ejemplo</a></li>
-					<li><b>ACTIVAR_GESTION_REMOTA</b> - Abre un puerto en un servidor remoto para realizar un ssh reverso. Esta opción es útil para administrar SVVPA cuando no tiene conexión a internet a través de una IP pública real (ej: conexión 3g). <a href="mailto:{correo}?subject=CMD_SVVPA ACTIVAR_GESTION_REMOTA">Ver ejemplo</a></li>
-					<li><b>REINICIAR</b> - Reinicia el sistema. Este comando es útil cuando algo no está funcionando correctamente. El reinicio tarda aproximádamente 1 minuto. <a href="mailto:{correo}?subject=CMD_SVVPA REINICIAR">Ver ejemplo</a></li>
-					<li><b>APAGAR</b> - Apaga el sistema. Cuando se envía este comando, SVVPA responde con un correo de confirmación. Para apagar correctamente SVVPA se debe responder al correo de confirmación sin modificar el asunto. Atención: Una vez apagado el sistema, solo se puede volver a iniciar desactivando y activando físicamente el mini-interruptor que está junto a las baterías. Asegúrate de no ejecutar <b>NUNCA</b> este comando cuando estés fuera de E.C. <a href="mailto:{correo}?subject=CMD_SVVPA APAGAR">Ver ejemplo</a></li>
-					</ul>							
-				</body>
-			</html>
-	'''.format(correo=os.environ['GMAIL_ACCOUNT_ALIAS']))
-
-	s = gsender.GMail(os.environ['SMPT_USER'], os.environ['SMPT_PASS'])
-	s.send(msg)
-	s.close()
-
+	notificar_email(cmd_help_subject, cmd_help_text, cmd_help_html.format(correo=os.environ['GMAIL_ACCOUNT_ALIAS']), None)
+	
 
 
 def cmd_saveFile(eventId):
