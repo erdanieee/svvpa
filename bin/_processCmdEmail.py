@@ -329,14 +329,14 @@ def main(args):
 			if r and CMD_SVVPA.has_key(r.group('cmd')):				
 				try:
 					print "[{}] {}: Ejecutando comando '{}'".format(datetime.datetime.now(), __file__, r.group('cmd'))
-					e.add_label(CMD_WORKING) if not DEBUG else None
+					e.add_label(CMD_WORKING) 
 					CMD_SVVPA[r.group('cmd')](r.group('args'))
 					print "[{}] {}: Comando '{}' ejecutado correctamente".format(datetime.datetime.now(), __file__, r.group('cmd'))
-					e.add_label(CMD_OK) if not DEBUG else None			
+					e.add_label(CMD_OK) 			
 				
 				except Exception, ex:
 					print "[{}] {}: ERROR! Ha ocurrido el error '{}' al procesar el comando '{}'".format(datetime.datetime.now(), __file__, repr(ex), r.group('cmd'))
-					e.add_label(CMD_ERROR) if not DEBUG else None
+					e.add_label(CMD_ERROR) 
 					#Envia email con el error
 					s 	 = gsender.GMail(os.environ['SMPT_USER'], os.environ['SMPT_PASS'])
 					msg = gsender.Message(	subject 		= u"Error al procesar el comando {0}".format(r.group('cmd')),
@@ -345,7 +345,7 @@ def main(args):
 					s.send(msg)
 					s.close()
 		
-				e.read() if not DEBUG else None
+				e.read() 
 					
 			else:
 				print "[{}] {}: ERROR! La sintaxis del comando '{}' no es correcta.".format(datetime.datetime.now(), __file__,r.group('cmd'))
