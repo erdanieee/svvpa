@@ -188,7 +188,7 @@ case $1 in
 
 	# Procesa la imagen capturada desde MOTION. Este commando está pensado para ser llamado desde el envento 'on_picture_save' de MOTION
 	process_image)
-		echo "[$(date)] $0: Servicio '$1': Procesando imagen"
+		echo "[$(date)] $0: Servicio '$1': Procesando imagen $2"
 		fileIn=$2
 
 		if [[ $# -gt 1 ]]
@@ -234,7 +234,7 @@ case $1 in
 
 	# Procesa el vídeo capturado desde MOTION. Este commando está pensado para ser llamado desde el envento 'on_movie_end' de MOTION
 	process_video)
-		echo "[$(date)] $0: Servicio '$1': Procesando video"
+		echo "[$(date)] $0: Servicio '$1': Procesando video $2"
 		fileIn=$2
 
 		if [[ $# -gt 1 ]]
