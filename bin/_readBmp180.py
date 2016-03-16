@@ -60,8 +60,8 @@ def main(args):
         	sensor = BMP085.BMP085()
 	        print '{0:0.2f} {0:0.2f}'.format(sensor.read_temperature(), sensor.read_pressure()*0.00750061683)
 
-	except Exception, ex:
-	        print "[{}] {}: ERROR! No se pudo leer el sensor BMP085".format(datetime.datetime.now(), __file__)
+	except:
+	        print >> sys.stderr, "[{}] {}: ERROR! No se pudo leer el sensor BMP185".format(datetime.datetime.now(), __file__)
 		return 1
 
 
