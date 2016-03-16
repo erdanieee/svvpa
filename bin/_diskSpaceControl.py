@@ -46,7 +46,7 @@ def free_space_up_to(free_percent_required, rootfolder, extension):
 			return
 
 	
-	print "[{}] {}: Espacio libre ({:.0f}%) es mayor que el mínimo requerido ({:.0f}%). No se borrarán más archivos.".format(datetime.datetime.now(), __file__, get_percent_free_disk_space(rootfolder), free_percent_required)
+	print "[{}] {}: Espacio libre es mayor que el mínimo requerido ({:.0f}%). No se borrarán más archivos.".format(datetime.datetime.now(), __file__, free_percent_required)
 	return
 
 	
