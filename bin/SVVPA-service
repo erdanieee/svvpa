@@ -30,16 +30,19 @@ fi
 
 cd $path
 source CONSTANTS.sh
-touch ${LOG_FILE}; exec &> >(tee -a ${LOG_FILE})
+touch ${LOG_FILE} 
+chmod 666 ${LOG_FILE}
+exec &> >(tee -a ${LOG_FILE})
 
 
 cd ${BIN_DIR}
+RETVAL=0
 case $1 in
 	# Apagar servicio. Se ejecuta automáticamente por Linux cuando se apaga el sistema (init 0 1 6)
 	stop|notify_shutdown)
 		echo "[$(date)] $0: Servicio '$1': El sistema se está apagando"
 		python -u _sendEmailShutdown.py
-		RETVAL=$?
+		RETVAL=$(($RETVAL|$?))
 	;;
 
 
@@ -49,7 +52,7 @@ case $1 in
 	start|notify_startup)
 		echo "[$(date)] $0: Servicio '$1': El sistema se está arrancando"
 		python -u _sendEmailStartup.py
-		RETVAL=$?
+		RETVAL=$(($RETVAL|$?))
 	;;
 	
 
@@ -60,7 +63,7 @@ case $1 in
 	notify_camera_lost)
 		echo "[$(date)] $0: Servicio '$1': La conexión con la cámara se ha perdido"
 		python -u _sendEmailCameraLost.py
-		RETVAL=$?
+		RETVAL=$(($RETVAL|$?))
 	;;
 
 
@@ -71,7 +74,10 @@ case $1 in
 	check_services)
 		echo "[$(date)] $0: Servicio '$1': Comprobando estado de los servicios requeridos por SVVPA"
 		sudo /usr/sbin/service motion status
+		RETVAL=$(($RETVAL|$?))
+
 		sudo /usr/sbin/service apache2 status
+		RETVAL=$(($RETVAL|$?))
 	;;
 
 
@@ -82,7 +88,7 @@ case $1 in
 	check_cmd_email)
 		echo "[$(date)] $0: Servicio '$1': Se está comprobando si hay nuevos commandos email"
 		python -u _processCmdEmail.py
-		RETVAL=$?
+		RETVAL=$(($RETVAL|$?))	
  	;;
 	
 
@@ -93,7 +99,7 @@ case $1 in
 	check_disk_space)
 		echo "[$(date)] $0: Servicio '$1': Comprobación de espacio libre en disco"
 		python -u _diskSpaceControl.py
-    	RETVAL=$?
+		RETVAL=$(($RETVAL|$?))
 	;;
 
 
@@ -105,7 +111,7 @@ case $1 in
 	update_vnstats)
 		echo "[$(date)] $0: Servicio '$1': Actualizando tráfico en ${VNSTAT_INTERFACE}"
 		sudo ${VNSTAT_BIN} -u -i ${VNSTAT_INTERFACE}
-		RETVAL=$?
+		RETVAL=$(($RETVAL|$?))
 	;;
 
 
@@ -116,36 +122,18 @@ case $1 in
 	# Actualiza la IP en duckdns.org y en google drive. Este comando es útil cuando SVVPA tiene acceso desde el exterior (IP pública real), pero no tiene IP fija. Si se desea actualizar, debería llamarse tras cada reconexión o un par de veces al día desde cron
 	update_ip)
 		echo "[$(date)] $0: Servicio '$1': Actualizando IP"
-		echo "[$(date)] $0: Updating svvpa.duckdns.org"
 		echo url="https://www.duckdns.org/update?domains=${DUCKDNS_DOMAIN}&token=${DUCKDNS_TOKEN}&ip=" | curl -s -k -K -
-		r1=$?
+		RETVAL=$(($RETVAL|$?))
 
-		echo "[$(date)] $0: Saving ip to $(basename ${CURRENT_IP_FILE})"
 		ip=$(wget "http://ipecho.net/plain" -qO -)
-		r2=$?
+		RETVAL=$(($RETVAL|$?))
 
-		if [[ $r2 -eq 0 ]]
-		then
-		  echo "[$(date)] $0: OK"
-		else
-		  echo "[$(date)] $0: ERROR!"
-		fi
-
-
-		echo "[$(date)] $0: Uploading IP file to Google Drive"
 		echo "http://${DUCKDNS_DOMAIN}.duckdns.org:${APACHE_PORT}" > ${CURRENT_IP_FILE} 
-		echo "http://$ip:${APACHE_PORT}" >> ${CURRENT_IP_FILE}
-		${RCLONE_BIN} --config ${RCLONE_CONFIG} copy ${CURRENT_IP_FILE} google:SVVPA/ 2>&1
-		r3=$?
+		echo "http://${ip}:${APACHE_PORT}" >> ${CURRENT_IP_FILE}
+		RETVAL=$(($RETVAL|$?))
 
-		if [[ $r1 -eq 0 && $r2 -eq 0  && $r3 -eq 0 ]]
-		then
-		  echo "[$(date)] $0: Ip actualizada correctamente. Este servidor se puede acceder desde $(cat ${CURRENT_IP_FILE})"
-			RETVAL=0	
-		else
-		  echo "[$(date)] $0: Hubo errores. Por favor, revisa los parámetros y si los sitios web están funcionando"
-		  RETVAL=1		
-		fi
+		${RCLONE_BIN} --config ${RCLONE_CONFIG} copy ${CURRENT_IP_FILE} google:SVVPA/ 2>&1
+		RETVAL=$(($RETVAL|$?))
 	;;
 	
 
@@ -157,27 +145,30 @@ case $1 in
 	update_sensors)
 		echo "[$(date)] $0: Servicio '$1': Actualizando sensores"
 		cpuTemp="$(sudo ./_readInternalTemp.sh)"
+		RETVAL=$(($RETVAL|$?))
+
 		bmp180Pres="$(sudo python _readBmp180Press.py)"
+		RETVAL=$(($RETVAL|$?))
+
 		bmp180Temp="$(sudo python _readBmp180Temp.py)"
+		RETVAL=$(($RETVAL|$?))
+
 		dht22Val="$(sudo python _readDht22HrTemp.py)"
+		RETVAL=$(($RETVAL|$?))
+
 		dht22Temp="$(echo $dht22Val|awk '{print $1}')"
+		RETVAL=$(($RETVAL|$?))
+
 		dht22Hr="$(echo $dht22Val|awk '{print $2}')"
+		RETVAL=$(($RETVAL|$?)) 
 
 		sqlStm=$(echo "insert into sensors (CPU_temp, BMP180_temp, BMP180_press, DHT22_temp, DHT22_HR) values ($(getMysqlVal $cpuTemp), $(getMysqlVal $bmp180Temp), $(getMysqlVal $bmp180Pres), $(getMysqlVal $dht22Temp), $(getMysqlVal $dht22Hr))")
-		echo -e "[$(date)] $0: Insertando valores en la base de datos\n$sqlStm"
 
 		mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo $sqlStm)
-		r1=$?
+		RETVAL=$(($RETVAL|$?))
 
-		echo "[$(date)] $0: enviando datos a google drive"
 		python -u _updateGoogleSpreadsheetSensors.py $(getGoogleSpVal $cpuTemp) $(getGoogleSpVal $bmp180Temp) $(getGoogleSpVal $bmp180Pres) $(getGoogleSpVal $dht22Temp) $(getGoogleSpVal $dht22Hr)
-		r2=$?
-
-		RETVAL=1
-		if [[ $r1 -eq 0 && $r2 -eq 0 ]]
-		then
-			RETVAL=0		
-		fi
+		RETVAL=$(($RETVAL|$?))
 	;;
 
 
@@ -195,33 +186,24 @@ case $1 in
 		then
 			if [[ ! -e $fileIn || ! -f $fileIn ]]
 			then
-				echo "[$(date)] $0: ERROR! Archivo de origen no existe o es un directorio: $fileIn"
+				echo "[$(date)] $0: Servicio '$1': ERROR! Archivo de origen no existe o es un directorio: $fileIn"
 				RETVAL=1
 			
 			else
 				mkdir -p ${MOTION_DIR} 2>/dev/null
 
-				#send file by email
-				echo "[$(date)] $0: enviando imagen por email"
 				python -u _sendEmailImage.py $fileIn
-				r1=$?		
+				RETVAL=$(($RETVAL|$?))		
 	
-				#move file to www
-				echo "[$(date)] $0: Moviendo $fileIn a ${MOTION_DIR}"
-				sudo chmod 664 $fileIn
-				sudo chown www-data:pi $fileIn
+				chmod 666 $fileIn
+				RETVAL=$(($RETVAL|$?))
+				
 				mv $fileIn ${MOTION_DIR}$(basename $fileIn)
-				r2=$?
-
-				RETVAL=1
-				if [[ $r1 -eq 0 && $r2 -eq 0 ]]
-				then
-					RETVAL=0		
-				fi
+				RETVAL=$(($RETVAL|$?))
 			fi
 	
 		else
-			echo "[$(date)] $0: ERROR! Invalid number of arguments: $#"
+			echo "[$(date)] $0: Servicio '$1': ERROR! Invalid number of arguments: $#"
 			RETVAL=1
 		fi
 	;;
@@ -241,34 +223,34 @@ case $1 in
 		then
 			if [[ ! -e $fileIn || ! -f $fileIn ]]
 			then
-				echo "[$(date)] $0: ERROR! Archivo de origen no existe o es un directorio: $fileIn"
+				echo "[$(date)] $0: Servicio '$1': ERROR! Archivo de origen no existe o es un directorio: $fileIn"
 				RETVAL=1
 				
 			else
 				mkdir -p ${MOTION_DIR} 2>/dev/null
 
-				echo "[$(date)] $0: Convirtiendo vídeo a formato .${MOTION_VIDEO_EXT}"
 				fileOutName=$( basename ${fileIn/\.${MOTION_VIDEO_EXT_RAW}/\.${MOTION_VIDEO_EXT}} )
 				fileOut=${MOTION_DIR}${fileOutName}
 				#TODO: usar avconv (see http://www.thehelloworldprogram.com/web-development/encode-video-and-audio-for-html5-with-avconv/)
-				sudo ${FFMPEG_BIN} -i $fileIn -preset ultrafast -y ${fileOut}	
-				RETVAL=$?
+				${FFMPEG_BIN} -i $fileIn -preset ultrafast -y ${fileOut}	
+				RETVAL=$(($RETVAL|$?))
 
 				if [[ ! -e $fileOut || ! -f $fileOut ]]
 				then
-					echo "[$(date)] $0: ERROR! La conversión del archivo $fileIn ha fallado"
+					echo "[$(date)] $0: Servicio '$1': ERROR! La conversión del archivo $fileIn ha fallado"
 					RETVAL=1
 
 				else
-					echo "[$(date)] $0: borrando vídeo original"
-					sudo chmod 664 $fileOut
-					sudo chown www-data:pi $fileOut 
-					sudo rm -f $fileIn 	
+					chmod 666 $fileOut
+					RETVAL=$(($RETVAL|$?))
+					
+					rm -f $fileIn 
+					RETVAL=$(($RETVAL|$?))	
 				fi
 			fi
 
 		else
-			echo "[$(date)] $0: ERROR! Invalid number of arguments: $#"
+			echo "[$(date)] $0: Servicio '$1': ERROR! Invalid number of arguments: $#"
 			RETVAL=1			
 		fi
 	;;
@@ -282,6 +264,11 @@ case $1 in
  		echo "[$(date)] $0: Comando '$1' no reconocido"	
 		RETVAL=99
 	esac
+
+if [[ ! $RETVAL -eq 0 ]]
+then
+	echo "[$(date)] $0: Servicio '$1': ERROR! El servicio acabó con errores"
+fi
 
 exit ${RETVAL}
 
