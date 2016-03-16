@@ -27,7 +27,7 @@ html = u"""\
 		<h3>Movimiento detectado</h3>
 		<p>S.V.V.P.A. 2.0 ha detectado un nuevo movimiento en E.C. {datetime}. Adjunto a este mensaje se incluye el fotograma más representativo.</p>
 		<p>Si el vídeo es interesante y deseas guardarlo en Google Drive, haz <a href="mailto:{email}?subject=CMD_SVVPA GUARDAR_EN_GOOGLE_DRIVE {id}">click aquí</a> para enviar enviar un email con el comando correspondiente. Recuerda que, en función del tamaño del vídeo, este proceso puede tardar varios minutos.</p>
-	 	<p>Recuerda que puedes ver las capturas guardadas anteriormente en <a href="https://drive.google.com/folderview?id=0Bwse_WnehFNKT2I3N005YmlYMms&usp=sharing">este enlace</a>.</p>
+	 	<p>Puedes ver las capturas guardadas anteriormente en <a href="https://drive.google.com/folderview?id=0Bwse_WnehFNKT2I3N005YmlYMms&usp=sharing">este enlace</a>.</p>
 		<p>El consumo de datos hasta el momento ha sido de {datos}Mb de los {datosMensuales}Mb mensuales que incluye la tarifa.		 
 	</body>
 </html>
@@ -48,10 +48,10 @@ def main(argv):
 				datetime = "el " + time.strftime("%Y/%m/%d") + " aproximadamente a las " + time.strftime("%H:%M:%S")			
 			s   = gsender.GMail(os.environ['SMPT_USER'], os.environ['SMPT_PASS'])
 			msg = gsender.Message(	
-				subject 		= u"Movimiento detectado ({})".format(id),
-				to 		 			= os.environ['EMAIL_ADDR'],
-				sender			= os.environ['GMAIL_ACCOUNT_ALIAS'],
-				html 				= html.format(
+				subject	= u"SVVPA - Movimiento detectado",
+				to 	= os.environ['EMAIL_ADDR'],
+				sender	= os.environ['GMAIL_ACCOUNT_ALIAS'],
+				html 	= html.format(
 					ip=get_ip(), 
 					datetime=datetime, 
 					dom=os.environ['DUCKDNS_DOMAIN'], 
