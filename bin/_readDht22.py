@@ -21,6 +21,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 import Adafruit_DHT
+import datetime
 
 # Sensor should be set to Adafruit_DHT.DHT11,
 # Adafruit_DHT.DHT22, or Adafruit_DHT.AM2302.
@@ -44,3 +45,6 @@ humidity, temperature = Adafruit_DHT.read_retry(sensor, pin)
 # If this happens try again!
 if humidity is not None and temperature is not None:
 	print '{0:0.1f} {1:0.1f}'.format(temperature, humidity)
+
+else:
+	print >> sys.stderr, print "[{}] {}: ERROR! No se pudo leer el sensor DHT22".format(datetime.datetime.now(), __file__)

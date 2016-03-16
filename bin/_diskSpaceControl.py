@@ -65,7 +65,7 @@ def main(argv=None):
 		free_space_up_to(percent_threshold, working_dir, extension)
 
 	except Exception, e: 
-		print "[{}] {}: ERROR! {}".format(datetime.datetime.now(), __file__, repr(e))
+		print >> sys.stderr, "[{}] {}: ERROR! {}".format(datetime.datetime.now(), __file__, repr(e))
 		return -1
 
 

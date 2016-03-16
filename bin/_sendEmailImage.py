@@ -66,10 +66,10 @@ def main(argv):
 
 
 		else:
-			print "[{}] {}: ERROR! No se encuentra el archivo {}".format(dat.datetime.now(), __file__,sys.argv[1])
+			print >> sys.stderr, "[{}] {}: ERROR! No se encuentra el archivo {}".format(dat.datetime.now(), __file__,sys.argv[1])
 		
 	else:
-		print "[{}] {}: ERROR! Número inválido de argumentos".format(dat.datetime.now(), __file__)
+		print >> sys.stderr, "[{}] {}: ERROR! Número inválido de argumentos".format(dat.datetime.now(), __file__)
 		
 
 def get_ip():

@@ -135,30 +135,30 @@ def cmd_saveFile(eventId):
 	msg_attachment = [imageLogFile, videoLogFile]
 
 	if not os.path.isfile(imageFile):
-		print "[{}] {}: ERROR! No se encuentra la imagen {}.".format(datetime.datetime.now(), __file__, imageFile)
+		print >> sys.stderr, "[{}] {}: ERROR! No se encuentra la imagen {}.".format(datetime.datetime.now(), __file__, imageFile)
 		raise Exception(u'{0}: No se encuentra la imagen del evento! Comprueba que has escrito correctamente el identificador del evento'.format(imageFile))	
 	if not os.path.isfile(videoFile):
-		print "[{}] {}: ERROR! No se encuentra el vídeo {}".format(datetime.datetime.now(), __file__, videoFile)
+		print >> sys.stderr, "[{}] {}: ERROR! No se encuentra el vídeo {}".format(datetime.datetime.now(), __file__, videoFile)
 		raise Exception(u'{0}: No se encuentra el vídeo del evento! Es posible que aún se esté procesando. Por favor, inténtalo de nuevo más tarde'.format(videoFile))
 	if len(eventId.split("_")) < 12:
-		print "[{}] {}: ERROR! El identificador del evento ({}) tiene menos de 12 tokens".format(datetime.datetime.now(), __file__, eventId)
+		print >> sys.stderr, "[{}] {}: ERROR! El identificador del evento ({}) tiene menos de 12 tokens".format(datetime.datetime.now(), __file__, eventId)
 		raise Exception(u'Error en el identificador del evento "{0}". Recuerda que el identificador son 12 números separados por guiones bajos'.format(eventId))
 
 	try:
 		imageCmdResult = proc.call(imageCmd, shell=True)
 	except Exception as e:
-		print "[{}] {}: ERROR! Error al subir la imagen a google drive: {}".format(datetime.datetime.now(), __file__, repr(e))
+		print >> sys.stderr, "[{}] {}: ERROR! Error al subir la imagen a google drive: {}".format(datetime.datetime.now(), __file__, repr(e))
 		errorMsg+=u'Error al enviar la imagen a google drive.\n' + str(e) + '\n'
 		#raise type(e)('Error al enviar el archivo a google drive.\n' + str(e) + '\n' + imageCmd)
 
 	try:
 		videoCmdResult = proc.call(videoCmd, shell=True)
 	except Exception as e:
-		print "[{}] {}: ERROR! Error al subir el vídeo a google drive: {}".format(datetime.datetime.now(), __file__, repr(e))
+		print >> sys.stderr, "[{}] {}: ERROR! Error al subir el vídeo a google drive: {}".format(datetime.datetime.now(), __file__, repr(e))
 		errorMsg+=u'Error al enviar el vídeo a google drive.\n' + str(e) + '\n'
 	
 	if imageCmdResult or videoCmdResult or errorMsg:
-		print "Se produjeron errores al subir los archivos del evento {} a google drive".format(eventId)
+		print >> sys.stderr, "[{}] {}: Se produjeron errores al subir los archivos del evento {} a google drive".format(eventId)
 		msg_subject=cmd_saveFile_subject_ERROR.format(eventId=eventId)
 		msg_html=cmd_saveFile_html_ERROR.format(error=errorMsg)
 
@@ -220,7 +220,7 @@ def cmd_shutdown(args):
 			proc.call('sudo /sbin/shutdown -r now', shell=True)
 
 		else:
-			print "[{}] {}: ERROR! Código de confirmación de apagado erróneo".format(datetime.datetime.now(), __file__)
+			print >> sys.stderr, "[{}] {}: ERROR! Código de confirmación de apagado erróneo".format(datetime.datetime.now(), __file__)
 			msg_subject	= cmd_shutdown_subject_ERROR
 			msg_html		= cmd_shutdown_html_ERROR
 			notificar_email(msg_subject, msg_html)
@@ -311,7 +311,7 @@ def cmd_motionDetection(args):
 
 	else:
 		e="Error en el formato del comando DETECTAR_MOVIMIENTO."
-		print "[{}] {}: ERROR! {}".format(datetime.datetime.now(), __file__, e)
+		print >> sys.stderr, "[{}] {}: ERROR! {}".format(datetime.datetime.now(), __file__, e)
 		raise Exception(e)
 
 
@@ -391,14 +391,14 @@ def main(args):
 					e.add_label(CMD_OK) 			
 				
 				except Exception, ex:
-					print "[{}] {}: ERROR! Ha ocurrido el error '{}' al procesar el comando '{}'".format(datetime.datetime.now(), __file__, repr(ex), r.group('cmd'))
+					print >> sys.stderr, "[{}] {}: ERROR! Ha ocurrido el error '{}' al procesar el comando '{}'".format(datetime.datetime.now(), __file__, repr(ex), r.group('cmd'))
 					e.add_label(CMD_ERROR)
 					msg_subject	= error_general_subject.format(command=r.group('cmd'))
 					msg_html		= error_general_html.format(command=r.group('cmd'), error=ex)
 					notificar_email(msg_subject, msg_html)	
 					
 			else:
-				print "[{}] {}: ERROR! La sintaxis del comando '{}' no es correcta.".format(datetime.datetime.now(), __file__,r.group('cmd'))
+				print >> sys.stderr, "[{}] {}: ERROR! La sintaxis del comando '{}' no es correcta.".format(datetime.datetime.now(), __file__,r.group('cmd'))
 				e.add_label(CMD_ERROR)
 				msg_subject	= error_sintaxis_subject
 				msg_html		= error_sintaxis_html.format(command=r.group('cmd'), correo=os.environ['GMAIL_ACCOUNT_ALIAS'])

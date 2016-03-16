@@ -30,7 +30,7 @@ def main(argv):
 		wks.append_row([datetime, cpuTemp, bmp180Temp, bmp180Pres, dht22Temp, dht22Hr])
 
 	else:
-		print "[{}] {}: ERROR! Número incorrecto de argumentos".format(dat.datetime.now(), __file__)
+		print >> sys.stderr, "[{}] {}: ERROR! Número incorrecto de argumentos".format(dat.datetime.now(), __file__)
 
 
 if __name__ == "__main__":
