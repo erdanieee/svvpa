@@ -29,8 +29,6 @@ def main(argv):
 		print "[{}] {}: Añadiendo fila en hoja de cálculo de google drive con los datos de sensores: CPU_TEMP:{}, BMP180_TEMP:{}, BMP180_PRESS:{}, DHT22_TEMP:{}, DHT22_HR:{}".format(dat.datetime.now(), __file__,cpuTemp,bmp180Temp,bmp180Pres,dht22Temp,dht22Hr)
 		wks.append_row([datetime, cpuTemp, bmp180Temp, bmp180Pres, dht22Temp, dht22Hr])
 
-		print "[{}] {}: Hoja de excel remota de los sensores actualizada correctamente".format(dat.datetime.now(), __file__)
-
 	else:
 		print "[{}] {}: ERROR! Número incorrecto de argumentos".format(dat.datetime.now(), __file__)
 
