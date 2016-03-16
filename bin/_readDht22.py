@@ -47,4 +47,4 @@ if humidity is not None and temperature is not None:
 	print '{0:0.1f} {1:0.1f}'.format(temperature, humidity)
 
 else:
-	print >> sys.stderr, print "[{}] {}: ERROR! No se pudo leer el sensor DHT22".format(datetime.datetime.now(), __file__)
+	print >> sys.stderr, "[{}] {}: ERROR! No se pudo leer el sensor DHT22".format(datetime.datetime.now(), __file__)

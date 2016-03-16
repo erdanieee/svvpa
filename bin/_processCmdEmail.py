@@ -147,14 +147,14 @@ def cmd_saveFile(eventId):
 	try:
 		imageCmdResult = proc.call(imageCmd, shell=True)
 	except Exception as e:
-		print >> sys.stderr, "[{}] {}: ERROR! Error al subir la imagen a google drive: {}".format(datetime.datetime.now(), __file__, repr(e))
+		print >> sys.stderr, "[{}] {}: ERROR! Se produjeron errores al subir la imagen a google drive: {}".format(datetime.datetime.now(), __file__, repr(e))
 		errorMsg+=u'Error al enviar la imagen a google drive.\n' + str(e) + '\n'
 		#raise type(e)('Error al enviar el archivo a google drive.\n' + str(e) + '\n' + imageCmd)
 
 	try:
 		videoCmdResult = proc.call(videoCmd, shell=True)
 	except Exception as e:
-		print >> sys.stderr, "[{}] {}: ERROR! Error al subir el vídeo a google drive: {}".format(datetime.datetime.now(), __file__, repr(e))
+		print >> sys.stderr, "[{}] {}: ERROR! Se produjeron errores al subir el vídeo a google drive: {}".format(datetime.datetime.now(), __file__, repr(e))
 		errorMsg+=u'Error al enviar el vídeo a google drive.\n' + str(e) + '\n'
 	
 	if imageCmdResult or videoCmdResult or errorMsg:
