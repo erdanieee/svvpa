@@ -19,8 +19,8 @@ import time
 #####################
 ###  E M A I L S  ###
 #####################
-cmd_help_subject=u'SVVPA - Ayuda'
-cmd_help_html=u'''
+cmd_help_subject='SVVPA - Ayuda'
+cmd_help_html='''
 	<html>
 		<body>
 			<h3>Control de SVVPA mediante correos electrónicos</h3>
@@ -42,49 +42,49 @@ cmd_help_html=u'''
 	'''
 
 
-cmd_status_subject=u'SVVPA - Información del sistema'
-cmd_status_html=u'<html><body><p>Adjunto se envían los registros más relevantes del sistema</p></body></html>'
+cmd_status_subject="SVVPA - Información del sistema"
+cmd_status_html='<html><body><p>Adjunto se envían los registros más relevantes del sistema</p></body></html>'
 
-cmd_reboot_subject=u'SVVPA - Reinicio del sistema'
-cmd_reboot_html=u'<html><body><p>El sistema se está reiniciando. Este proceso tarda aproximadamente 1 minuto.</p></body></html>'
+cmd_reboot_subject='SVVPA - Reinicio del sistema'
+cmd_reboot_html='<html><body><p>El sistema se está reiniciando. Este proceso tarda aproximadamente 1 minuto.</p></body></html>'
 
-cmd_saveFile_subject_OK=u'SVVPA - Copia Google Drive correcta ({eventId})'
-cmd_saveFile_subject_ERROR=u'SVVPA - Error en la subida a Google Drive ({eventId})'
-cmd_saveFile_html_OK=u'<html><body><p>La imagen y el vídeo se han copiado correctamente a google drive. Puedes ver las imágenes y vídeos guardados en <a href="https://drive.google.com/folderview?id=0Bwse_WnehFNKT2I3N005YmlYMms&usp=sharing">este enlace</a>.</p></body></html>'
-cmd_saveFile_html_ERROR=u'<html><body><p>Se han producido los siguientes errores al subir los archivos a google drive:</p><p>{error}</p></body></html>'
+cmd_saveFile_subject_OK='SVVPA - Copia Google Drive correcta ({eventId})'
+cmd_saveFile_subject_ERROR='SVVPA - Error en la subida a Google Drive ({eventId})'
+cmd_saveFile_html_OK='<html><body><p>La imagen y el vídeo se han copiado correctamente a google drive. Puedes ver las imágenes y vídeos guardados en <a href="https://drive.google.com/folderview?id=0Bwse_WnehFNKT2I3N005YmlYMms&usp=sharing">este enlace</a>.</p></body></html>'
+cmd_saveFile_html_ERROR='<html><body><p>Se han producido los siguientes errores al subir los archivos a google drive:</p><p>{error}</p></body></html>'
 
-cmd_shutdown_subject_OK=u'SVVPA - Apagando sistema'
-cmd_shutdown_subject_CONFIRM=u'SVVPA - Confirmar apagado: CMD_SVVPA APAGAR {code}'
-cmd_shutdown_subject_ERROR=u'SVVPA - Código de apagado erróneo'
-cmd_shutdown_html_OK=u'<html><body><p>Código de confirmación de apagado aceptado. El sistema se apagará en unos segundos. Recuerda que para iniciar de nuevo el sistema es necesario desactivar y volver a activar físicamente el mini-interruptor que está junto a las baterías.</p></body></html>'
-cmd_shutdown_html_CONFIRM=u'<html><body><h4>¿Confirmar apagado?</h4><p>Se va a proceder a apagar el sistema. Recuerda que una vez apagado, <ins>solo</ins> se puede volver a iniciar desactivando y activando físicamente el mini-interruptor que está junto a las baterías.</p><p>Si realmente quieres apagar el sistema <b>responde a este email <mark>sin modificar el asunto</mark></b>.</p></body></html>'
-cmd_shutdown_html_ERROR=u'<html><body><p>El código de confirmación utilizado para apagar el sistema es inválido. Recuerda que los códigos caducan en una hora y no se pueden reutilizar.</p></body></html>'
-
-
-cmd_openReverseSsh_subject_OPEN=u'SVVPA - Servicio SSH abierto'
-cmd_openReverseSsh_subject_CLOSE=u'SVVPA - Servicio SSH cerrado'
-cmd_openReverseSsh_html_OPEN=u'<html><body><p>Se ha abierto el servicio SSH en el puerto {port} del servidor {server}.El servicio estará activo <b>{time} minutos</b>.</p></body></html>'
-cmd_openReverseSsh_html_CLOSE=u'<html><body>El servicio ssh reverso se ha cerrado porque ha transcurrido el tiempo de expiración.</body></html>'
-
-cmd_motionDetection_subject_INICIAR=u'SVVPA - Detección de movimiento activada'
-cmd_motionDetection_subject_PARAR=u'SVVPA - Detección de movimiento desactivada'
-cmd_motionDetection_subject_PAUSAR=u'SVVPA - Detección de movimiento pausada'
-cmd_motionDetection_subject_REANUDAR=u'SVVPA - Detección de movimiento reanudada'
-cmd_motionDetection_html_INICIAR=u'<html><body><p>Se acaba de iniciar la detección de movimiento. A partir de ahora, todos los movimientos serán grabados y enviados por email.</p><p>Si deseas parar el servicio, envía el comando correspondiente <a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO PARAR">pulsando aquí</a>. También puedes pausarlo temporalmente <a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO PAUSAR 1D">pulsando aquí</a> y modificando el asunto a criterio (S, M, H o D para segundos, minutos, horas o días)</p></body></html>'
-cmd_motionDetection_html_PARAR=u'<html><body>Se acaba de detener la detección de movimiento. A partir de ahora, los movimientos <b>no</b> serán grabados ni enviados por email. Para iniciarla de nuevo envía el comando correspondiente haciendo <a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO INICIAR">click aquí</a>.</body></html>'
-cmd_motionDetection_html_PAUSAR=u'<html><body><p>La detección de movimiento acaba de ser pausada, pero volverá a iniciarse automáticamente en <b>{time} segundos</p>. Recuerda que hasta entonces, los movimientos <b>no serán grabados ni enviados por email</b></p><p>Si desear iniciar la detección antes de que transcurra el tiempo envía el comando correspondiente haciendo <a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO INICIAR">click aquí</a></p>.</body></html>'
-cmd_motionDetection_html_REANUDAR=u'<html><body><p>La detección de movimiento se ha reanudado correctamente. Recuerda que puedes <a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO PARAR">pararla</a> o <a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO PAUSAR 1D">pausarla</a> en cualquier momento.</p></body></html>'
-
-cmd_updateRepository_subject=u'SVVPA - Repositorio actualizado correctamente'
-cmd_updateRepository_html=u'<html><body>El repositorio se ha actualizado correctamente</body></html>'
+cmd_shutdown_subject_OK='SVVPA - Apagando sistema'
+cmd_shutdown_subject_CONFIRM='SVVPA - Confirmar apagado: CMD_SVVPA APAGAR {code}'
+cmd_shutdown_subject_ERROR='SVVPA - Código de apagado erróneo'
+cmd_shutdown_html_OK='<html><body><p>Código de confirmación de apagado aceptado. El sistema se apagará en unos segundos. Recuerda que para iniciar de nuevo el sistema es necesario desactivar y volver a activar físicamente el mini-interruptor que está junto a las baterías.</p></body></html>'
+cmd_shutdown_html_CONFIRM='<html><body><h4>¿Confirmar apagado?</h4><p>Se va a proceder a apagar el sistema. Recuerda que una vez apagado, <ins>solo</ins> se puede volver a iniciar desactivando y activando físicamente el mini-interruptor que está junto a las baterías.</p><p>Si realmente quieres apagar el sistema <b>responde a este email <mark>sin modificar el asunto</mark></b>.</p></body></html>'
+cmd_shutdown_html_ERROR='<html><body><p>El código de confirmación utilizado para apagar el sistema es inválido. Recuerda que los códigos caducan en una hora y no se pueden reutilizar.</p></body></html>'
 
 
-error_general_subject=u'SVVPA - Error al procesar el comando {command}'
-error_general_html=u'<html><body>Se ha producido el siguiente error al procesar el comando "{command}":<br><i>{error}</i></body></html>'
+cmd_openReverseSsh_subject_OPEN='SVVPA - Servicio SSH abierto'
+cmd_openReverseSsh_subject_CLOSE='SVVPA - Servicio SSH cerrado'
+cmd_openReverseSsh_html_OPEN='<html><body><p>Se ha abierto el servicio SSH en el puerto {port} del servidor {server}.El servicio estará activo <b>{time} minutos</b>.</p></body></html>'
+cmd_openReverseSsh_html_CLOSE='<html><body>El servicio ssh reverso se ha cerrado porque ha transcurrido el tiempo de expiración.</body></html>'
+
+cmd_motionDetection_subject_INICIAR='SVVPA - Detección de movimiento activada'
+cmd_motionDetection_subject_PARAR='SVVPA - Detección de movimiento desactivada'
+cmd_motionDetection_subject_PAUSAR='SVVPA - Detección de movimiento pausada'
+cmd_motionDetection_subject_REANUDAR='SVVPA - Detección de movimiento reanudada'
+cmd_motionDetection_html_INICIAR='<html><body><p>Se acaba de iniciar la detección de movimiento. A partir de ahora, todos los movimientos serán grabados y enviados por email.</p><p>Si deseas parar el servicio, envía el comando correspondiente <a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO PARAR">pulsando aquí</a>. También puedes pausarlo temporalmente <a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO PAUSAR 1D">pulsando aquí</a> y modificando el asunto a criterio (S, M, H o D para segundos, minutos, horas o días)</p></body></html>'
+cmd_motionDetection_html_PARAR='<html><body>Se acaba de detener la detección de movimiento. A partir de ahora, los movimientos <b>no</b> serán grabados ni enviados por email. Para iniciarla de nuevo envía el comando correspondiente haciendo <a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO INICIAR">click aquí</a>.</body></html>'
+cmd_motionDetection_html_PAUSAR='<html><body><p>La detección de movimiento acaba de ser pausada, pero volverá a iniciarse automáticamente en <b>{time} segundos</p>. Recuerda que hasta entonces, los movimientos <b>no serán grabados ni enviados por email</b></p><p>Si desear iniciar la detección antes de que transcurra el tiempo envía el comando correspondiente haciendo <a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO INICIAR">click aquí</a></p>.</body></html>'
+cmd_motionDetection_html_REANUDAR='<html><body><p>La detección de movimiento se ha reanudado correctamente. Recuerda que puedes <a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO PARAR">pararla</a> o <a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO PAUSAR 1D">pausarla</a> en cualquier momento.</p></body></html>'
+
+cmd_updateRepository_subject='SVVPA - Repositorio actualizado correctamente'
+cmd_updateRepository_html='<html><body>El repositorio se ha actualizado correctamente</body></html>'
 
 
-error_sintaxis_subject=u'SVVPA - Error en comando'
-error_sintaxis_html=u'<html><body>Error al procesar el comando <i>{command}</i>. Probablemente la sintaxis no es correcta. Para ver los comandos disponibles y su sintaxis envía el comando ayuda haciendo <a href="mailto:{correo}?subject=CMD_SVVPA AYUDA">click aquí</a></body></html>'
+error_general_subject='SVVPA - Error al procesar el comando {command}'
+error_general_html='<html><body>Se ha producido el siguiente error al procesar el comando "{command}":<br><i>{error}</i></body></html>'
+
+
+error_sintaxis_subject='SVVPA - Error en comando'
+error_sintaxis_html='<html><body>Error al procesar el comando <i>{command}</i>. Probablemente la sintaxis no es correcta. Para ver los comandos disponibles y su sintaxis envía el comando ayuda haciendo <a href="mailto:{correo}?subject=CMD_SVVPA AYUDA">click aquí</a></body></html>'
 
 
 
@@ -148,14 +148,14 @@ def cmd_saveFile(eventId):
 		imageCmdResult = proc.call(imageCmd, shell=True)
 	except Exception as e:
 		print >> sys.stderr, "[{}] {}: ERROR! Se produjeron errores al subir la imagen a google drive: {}".format(datetime.datetime.now(), __file__, repr(e))
-		errorMsg+=u'Error al enviar la imagen a google drive.\n' + str(e) + '\n'
+		errorMsg+='Error al enviar la imagen a google drive.\n' + str(e) + '\n'
 		#raise type(e)('Error al enviar el archivo a google drive.\n' + str(e) + '\n' + imageCmd)
 
 	try:
 		videoCmdResult = proc.call(videoCmd, shell=True)
 	except Exception as e:
 		print >> sys.stderr, "[{}] {}: ERROR! Se produjeron errores al subir el vídeo a google drive: {}".format(datetime.datetime.now(), __file__, repr(e))
-		errorMsg+=u'Error al enviar el vídeo a google drive.\n' + str(e) + '\n'
+		errorMsg+='Error al enviar el vídeo a google drive.\n' + str(e) + '\n'
 	
 	if imageCmdResult or videoCmdResult or errorMsg:
 		print >> sys.stderr, "[{}] {}: Se produjeron errores al subir los archivos del evento {} a google drive".format(eventId)
@@ -190,6 +190,8 @@ def cmd_status(args):
 	zf.close()
 
 	notificar_email(msg_subject, msg_html, msg_attachment)
+	os.remove(f)
+	
 
 
 

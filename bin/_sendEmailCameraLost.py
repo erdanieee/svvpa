@@ -16,7 +16,7 @@ def main(argv):
 								to 		 	= os.environ['EMAIL_ADDR'],
 								sender	= os.environ['GMAIL_ACCOUNT_ALIAS'],
 								text 		= u'Se ha perido la señal con la cámara. Si el problema persiste trata de reiniciar SVVPA',
-								html		=	u'''\
+								html		=	'''\
 <html>
   <head></head>
   <body>
