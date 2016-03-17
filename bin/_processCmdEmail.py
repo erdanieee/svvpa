@@ -240,11 +240,12 @@ def cmd_openReverseSsh(args):
 		msg_subject		= cmd_openReverseSsh_subject_OPEN
 		msg_html			= cmd_openReverseSsh_html_OPEN.format(port=os.environ['SSH_REMOTE_TUNEL_PORT'], server=os.environ['SSH_REMOTE_SERVER'], time=timeout/60)
 
-		pid = proc.check_output('ssh -p {port} -fCNR {tunelPort}:localhost:22 {user}@{server} 2>&1 >/dev/null; echo $$'.format( 
-			port 			= os.environ['SSH_REMOTE_PORT'], 
-			tunelPort	= os.environ['SSH_REMOTE_TUNEL_PORT'],	
-			user 			= os.environ['SSH_REMOTE_USER'], 
-			server 		= os.environ['SSH_REMOTE_SERVER']), shell=True)
+		cmd='ssh -p {port} -fCNR {tunelPort}:localhost:22 {user}@{server}'.format(
+                        port      = os.environ['SSH_REMOTE_PORT'],
+                        tunelPort = os.environ['SSH_REMOTE_TUNEL_PORT'],
+                        user      = os.environ['SSH_REMOTE_USER'],
+                        server    = os.environ['SSH_REMOTE_SERVER'])
+		pid = proc.check_output("ps aux|egrep '{cmd}'|grep -v 'grep'|awk '{print $2}'".format(cmd=cmd), shell=True) 
 		notificar_email(msg_subject, msg_html)
 
 		t=0
