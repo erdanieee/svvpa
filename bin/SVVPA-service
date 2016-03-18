@@ -227,8 +227,9 @@ case $1 in
 
 				fileOutName=$( basename ${fileIn/\.${MOTION_VIDEO_EXT_RAW}/\.${MOTION_VIDEO_EXT}} )
 				fileOut=${MOTION_DIR}${fileOutName}
-				#TODO: usar avconv (see http://www.thehelloworldprogram.com/web-development/encode-video-and-audio-for-html5-with-avconv/)
-				${FFMPEG_BIN} -i $fileIn -preset ultrafast -y ${fileOut}	
+				#TODO: usar avconv que está en los repositorios 
+				#ej: avconv -i video.avi -c:v h264 -crf 22 -preset ultrafast -y -loglevel error video.mp4
+				${FFMPEG_BIN} -loglevel error -i $fileIn -preset ultrafast -y ${fileOut}	
 				RETVAL=$(($RETVAL|$?))
 
 				if [[ ! -e $fileOut || ! -f $fileOut ]]
