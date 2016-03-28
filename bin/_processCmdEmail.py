@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+#coding=utf-8
 
 import sys, os
 import re
@@ -382,7 +382,7 @@ def main(args):
 		if e.has_label(CMD_WORKING):
 			#Comprueba que no lleva mucho tiempo procesándose
 			if (datetime.datetime.now() - e.sent_at).days > 0:
-				print u"[{}] {}: El comando '{}' lleva más de un día sin terminar de procesarse. Se va a intentar procesar de nuevo".format(datetime.datetime.now(), __file__, subject)
+				print "[{}] {}: El comando '{}' lleva más de un día sin terminar de procesarse. Se va a intentar procesar de nuevo".format(datetime.datetime.now(), __file__, subject)
 				e.add_label(CMD_TIMEOUT)
 				e.remove_label(CMD_WORKING)
 			else:
@@ -398,7 +398,7 @@ def main(args):
 					e.add_label(CMD_WORKING) 
 					CMD_SVVPA[r.group('cmd')](r.group('args'))
 					print u"[{}] {}: Comando '{}' ejecutado correctamente".format(datetime.datetime.now(), __file__, r.group('cmd'))
-					e.add_label(CMD_OK) 			
+					e.add_label(CMD_OK) #FIXME: falla con el servicio ssh seguramente porque caduca la sesión o se abren otras 			
 				
 				except Exception, ex:
 					print >> sys.stderr, u"[{}] {}: ERROR! Ha ocurrido el error '{}' al procesar el comando '{}'".format(datetime.datetime.now(), __file__, repr(ex), r.group('cmd'))
