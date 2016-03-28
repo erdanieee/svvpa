@@ -14,7 +14,8 @@
 * ffmpeg (probar a usar avconv que está en los repositorios [libav-tools])
 	- compilación en la RPi (see http://owenashurst.com/?p=242)
 		* es necesario modificar el archivo autogen.sh de libaacplus para que no falle al no encontrar libtool (debe ser libtoolize)
-* instalar la versión modificada de gmail-sender que está en el directorio bin
+* instalar la versión modificada de gmail-sender que en mi github
+	- git clone https://github.com/erdanieee/gmail-sender
 	- sudo python setup.py install
 * instalar la API de gmail de https://github.com/charlierguo/gmail
 	- git clone https://github.com/charlierguo/gmail
@@ -35,28 +36,29 @@
 ################################
 ### MODIFICACIÓN DE FICHEROS ###
 ################################
-* copiar archivos www a la ruta default de apache2 (/var/www/)
-* copiar ~/.rclone.conf
-* copiar svvpa-81b7a04fc4c2.json para gspread
-* copiar CONSTANTS.php.example a CONSTANTS.php y modificar a criterio
-* copiar CONSTANTS.sh.example a CONSTANTS.sh y modificar a criterio
-* modificar /etc/default/motion para que se inicie motion on startup
-* Comprobar los paths de los scripts "on_evento" del fichero /etc/motion/motion.conf
-* modificar archivo sudoers para que se pueda apagar y cambiar hora sin meter clave de sudo:
-	- sudo visudo
-	- User_Alias SVVPAWEB = www-data
-	- User_Alias CRONUSER = pi
-	- SVVPAWEB ALL = NOPASSWD: /sbin/shutdown, /sbin/date, /usr/bin/vnstat
-	- CRONUSER ALL = NOPASSWD: ALL
-* proteger página con password
+* clonar proyecto en /var/www
+* modificar /etc/apache2/sites-available/000-default.conf para que el directorio por defecto sea /var/www/svvpa/www
+	- DocumentRoot /var/www/svvpa/www
+* proteger www con password
 	- sudo htpasswd -c /etc/apache2/pwd user
 	- Modificar el directorio de /etc/apache2/apache2.conf para que incluya:
 		* AuthType Basic
     * AuthName "Restricted Access"
     * AuthUserFile /etc/apache2/pwd
     * Require user svvpa
+* copiar ~/.rclone.conf
+* copiar svvpa-81b7a04fc4c2.json para gspread
+* copiar CONSTANTS.php.example a CONSTANTS.php y modificar a criterio
+* copiar CONSTANTS.sh.example a CONSTANTS.sh y modificar a criterio
+* modificar /etc/default/motion para que se inicie motion on startup
+* modificar archivo sudoers para que se pueda apagar y cambiar hora sin meter clave de sudo:
+	- sudo visudo
+	- User_Alias SVVPAWEB = www-data
+	- User_Alias CRONUSER = pi
+	- SVVPAWEB ALL = NOPASSWD: /sbin/shutdown, /sbin/date, /usr/bin/vnstat
+	- CRONUSER ALL = NOPASSWD: ALL
 * Crear directorio motion (ver CONSTANTS para la ubicación) que pertenezca a www-data y motion con permisos 774
-* Modificar config/svvpa convenientemente y moverlo a /etc/logrotate.d/
+* Copiar config/svvpa.logrotate.example a /etc/logrotate.d/svvpa y modificarlo convenientemente	
 
 
 
@@ -64,11 +66,12 @@
 ### OTROS ###
 #############
 * Añadir clave privada en servidor remoto para hacer SSH reverso sin password (para comando email SSH remoto)
-* Añadir a crontab los comandos "cron_*" del directorio bin
-* Añadir servicio SVVPA-startup-shutdown-notification a /etc/init.d
+* Añadir servicio SVVPA-service a /etc/init.d
 	- cd /etc/init.d
-	- sudo ln -s /var/www/svvpa/bin/SVVPA-startup-shutdown-notification.sh SVVPA-startup-shutdown-notification
-	- sudo update-rc.d SVVPA-startup-shutdown-notification defaults 
+	- sudo ln -s /var/www/svvpa/bin/SVVPA-serice .
+	- sudo update-rc.d SVVPA-stervice defaults 
+* Añadir a crontab los comandos de los servicios que se quieran usar (ver config/cron.example)
+
 
 
 ################
