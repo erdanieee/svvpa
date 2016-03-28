@@ -83,7 +83,7 @@ def get_ip():
 
 def get_datos():
 	ret = os.popen(os.environ['BIN_DIR'] + "_getInternetUsage.sh").readlines()
-	return ret[0]
+	return ret[0].strip()
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv))
