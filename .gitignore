@@ -2,6 +2,7 @@
 test*
 *~
 *.pyc
+*.pyr
 www/motion/*.jpg
 www/motion/*.mp4
 current_ip.txt
@@ -12,4 +13,4 @@ CONSTANTS.sh
 gspread.json
 rclone.conf
 svvpa.log
-logrotate.state
+svvpa.logrotate

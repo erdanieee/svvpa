@@ -5,14 +5,14 @@ v_example=$(egrep export CONSTANTS.sh.example|cut -f 1 -d "="|md5sum|awk '{print
 v_local=$(egrep export $BASH_SOURCE|cut -f 1 -d "="|md5sum|awk '{print $1}')
 if [[ ! "$v_local" == "$v_example" ]]
 then
-        echo "Error!!! El archivo de configuración está obsoleto"
+        echo "ERROR!!! El archivo de configuración está obsoleto"
         return
 fi
 
 
 export SVVPA_DIR="/var/www/svvpa/"
 export APACHE_DIR=${SVVPA_DIR}"www/"
-export MOTION_DIR=${APACHE_DIR}"motion"
+export MOTION_DIR=${APACHE_DIR}"motion/"
 export BIN_DIR=${SVVPA_DIR}"bin/"
 export CONFIG_DIR=${SVVPA_DIR}"config/"
 		
@@ -37,8 +37,6 @@ export FREE_DISK_PERCENT_THRESHOLD=5
 
 export EMAIL_ADDR="XXX@aaa.com,ZYZ@bbb.com"
 export EMAIL_FROM="XXX@gmail.com"
-export SMPT_SERVER="smtp.gmail.com"
-export SMPT_PORT="587"
 export SMPT_USER="XXX@gmail.com"
 export SMPT_PASS="XXX"
 

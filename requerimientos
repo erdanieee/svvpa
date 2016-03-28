@@ -69,6 +69,16 @@
 * Añadir servicio SVVPA-service a /etc/init.d
 	- cd /etc/init.d
 	- sudo ln -s /var/www/svvpa/bin/SVVPA-serice .
-	- sudo update-rc.d SVVPA-stervice defaults 99
+	- sudo update-rc.d SVVPA-stervice defaults 
 * Añadir a crontab los comandos de los servicios que se quieran usar (ver config/cron.example)
 
+
+
+################
+### OPCIONAL ###
+################
+* autocompletar el servicio SVVPA-service. Para ello:
+	- crear alias en .bashrc
+		alias svvpa="service SVVPA-service"
+	- ln -s /var/www/svvpa/config/svvpa.bash.completion /etc/bash_completion.d/svvpa
+	- al escribir svvpa y doble tab se completa con los servicios disponibles
