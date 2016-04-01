@@ -7,6 +7,7 @@ import time
 import datetime as dat
 import gmail_sender as gsender
 import urllib
+import time
 
 
 html = u"""\
@@ -45,8 +46,8 @@ def main(argv):
 			if len(tk)>=12:
 				datetime = "el " + tk[0] +"/"+ tk[1] +"/"+ tk[2] + " a las "+ tk[3] +":"+ tk[4] +":"+ tk[5]
 			else:
-				datetime = "el " + time.strftime("%Y/%m/%d") + " aproximadamente a las " + time.strftime("%H:%M:%S")			
-			s   = gsender.GMail(os.environ['SMPT_USER'], os.environ['SMPT_PASS'])
+				datetime = "el " + time.strftime("%Y/%m/%d") + " aproximadamente a las " + time.strftime("%H:%M:%S")		
+	
 			msg = gsender.Message(	
 				subject	= u"SVVPA - Movimiento detectado",
 				to 	= os.environ['EMAIL_ADDR'],
@@ -61,6 +62,12 @@ def main(argv):
 					datosMensuales=os.environ['DATOS_MENSUALES'],
 					email=os.environ['GMAIL_ACCOUNT_ALIAS']),
 				attachments	= [image])
+
+			s = gsender.GMail(os.environ['SMPT_USER'], os.environ['SMPT_PASS'])
+			for n in range(1,20):
+				if not s.is_connected():
+					time.sleep(40)
+					s.connect()			
 			s.send(msg)
 			s.close()
 
