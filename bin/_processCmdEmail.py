@@ -412,6 +412,7 @@ def main(args):
 					print u"[{}] {}: Comando '{}' ejecutado correctamente".format(datetime.datetime.now(), __file__, r.group('cmd'))
 					e=getEmailByUid(uid, e)
 					e.add_label(CMD_OK)  			
+					e.remove_label(CMD_WORKING)
 				
 				except Exception, ex:
 					print >> sys.stderr, u"[{}] {}: ERROR! Ha ocurrido el error '{}' al procesar el comando '{}'".format(datetime.datetime.now(), __file__, repr(ex), r.group('cmd'))
