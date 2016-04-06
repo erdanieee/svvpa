@@ -252,6 +252,7 @@ def cmd_openReverseSsh(args):
 	
 		proc.call(cmd, shell=True)	
 		pid = proc.check_output("ps aux --sort start_time|egrep '"+cmd+"'|grep -v 'grep'|tail -n 1|awk '{print $2}'",shell=True).strip()
+		#proc.call('(sleep {t} && kill {p} && _notifyEmail.sh SSH_CLOSED) &'.format(t=timeout, p=pid),shell=True)
 		notificar_email(msg_subject, msg_html)
 
 		t=0
@@ -265,7 +266,8 @@ def cmd_openReverseSsh(args):
 	
 	finally:
 		print u"[{}] {}: Cerrando servicio SSH (pid={})".format(datetime.datetime.now(), __file__, pid)
-		os.kill(int(pid), signal.SIGKILL)		
+		if os.path.isdir("/proc/"+pid):
+			os.kill(int(pid), signal.SIGKILL)  		
 
 		msg_subject	= cmd_openReverseSsh_subject_CLOSE
 		msg_html	= cmd_openReverseSsh_html_CLOSE
@@ -389,7 +391,7 @@ def main(args):
 		e = getEmailByUid(uid)
 		subject = e.subject.replace("\r\n","")
 		
-		if e.has_label(CMD_WORKING):
+		if e.has_label(CMD_WORKING) and not e.has_label(CMD_TIMEOUT):
 			#Comprueba que no lleva mucho tiempo procesándose
 			if (datetime.datetime.now() - e.sent_at).days > 0:
 				print "[{}] {}: El comando '{}' lleva más de un día sin terminar de procesarse. Se va a intentar procesar de nuevo".format(datetime.datetime.now(), __file__, subject)
@@ -432,7 +434,8 @@ def main(args):
 		
 			e=getEmailByUid(uid, e)
 			e.read()
-	e.gmail.logout()
+	#e=getEmailByUid(uid, e)
+	#e.gmail.logout()
 
 
 if __name__ == "__main__":
