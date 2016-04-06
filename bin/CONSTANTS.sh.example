@@ -58,3 +58,5 @@ export SSH_REMOTE_TUNEL_PORT="9876"
 export SSH_REMOTE_TIMEOUT=10800		#seconds
 
 export LOG_FILE=${SVVPA_DIR}"svvpa.log"
+
+export FIFO_EMAIL_NOTIF=${SVVPA_DIR}".email_fifo"
