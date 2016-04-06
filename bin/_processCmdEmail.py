@@ -389,53 +389,39 @@ def main(args):
 		
 	for uid in uids:
 		e = getEmailByUid(uid)
+		e.read()
 		subject = e.subject.replace("\r\n","")
 		
-		if e.has_label(CMD_WORKING) and not e.has_label(CMD_TIMEOUT):
-			#Comprueba que no lleva mucho tiempo procesándose
-			if (datetime.datetime.now() - e.sent_at).days > 0:
-				print "[{}] {}: El comando '{}' lleva más de un día sin terminar de procesarse. Se va a intentar procesar de nuevo".format(datetime.datetime.now(), __file__, subject)
-				e=getEmailByUid(uid, e)
-				e.add_label(CMD_TIMEOUT)
-				e.remove_label(CMD_WORKING)
-			else:
-				print "[{}] {}: El comando '{}' ya se está procesando".format(datetime.datetime.now(), __file__, subject)
-	
-		else:
-			print u"[{}] {}: Procesando comando '{}'".format(datetime.datetime.now(), __file__, subject)
-			r = re_subject.search(subject)			
+		print u"[{}] {}: Procesando comando '{}'".format(datetime.datetime.now(), __file__, subject)
+		r = re_subject.search(subject)			
 
-			if r and CMD_SVVPA.has_key(r.group('cmd')):				
-				try:
-					print u"[{}] {}: Ejecutando comando '{}'".format(datetime.datetime.now(), __file__, r.group('cmd'))
-					e=getEmailByUid(uid, e)
-					e.add_label(CMD_WORKING) 
-					CMD_SVVPA[r.group('cmd')](r.group('args'))
-					print u"[{}] {}: Comando '{}' ejecutado correctamente".format(datetime.datetime.now(), __file__, r.group('cmd'))
-					e=getEmailByUid(uid, e)
-					e.add_label(CMD_OK)  			
-					e.remove_label(CMD_WORKING)
+		if r and CMD_SVVPA.has_key(r.group('cmd')):								
+			try:
+				print u"[{}] {}: Ejecutando comando '{}'".format(datetime.datetime.now(), __file__, r.group('cmd'))
+				e=getEmailByUid(uid, e)
+				e.add_label(CMD_WORKING) 
+				CMD_SVVPA[r.group('cmd')](r.group('args'))
+				print u"[{}] {}: Comando '{}' ejecutado correctamente".format(datetime.datetime.now(), __file__, r.group('cmd'))
+				e=getEmailByUid(uid, e)
+				e.add_label(CMD_OK)  			
+				e.remove_label(CMD_WORKING)
 				
-				except Exception, ex:
-					print >> sys.stderr, u"[{}] {}: ERROR! Ha ocurrido el error '{}' al procesar el comando '{}'".format(datetime.datetime.now(), __file__, repr(ex), r.group('cmd'))
-					e=getEmailByUid(uid, e)
-					e.add_label(CMD_ERROR)
-					msg_subject	= error_general_subject.format(command=r.group('cmd'))
-					msg_html	= error_general_html.format(command=r.group('cmd'), error=ex)
-					notificar_email(msg_subject, msg_html)	
-					
-			else:
-				print >> sys.stderr, u"[{}] {}: ERROR! La sintaxis del comando '{}' no es correcta.".format(datetime.datetime.now(), __file__,r.group('cmd'))
+			except Exception, ex:
+				print >> sys.stderr, u"[{}] {}: ERROR! Ha ocurrido el error '{}' al procesar el comando '{}'".format(datetime.datetime.now(), __file__, repr(ex), r.group('cmd'))
 				e=getEmailByUid(uid, e)
 				e.add_label(CMD_ERROR)
-				msg_subject	= error_sintaxis_subject
-				msg_html		= error_sintaxis_html.format(command=r.group('cmd'), correo=os.environ['GMAIL_ACCOUNT_ALIAS'])
+				msg_subject	= error_general_subject.format(command=r.group('cmd'))
+				msg_html	= error_general_html.format(command=r.group('cmd'), error=ex)
 				notificar_email(msg_subject, msg_html)	
-		
+					
+		else:
+			print >> sys.stderr, u"[{}] {}: ERROR! La sintaxis del comando '{}' no es correcta.".format(datetime.datetime.now(), __file__,r.group('cmd'))
 			e=getEmailByUid(uid, e)
-			e.read()
-	#e=getEmailByUid(uid, e)
-	#e.gmail.logout()
+			e.add_label(CMD_ERROR)
+			msg_subject	= error_sintaxis_subject
+			msg_html		= error_sintaxis_html.format(command=r.group('cmd'), correo=os.environ['GMAIL_ACCOUNT_ALIAS'])
+			notificar_email(msg_subject, msg_html)	
+		
 
 
 if __name__ == "__main__":
