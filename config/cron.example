@@ -3,4 +3,5 @@
 */30 * * * * sleep 20; /usr/sbin/service SVVPA-service update_vnstats
 */10 * * * * sleep 25; /usr/sbin/service SVVPA-service update_sensors
 */3  * * * * sleep 35; /usr/sbin/service SVVPA-service check_cmd_email
-
+59 22 * * * sleep 45; sudo /usr/sbin/service motion stop
+0 6 * * * sleep 50; sudo /usr/sbin/service motion start
