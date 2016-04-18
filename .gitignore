@@ -3,6 +3,7 @@ test*
 *~
 *.pyc
 *.pyr
+*.shr
 www/motion/*.jpg
 www/motion/*.mp4
 current_ip.txt
