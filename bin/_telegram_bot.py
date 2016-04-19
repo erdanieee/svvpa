@@ -172,7 +172,7 @@ def resp_motion_start(msg):
 		timerMotion.cancel()
 
 	try:
-		proc.check_call('sudo service motion restart', shell=True)	#FIXME: Reemplazar echo por sudo
+		proc.check_call('sudo service motion restart', shell=True)
 		bot.sendMessage(CHAT_GROUP, u'La detección de movimiento se ha activado correctamente. \U0001f440')
 	except:
 		bot.sendMessage(CHAT_GROUP, u'Hubo un error al iniciar el servicio de detección de movimiento (?!)', reply_to_message_id=reply_id)
@@ -190,7 +190,7 @@ def resp_motion_stop(msg):
 		timerMotion.cancel()
 
 	try:
-		proc.check_call('sudo service motion stop', shell=True)	#FIXME: Reemplazar echo por sudo
+		proc.check_call('sudo service motion stop', shell=True)
 		bot.sendMessage(CHAT_GROUP, u'La detección de movimiento se ha detenido. Utiliza el comando /movimiento para volver a iniciarla.')
 	except:
 		bot.sendMessage(CHAT_GROUP, u'Hubo un error al detener el servicio de detección de movimiento (?!)', reply_to_message_id=reply_id)
@@ -296,7 +296,7 @@ def send_photo(device):
 	f=None
 
 	try:
-		proc.call([os.environ['FSWEBCAM_BIN'], "--config", os.environ['FSWEBCAM_CONFIG'], "--device", device, "/tmp/snapshot.jpg"],shell=True)		#FIXME: remove "echo" for testing
+		proc.call([os.environ['FSWEBCAM_BIN'], "--config", os.environ['FSWEBCAM_CONFIG'], "--device", device, "/tmp/snapshot.jpg"],shell=True)	
 		f=open(fileout, 'rb')	#open read-only in binary mode
 		bot.sendPhoto(CHAT_GROUP, f, caption=str(datetime.datetime.now()))
 		f.close()
