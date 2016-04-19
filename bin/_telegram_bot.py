@@ -56,8 +56,9 @@ def cmd_photo(msg):
 		k.append(d.strip())
 		kb.append(k)	
 
+	#print kb
 	keyboard = ReplyKeyboardMarkup(keyboard=kb, one_time_keyboard=True)
-	bot.sendMessage(CHAT_GROUP, u'Selecciona la cámara que quieres ver')			
+	bot.sendMessage(CHAT_GROUP, u'Selecciona la cámara que quieres ver', reply_markup=keyboard)			
 
 	return
 
@@ -292,14 +293,16 @@ def getCommand(msg):
 
 def send_photo(device):
 	fileout="/tmp/snapshot.jpg"
+	f=None
 
 	try:
-		proc.call([os.environ['FSWEBCAM_BIN'], "--config", os.environ['FSWEBCAM_CONFIG'], "--device", device, "/tmp/snapshot.jpg"],shell=True)
+		proc.call([os.environ['FSWEBCAM_BIN'], "--config", os.environ['FSWEBCAM_CONFIG'], "--device", device, "/tmp/snapshot.jpg"],shell=True)		#FIXME: remove "echo" for testing
 		f=open(fileout, 'rb')	#open read-only in binary mode
 		bot.sendPhoto(CHAT_GROUP, f, caption=str(datetime.datetime.now()))
 		f.close()
 
-	except:
+	except Exception as e:
+		print e
 		bot.sendMessage(CHAT_GROUP, u'ERROR! Hubo un problema al capturar la imagen')
 		pass
 
