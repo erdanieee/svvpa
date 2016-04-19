@@ -9,9 +9,14 @@ import json
 import subprocess as proc
 import numconv
 import re
+from threading import Timer
 
 #alfabeto para codificar información usando caracteres unicode no imprimibles
 ALPHABET=u'\x80\x81\x82\x83\x84\x85\x86\x87\x88\x89\x8A\x8B\x8C\x8D\x8E\x8F\x90\x91\x92\x93\x94\x95\x96\x97\x98\x99\x9A\x9B\x9C\x9D\x9E\x9F'
+
+
+timerMotion = None
+
 
 
 def cmd_help(msg):
@@ -31,9 +36,17 @@ Para enviar un comando, escribe */* y pulsa sobre la opción que te interese. Ad
 /apagar - Apaga el sistema
 '''.format(bot.getMe()['username']), parse_mode="Markdown")
 	return
+
+
 def cmd_motion(msg):
-	bot.sendMessage(CHAT_GROUP, u'FIXME: Función no implementada!')
+	#reply_id=msg['reply_to_message']['message_id']
+	keyboard = ReplyKeyboardMarkup(keyboard=[[R_MOTION_START], [R_MOTION_STOP], [R_MOTION_PAUSE_TIME]], one_time_keyboard=True)	
+	bot.sendMessage(CHAT_GROUP, u'Este comando sirve para controlar la detección de movimiento. ¿Qué quieres hacer?', reply_markup=keyboard)
 	return
+
+
+
+
 def cmd_photo(msg):
 	bot.sendMessage(CHAT_GROUP, u'FIXME: Función no implementada!')
 	return
@@ -101,6 +114,8 @@ def resp_allow_user(msg):
 	return
 
 
+
+
 def resp_block_user(msg):
 	contact_id=re.findall('[\x80-\x9f]+', msg['reply_to_message']['text'])
 	reply_id=msg['reply_to_message']['message_id']
@@ -110,6 +125,8 @@ def resp_block_user(msg):
 		BANNED_USERS.append(contact_id)
 		bot.sendMessage(CHAT_GROUP, u'El usuario será bloqueado hasta la próxima vez que se reinicie el svvpa', reply_to_message_id=reply_id)
 	return
+
+
 
 
 def resp_ban_user(msg):
@@ -130,17 +147,121 @@ def resp_ban_user(msg):
 	return
 
 
+
+
+def resp_motion_start(msg):
+	reply_id = msg['message_id']
+	
+	#comprueba si hay thread de pausa y lo cancela
+	if timerMotion:
+		timerMotion.cancel()
+
+	try:
+		proc.check_call('sudo service motion restart', shell=True)	#FIXME: Reemplazar echo por sudo
+		bot.sendMessage(CHAT_GROUP, u'La detección de movimiento se ha activado correctamente. \U0001f440')
+	except:
+		bot.sendMessage(CHAT_GROUP, u'Hubo un error al iniciar el servicio de detección de movimiento (?!)', reply_to_message_id=reply_id)
+		pass	
+	return
+
+
+
+
+def resp_motion_stop(msg):
+	reply_id = msg['message_id']
+
+	#comprueba si hay thread de pausa y lo cancela
+	if timerMotion:
+		timerMotion.cancel()
+
+	try:
+		proc.check_call('sudo service motion stop', shell=True)	#FIXME: Reemplazar echo por sudo
+		bot.sendMessage(CHAT_GROUP, u'La detección de movimiento se ha detenido. Utiliza el comando /movimiento para volver a iniciarla.')
+	except:
+		bot.sendMessage(CHAT_GROUP, u'Hubo un error al detener el servicio de detección de movimiento (?!)', reply_to_message_id=reply_id)
+		pass	
+	return
+
+
+
+
+def resp_motion_pause_time(msg):
+	reply_id = msg['message_id']	
+	bot.sendMessage(CHAT_GROUP, u'Dime cuánto tiempo quieres pausar la detección de movimiento. Utiliza el formato _nU_, siendo _n_ el número y _U_ la unidad (_M_, _H_, _D_ para minutos, horas y días respectívamente). Ej: _3D_ (3 días), _1D3H_ (1 día y 3 horas)', reply_to_message_id=reply_id, parse_mode="Markdown", reply_markup=ForceReply())
+	return
+		
+
+
+
+def pause2text(time):
+	a={86400.0 : ("días","día"), 3600.0 : ("horas","hora"), 60.0 : ("minutos","minuto"), 1.0 : ("segundos","segundo")}
+	resp=[]
+
+	for i in a:
+		     r = time / i
+		     if r>=1:
+		             d=int(r)
+		             resp.append( str(d) + ' ' + (a[i][0] if d>1 else a[i][1]) )
+		             time-=d*i
+
+	return (resp[0] if len(resp)==1 else ", ".join(resp[:-1]) + ' y ' + resp[-1])
+
+
+
+
+def resp_motion_pause(msg):
+	r        = re.findall('([0-9]+[smhd])', msg['text'].lower())
+
+	#comprueba si hay thread de pausa y lo cancela	
+	global timerMotion
+	if timerMotion:
+		timerMotion.cancel()
+	
+	time=0
+	mult=0
+	for t in r:
+		if 's' in t:
+			mult=1
+		elif 'm' in t:
+			mult=60
+		elif 'h' in t:
+			mult=3600
+		elif 'd' in t:
+			mult=86400
+		time+=int(t[:-1])*mult
+
+	timerMotion = Timer(time, resp_motion_start, args=(msg,))
+	timerMotion.start()
+	bot.sendMessage(CHAT_GROUP, u'La detección de movimiento estará pausada durante %s' % (pause2text(time)))
+	return	
+
+
+
+
+
+
 # Respuestas enviadas por el usuario. Formato: [icono], código unicode de la respuesta (\x80-\x9F), texto
-R_ALLOW_USER_YES=u'\u2705\x80Sí'
-R_ALLOW_USER_NO_THIS_TIME=u'\u274c\x81No por ahora'
-R_ALLOW_USER_NO_NEVER=u'\u26d4\ufe0f\x82No, nunca jamás de los jamases'
+R_ALLOW_USER_YES          = u'\u2705\x80Sí'
+R_ALLOW_USER_NO_THIS_TIME = u'\u274c\x81No por ahora'
+R_ALLOW_USER_NO_NEVER     = u'\u26d4\ufe0f\x82No, nunca jamás de los jamases'
+R_MOTION_START            = u'\u25b6\ufe0f\x83Iniciar'
+R_MOTION_STOP             = u'\u23f9\x84Parar'
+R_MOTION_PAUSE_TIME       = u'\u23f8\x85Pausar'
+
+
+
 
 # Funciones para las respuestas
 responses={
 	R_ALLOW_USER_YES            : resp_allow_user,
 	R_ALLOW_USER_NO_THIS_TIME   : resp_block_user,
-	R_ALLOW_USER_NO_NEVER       : resp_ban_user
+	R_ALLOW_USER_NO_NEVER       : resp_ban_user,
+	R_MOTION_START              : resp_motion_start,
+	R_MOTION_STOP               : resp_motion_stop,
+	R_MOTION_PAUSE_TIME         : resp_motion_pause_time
 }
+
+
 
 
 def getCommand(msg):
@@ -152,6 +273,8 @@ def getCommand(msg):
 
 		else:
 			return None
+
+
 
 
 # Procesa mensajes privados (private chat), menciones (@svvpaBot ####), comandos (/####), o respuestas
@@ -181,11 +304,14 @@ def on_chat_message(msg):
 			return	
 
 		#procesa respuestas
-		if 'reply_to_message' in msg and msg['text'] in responses:
-			responses[msg['text']](msg)				
+		if 'reply_to_message' in msg:
+			if msg['text'] in responses:
+				responses[msg['text']](msg)				
+			elif re.match('^([0-9]+[SsMmHhDd]+)+$', msg['text']):
+				resp_motion_pause(msg)
 			return
 
-		#procesa comandos
+		#procesa menciones
 		if 'entities' in msg and msg['entities'][0]['type']=='mention':
 			bot.sendMessage(chat_id, u'¿Qué dices de mí?')	#FIXME: poner frases aleatorias
 			return	
@@ -193,7 +319,6 @@ def on_chat_message(msg):
 		#No es un comando o respuesta reconocida
 		bot.sendMessage(chat_id, u'\U0001f21a\ufe0f \U0001f236\U0001f236 \U0001f238\u203c\ufe0f')
 		bot.sendMessage(chat_id, u'¿Te has enterado? Pues yo tampoco se lo que quieres. Anda, hazme el favor de escribir los comandos correctamente, solo uno por mensaje y utilizar el teclado emergente para responder, que si no no se puede, aaaaaaaaes?.', reply_to_message_id=msg['message_id'])
-
 
 	else:
 		#TODO: nuevo usuario, permitir?
@@ -262,10 +387,11 @@ def on_chosen_inline_result(msg):
 
 
 
-TOKEN = os.environ['TELEGRAM_TOKEN']
-CHAT_GROUP = int(os.environ['TELEGRAM_CHAT_GROUP'])
+TOKEN         = os.environ['TELEGRAM_TOKEN']
+CHAT_GROUP    = int(os.environ['TELEGRAM_CHAT_GROUP'])
 ALLOWED_USERS = map(int,os.environ['TELEGRAM_ALLOWED_USERS'].split(','))
-BANNED_USERS = [] if not os.environ['TELEGRAM_BANNED_USERS'] else map(int,os.environ['TELEGRAM_BANNED_USERS'].split(','))
+BANNED_USERS  = [] if not os.environ['TELEGRAM_BANNED_USERS'] else map(int,os.environ['TELEGRAM_BANNED_USERS'].split(','))
+
 
 if not TOKEN or not CHAT_GROUP or not ALLOWED_USERS:
 	print >> sys.stderr, "[{}] {}: ERROR! Variables de entorno TELEGRAM_TOKEN, TELEGRAM_CHAT_GROUP y TELEGRAM_ALLOWED_USERS deben estar definidas".format(datetime.datetime.now(), __file__)
