@@ -48,8 +48,22 @@ def cmd_motion(msg):
 
 
 def cmd_photo(msg):
-	bot.sendMessage(CHAT_GROUP, u'FIXME: Función no implementada!')
+	devices = os.environ['CAMERA_DEVICES'].split(",")
+
+	kb=[]
+	for d in devices:
+		k=[]
+		k.append(d.strip())
+		kb.append(k)	
+
+	keyboard = ReplyKeyboardMarkup(keyboard=kb, one_time_keyboard=True)
+	bot.sendMessage(CHAT_GROUP, u'Selecciona la cámara que quieres ver')			
+
 	return
+
+
+
+
 def cmd_upload_video(msg):
 	bot.sendMessage(CHAT_GROUP, u'FIXME: Función no implementada!')
 	return
@@ -185,14 +199,6 @@ def resp_motion_stop(msg):
 
 
 
-def resp_motion_pause_time(msg):
-	reply_id = msg['message_id']	
-	bot.sendMessage(CHAT_GROUP, u'Dime cuánto tiempo quieres pausar la detección de movimiento. Utiliza el formato _nU_, siendo _n_ el número y _U_ la unidad (_M_, _H_, _D_ para minutos, horas y días respectívamente). Ej: _3D_ (3 días), _1D3H_ (1 día y 3 horas)', reply_to_message_id=reply_id, parse_mode="Markdown", reply_markup=ForceReply())
-	return
-		
-
-
-
 def pause2text(time):
 	a={86400.0 : ("días","día"), 3600.0 : ("horas","hora"), 60.0 : ("minutos","minuto"), 1.0 : ("segundos","segundo")}
 	resp=[]
@@ -209,8 +215,16 @@ def pause2text(time):
 
 
 
-def resp_motion_pause(msg):
-	r        = re.findall('([0-9]+[smhd])', msg['text'].lower())
+def  resp_motion_pause(msg):
+	reply_id = msg['message_id']	
+	bot.sendMessage(CHAT_GROUP, u'Dime cuánto tiempo quieres pausar la detección de movimiento. Utiliza el formato _nU_, siendo _n_ el número y _U_ la unidad (_M_, _H_, _D_ para minutos, horas y días respectívamente). Ej: _3D_ (3 días), _1D3H_ (1 día y 3 horas)', reply_to_message_id=reply_id, parse_mode="Markdown", reply_markup=ForceReply())
+	return
+		
+
+
+
+def  resp_motion_pause_2(msg):
+	r = re.findall('([0-9]+[smhd])', msg['text'].lower())
 
 	#comprueba si hay thread de pausa y lo cancela	
 	global timerMotion
@@ -239,7 +253,6 @@ def resp_motion_pause(msg):
 
 
 
-
 # Respuestas enviadas por el usuario. Formato: [icono], código unicode de la respuesta (\x80-\x9F), texto
 R_ALLOW_USER_YES          = u'\u2705\x80Sí'
 R_ALLOW_USER_NO_THIS_TIME = u'\u274c\x81No por ahora'
@@ -258,7 +271,7 @@ responses={
 	R_ALLOW_USER_NO_NEVER       : resp_ban_user,
 	R_MOTION_START              : resp_motion_start,
 	R_MOTION_STOP               : resp_motion_stop,
-	R_MOTION_PAUSE_TIME         : resp_motion_pause_time
+	R_MOTION_PAUSE_TIME         : resp_motion_pause
 }
 
 
@@ -273,6 +286,28 @@ def getCommand(msg):
 
 		else:
 			return None
+
+
+
+
+def send_photo(device):
+	fileout="/tmp/snapshot.jpg"
+
+	try:
+		proc.call([os.environ['FSWEBCAM_BIN'], "--config", os.environ['FSWEBCAM_CONFIG'], "--device", device, "/tmp/snapshot.jpg"],shell=True)
+		f=open(fileout, 'rb')	#open read-only in binary mode
+		bot.sendPhoto(CHAT_GROUP, f, caption=str(datetime.datetime.now()))
+		f.close()
+
+	except:
+		bot.sendMessage(CHAT_GROUP, u'ERROR! Hubo un problema al capturar la imagen')
+		pass
+
+	finally:
+		if f:
+			f.close()
+
+	return
 
 
 
@@ -306,9 +341,13 @@ def on_chat_message(msg):
 		#procesa respuestas
 		if 'reply_to_message' in msg:
 			if msg['text'] in responses:
-				responses[msg['text']](msg)				
+				responses[msg['text']](msg)	
+			
 			elif re.match('^([0-9]+[SsMmHhDd]+)+$', msg['text']):
-				resp_motion_pause(msg)
+				resp_motion_pause_2(msg)
+
+			elif re.match('/dev/[a-z0-9_]+' , msg['text']):
+				send_photo(msg['text'])
 			return
 
 		#procesa menciones
