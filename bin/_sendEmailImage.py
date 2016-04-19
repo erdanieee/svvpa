@@ -27,9 +27,8 @@ html = u"""\
 	<body>
 		<h3>Movimiento detectado</h3>
 		<p>S.V.V.P.A. 2.0 ha detectado un nuevo movimiento en E.C. <b>{datetime}</b>. Adjunto a este mensaje se incluye el fotograma más representativo.</p>
-		<p>Si el vídeo es interesante y deseas guardarlo en Google Drive, haz <a href="mailto:{email}?subject=CMD_SVVPA GUARDAR_EN_GOOGLE_DRIVE {id}">click aquí</a> para enviar enviar un email con el comando correspondiente. Recuerda que, en función del tamaño del vídeo, este proceso puede tardar varios minutos.</p>
+		<p>Si piensas que el vídeo puede ser interesante (Duración:{duration}, tamaño:{size}) y deseas subirlo a Google Drive, haz <a href="mailto:{email}?subject=CMD_SVVPA GUARDAR_EN_GOOGLE_DRIVE {id}">click aquí</a> para enviar enviar un email con el comando correspondiente. Te recordamos que el consumo de datos hasta el momento ha sido de {datos}Mb de los {datosMensuales}Mb mensuales que incluye la tarifa.</p>
 	 	<p>Puedes ver las capturas guardadas anteriormente en <a href="https://drive.google.com/folderview?id=0Bwse_WnehFNKT2I3N005YmlYMms&usp=sharing">este enlace</a>.</p>
-		<p>El consumo de datos hasta el momento ha sido de {datos}Mb de los {datosMensuales}Mb mensuales que incluye la tarifa.		 
 	</body>
 </html>
 """
@@ -60,7 +59,9 @@ def main(argv):
 					id=id, 
 					datos=get_datos(), 
 					datosMensuales=os.environ['DATOS_MENSUALES'],
-					email=os.environ['GMAIL_ACCOUNT_ALIAS']),
+					email=os.environ['GMAIL_ACCOUNT_ALIAS'],
+					duration=get_duration(id),
+					size=get_size(id)),
 				attachments	= [image])
 
 			s = gsender.GMail(os.environ['SMPT_USER'], os.environ['SMPT_PASS'])
@@ -89,9 +90,23 @@ def get_ip():
 		fp.close()
 	return data
 
+
 def get_datos():
 	ret = os.popen(os.environ['BIN_DIR'] + "_getInternetUsage.sh").readlines()
 	return ret[0].strip()
+
+
+def get_duration(id):
+	f=""
+	 
+	ret = os.popen(os.environ['FFMPEG_BIN'] + ' -i /var/www/svvpa/www/motion/2016_03_19_13_29_09_8665_13_64_194_32_325_1.mp4 2>&1|egrep -o "Duration: [0-9:]+"|egrep -o "[0-9]{2}:[0-9]{2}$"').readlines()
+	return ret[0].strip()
+
+
+#FIXME: calcular tamaño del archivo
+def get_size(id):
+	return 0
+
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv))
