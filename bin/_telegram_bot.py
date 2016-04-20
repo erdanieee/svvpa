@@ -10,6 +10,7 @@ import subprocess as proc
 import numconv
 import re
 from threading import Timer
+from signal import SIGKILL
 
 #alfabeto para codificar información usando caracteres unicode no imprimibles
 ALPHABET=u'\x80\x81\x82\x83\x84\x85\x86\x87\x88\x89\x8A\x8B\x8C\x8D\x8E\x8F\x90\x91\x92\x93\x94\x95\x96\x97\x98\x99\x9A\x9B\x9C\x9D\x9E\x9F'
@@ -71,9 +72,41 @@ def cmd_upload_video(msg):
 def cmd_sensors(msg):
 	bot.sendMessage(CHAT_GROUP, u'FIXME: Función no implementada!')
 	return
-def cmd_open_ssh(msg):
-	bot.sendMessage(CHAT_GROUP, u'FIXME: Función no implementada!')
+def cmd_open_ssh(msg):	
+	try:
+		#cerramos puerto ssh si ya está abierto para evitar problemas
+		close_ssh()
+		
+		cmd="sshpass -e ssh -p {port} -fCNR {tunelPort}:localhost:22 {user}@{server}".format(
+                        port      = os.environ['SSH_REMOTE_PORT'],
+                        tunelPort = os.environ['SSH_REMOTE_TUNEL_PORT'],
+                        user      = os.environ['SSH_REMOTE_USER'],
+                        server    = os.environ['SSH_REMOTE_SERVER'])	
+		o = proc.call(cmd,shell=True)
+		
+		if o:
+			bot.sendMessage(
+						CHAT_GROUP, 
+						u'Túnel reverso ssh accesible desde {}:{} durante {} segundos'.format(
+																							os.environ['SSH_REMOTE_SERVER'],
+																							os.environ['SSH_REMOTE_TUNEL_PORT'], 
+																							os.environ['SSH_REMOTE_TIMEOUT']), 
+						reply_markup=ReplyKeyboardHide())
+			
+			global timerSsh
+			timerSsh = Timer(int(os.environ['SSH_REMOTE_TIMEOUT']), close_ssh)
+			timerSsh.start()
+			
+		else:
+			bot.sendMessage(CHAT_GROUP,	u'ERROR! Hubo un error inesperado al abrir el túnel ssh', reply_markup=ReplyKeyboardHide())
+		
+	except:
+		pass
+	
 	return
+	
+
+
 def cmd_update(msg):
 	bot.sendMessage(CHAT_GROUP, u'FIXME: Función no implementada!')
 	return
@@ -291,6 +324,31 @@ responses={
 
 
 
+def close_ssh():
+	r=False
+	try:
+		if timerSsh:
+			timerSsh.cancel()
+		
+		o = proc.check_output('ps aux', shell=True)
+		for l in o.splitlines():
+			if ('ssh' and os.environ['SSH_REMOTE_SERVER'] and 'localhost') in l:
+				pid = int(l.split()[1])
+				os.kill(pid, SIGKILL)
+				r=True
+				break
+	
+	except:
+		pass
+	
+	return r
+	
+	
+
+
+
+
+
 
 
 def get_motion_status():
@@ -481,6 +539,7 @@ if not TOKEN or not CHAT_GROUP or not ALLOWED_USERS:
 	exit(1)
 
 timerMotion = None
+timerSsh    = None
 
 bot = telepot.Bot(TOKEN)
 bot.message_loop({'chat': on_chat_message, 'inline_query': on_inline_query, 'chosen_inline_result': on_chosen_inline_result}, relax=1, timeout=60)
