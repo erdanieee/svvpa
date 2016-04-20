@@ -10,17 +10,21 @@ var TOKEN_DIR = (process.env.HOME || process.env.HOMEPATH ||
     process.env.USERPROFILE) + '/.credentials/';
 var TOKEN_PATH = TOKEN_DIR + 'drive-nodejs-quickstart.json';
 
-// Load client secrets from a local file.
-fs.readFile(process.env.GOOGLE_DRIVE_CREDENTIALS, function processClientSecrets(err, content) {
-  if (err) {
-    console.log('Error loading client secret file: ' + err);
-    return;
-  }
-  // Authorize a client with the loaded credentials, then call the
-  // Drive API.
-  authorize(JSON.parse(content), listFiles);
-});
+if (process.env.GOOGLE_DRIVE_CREDENTIALS == undefined) { 
+	console.log('ERROR! La variable GOOGLE_DRIVE_CREDENTIALS no está definida.')
 
+}else{
+// Load client secrets from a local file.
+	fs.readFile(process.env.GOOGLE_DRIVE_CREDENTIALS, function processClientSecrets(err, content) {
+  		if (err) {
+    			console.log('Error loading client secret file: ' + err);
+    			return;
+  		}
+  		// Authorize a client with the loaded credentials, then call the
+  		// Drive API.
+  		authorize(JSON.parse(content), listFiles);
+	});
+}
 /**
  * Create an OAuth2 client with the given credentials, and then execute the
  * given callback function.
