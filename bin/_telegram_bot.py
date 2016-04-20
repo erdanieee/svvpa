@@ -440,7 +440,7 @@ if not TOKEN or not CHAT_GROUP or not ALLOWED_USERS:
 	exit(1)
 
 bot = telepot.Bot(TOKEN)
-bot.notifyOnMessage({'normal': on_chat_message, 'inline_query': on_inline_query, 'chosen_inline_result': on_chosen_inline_result}, relax=1, timeout=60)
+bot.message_loop({'chat': on_chat_message, 'inline_query': on_inline_query, 'chosen_inline_result': on_chosen_inline_result}, relax=1, timeout=60)
 
 print 'Listening ...'
 
