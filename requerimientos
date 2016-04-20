@@ -1,8 +1,8 @@
 ###################################
 ### INSTALACIÓN DE DEPENDENCIAS	###
 ###################################
-* sudo apt-get install git motion apache2 mysql-server php5 php5-mysql bc build-essential python-dev python-smbus vnstat
-* sudo pip install --upgrade oauth2client PyOpenSSL gspread zipfile md5
+* sudo apt-get install git motion apache2 mysql-server php5 php5-mysql bc build-essential python-dev python-smbus vnstat fswebcam
+* sudo pip install --upgrade oauth2client PyOpenSSL gspread zipfile md5 nunconv
 * Adafruit_Python_DHT
 	- git clone https://github.com/adafruit/Adafruit_Python_DHT.git
 	- sudo python setup.py install
@@ -21,6 +21,12 @@
 	- git clone https://github.com/erdanieee/gmail
 	- cd gmail
 	- sudo python setup.py install
+* instalar telepot
+	- git clone https://github.com/nickoala/telepot && cd telepot && sudo python setup.py install
+* instalar nodejs y dependencias
+	- curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
+	- sudo apt-get install -y nodejs
+	- sudo npm install -g googleapis google-auth-library
 			
 
 
@@ -73,6 +79,7 @@
 	- sudo ln -s /var/www/svvpa/bin/SVVPA-serice .
 	- sudo update-rc.d SVVPA-stervice defaults 
 * Añadir a crontab los comandos de los servicios que se quieran usar (ver config/cron.example)
+* Comprobar que _google_drive_last_uploads.js puede acceder a google drive. Puede ser necesario ejecutarlo en el portátil y copiar luego los archivos ~/.credentials a la RPi
 
 
 
