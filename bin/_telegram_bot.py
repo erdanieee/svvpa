@@ -84,7 +84,7 @@ def cmd_open_ssh(msg):
                         server    = os.environ['SSH_REMOTE_SERVER'])	
 		o = proc.call(cmd,shell=True)
 		
-		if o:
+		if not o:
 			bot.sendMessage(
 						CHAT_GROUP, 
 						u'Túnel reverso ssh accesible desde {}:{} durante {} segundos'.format(
@@ -335,6 +335,7 @@ def close_ssh():
 			if ('ssh' and os.environ['SSH_REMOTE_SERVER'] and 'localhost') in l:
 				pid = int(l.split()[1])
 				os.kill(pid, SIGKILL)
+				print "matado ssh con PID %s" % str(pid)
 				r=True
 				break
 	
