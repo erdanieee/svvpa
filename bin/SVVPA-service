@@ -179,8 +179,15 @@ case $1 in
 		fileIn=$2
 		snapshot=$(echo $fileIn|grep snapshot)
 	
-		if [[ ! "${snapshot}" ]]
+		if [[ "${snapshot}" ]]
 		then
+			chmod 666 $fileIn
+			RETVAL=$(($RETVAL|$?))
+
+			mv $fileIn ${MOTION_DIR}$(basename $fileIn)
+			RETVAL=$(($RETVAL|$?))	
+
+		else
 			if [[ $# -gt 1 ]]
 			then
 				if [[ ! -e $fileIn || ! -f $fileIn ]]
