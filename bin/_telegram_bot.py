@@ -15,9 +15,6 @@ from threading import Timer
 ALPHABET=u'\x80\x81\x82\x83\x84\x85\x86\x87\x88\x89\x8A\x8B\x8C\x8D\x8E\x8F\x90\x91\x92\x93\x94\x95\x96\x97\x98\x99\x9A\x9B\x9C\x9D\x9E\x9F'
 
 
-timerMotion = None
-
-
 
 def cmd_help(msg):
 	bot.sendMessage(CHAT_GROUP, u'''Mu wenas! Me llaman @{}, el *robot telegram* diseñado específicamente para el control remoto de _SVVPA_ \U0001f60e. Al final de este mensaje puedes ver las funciones disponibles.
@@ -38,9 +35,12 @@ Para enviar un comando, escribe */* y pulsa sobre la opción que te interese. Ad
 	return
 
 
+
+
+
 def cmd_motion(msg):
 	#reply_id=msg['reply_to_message']['message_id']
-	keyboard = ReplyKeyboardMarkup(keyboard=[[R_MOTION_START], [R_MOTION_STOP], [R_MOTION_PAUSE_TIME]], one_time_keyboard=True)	
+	keyboard = ReplyKeyboardMarkup(keyboard=[[R_MOTION_START], [R_MOTION_STOP], [R_MOTION_PAUSE_TIME], [R_MOTION_STATUS]], one_time_keyboard=True)	
 	bot.sendMessage(CHAT_GROUP, u'Este comando sirve para controlar la detección de movimiento. ¿Qué quieres hacer?', reply_markup=keyboard)
 	return
 
@@ -122,10 +122,10 @@ def resp_allow_user(msg):
 		#print cmd
 		proc.call(cmd, shell=True)
 		ALLOWED_USERS.append(contact_id)
-		bot.sendMessage(CHAT_GROUP, u'contacto añadido!', reply_to_message_id=reply_id)
+		bot.sendMessage(CHAT_GROUP, u'contacto añadido!', reply_to_message_id=reply_id, reply_markup=ReplyKeyboardHide())
 		
 	else:
-		bot.sendMessage(CHAT_GROUP, u'ERROR! No se ha podido añadir al contacto (?!)', reply_to_message_id=reply_id)		
+		bot.sendMessage(CHAT_GROUP, u'ERROR! No se ha podido añadir al contacto (?!)', reply_to_message_id=reply_id, reply_markup=ReplyKeyboardHide())		
 	return
 
 
@@ -138,7 +138,7 @@ def resp_block_user(msg):
 	if contact_id:
 		contact_id = numconv.str2int( contact_id[0], 32, ALPHABET )
 		BANNED_USERS.append(contact_id)
-		bot.sendMessage(CHAT_GROUP, u'El usuario será bloqueado hasta la próxima vez que se reinicie el svvpa', reply_to_message_id=reply_id)
+		bot.sendMessage(CHAT_GROUP, u'El usuario será bloqueado hasta la próxima vez que se reinicie el svvpa', reply_to_message_id=reply_id, reply_markup=ReplyKeyboardHide())
 	return
 
 
@@ -155,10 +155,10 @@ def resp_ban_user(msg):
 		cmd            = 'sed -i -r \'s/TELEGRAM_BANNED_USERS=".*"/TELEGRAM_BANNED_USERS="{}{}"/g\' {}'.format(current_users + ',' if current_users else '', contact_id, file_constants)
 		proc.call(cmd, shell=True)
 		BANNED_USERS.append(contact_id)
-		bot.sendMessage(CHAT_GROUP, u'contacto bloqueado permanentemente!', reply_to_message_id=reply_id)
+		bot.sendMessage(CHAT_GROUP, u'contacto bloqueado permanentemente!', reply_to_message_id=reply_id, reply_markup=ReplyKeyboardHide())
 
 	else:
-		bot.sendMessage(CHAT_GROUP, u'ERROR! No se ha podido bloquear el contacto permanentemente (?!), pero tampoco ha ejecutado nada', reply_to_message_id=reply_id)		
+		bot.sendMessage(CHAT_GROUP, u'ERROR! No se ha podido bloquear el contacto permanentemente (?!), pero tampoco ha ejecutado nada', reply_to_message_id=reply_id, reply_markup=ReplyKeyboardHide())		
 	return
 
 
@@ -173,9 +173,9 @@ def resp_motion_start(msg):
 
 	try:
 		proc.check_call('sudo service motion restart', shell=True)
-		bot.sendMessage(CHAT_GROUP, u'La detección de movimiento se ha activado correctamente. \U0001f440')
+		bot.sendMessage(CHAT_GROUP, u'La detección de movimiento se ha activado correctamente. \U0001f440', reply_markup=ReplyKeyboardHide())
 	except:
-		bot.sendMessage(CHAT_GROUP, u'Hubo un error al iniciar el servicio de detección de movimiento (?!)', reply_to_message_id=reply_id)
+		bot.sendMessage(CHAT_GROUP, u'Hubo un error al iniciar el servicio de detección de movimiento (?!)', reply_to_message_id=reply_id, reply_markup=ReplyKeyboardHide())
 		pass	
 	return
 
@@ -191,9 +191,9 @@ def resp_motion_stop(msg):
 
 	try:
 		proc.check_call('sudo service motion stop', shell=True)
-		bot.sendMessage(CHAT_GROUP, u'La detección de movimiento se ha detenido. Utiliza el comando /movimiento para volver a iniciarla.')
+		bot.sendMessage(CHAT_GROUP, u'La detección de movimiento se ha detenido. Utiliza el comando /movimiento para volver a iniciarla.', reply_markup=ReplyKeyboardHide())
 	except:
-		bot.sendMessage(CHAT_GROUP, u'Hubo un error al detener el servicio de detección de movimiento (?!)', reply_to_message_id=reply_id)
+		bot.sendMessage(CHAT_GROUP, u'Hubo un error al detener el servicio de detección de movimiento (?!)', reply_to_message_id=reply_id, reply_markup=ReplyKeyboardHide())
 		pass	
 	return
 
@@ -244,13 +244,25 @@ def  resp_motion_pause_2(msg):
 		elif 'd' in t:
 			mult=86400
 		time+=int(t[:-1])*mult
-
+	
+	bot.sendMessage(CHAT_GROUP, u'La detección de movimiento estará pausada durante %s' % (pause2text(time)), reply_markup=ReplyKeyboardHide())
+	proc.call('sudo service motion stop', shell=True)	
 	timerMotion = Timer(time, resp_motion_start, args=(msg,))
 	timerMotion.start()
-	bot.sendMessage(CHAT_GROUP, u'La detección de movimiento estará pausada durante %s' % (pause2text(time)))
 	return	
 
 
+
+
+
+def resp_motion_status(msg):
+	if get_motion_status():
+		bot.sendMessage(CHAT_GROUP, u'La detección de movimiento está activa \U0001f440', reply_markup=ReplyKeyboardHide())
+	
+	else:
+		bot.sendMessage(CHAT_GROUP, u'La detección de movimiento está inactiva \U0001f648', reply_markup=ReplyKeyboardHide())
+			
+	return
 
 
 
@@ -261,6 +273,7 @@ R_ALLOW_USER_NO_NEVER     = u'\u26d4\ufe0f\x82No, nunca jamás de los jamases'
 R_MOTION_START            = u'\u25b6\ufe0f\x83Iniciar'
 R_MOTION_STOP             = u'\u23f9\x84Parar'
 R_MOTION_PAUSE_TIME       = u'\u23f8\x85Pausar'
+R_MOTION_STATUS           = u'\u2753\x86Comprobar estado'
 
 
 
@@ -272,8 +285,23 @@ responses={
 	R_ALLOW_USER_NO_NEVER       : resp_ban_user,
 	R_MOTION_START              : resp_motion_start,
 	R_MOTION_STOP               : resp_motion_stop,
-	R_MOTION_PAUSE_TIME         : resp_motion_pause
+	R_MOTION_PAUSE_TIME         : resp_motion_pause,
+	R_MOTION_STATUS             : resp_motion_status
 }
+
+
+
+
+
+def get_motion_status():
+	try:
+		return proc.call('sudo service motion status', shell=True)
+		
+	except:
+		pass
+					
+	return False
+
 
 
 
@@ -303,7 +331,7 @@ def send_photo(device):
 
 	except Exception as e:
 		print e
-		bot.sendMessage(CHAT_GROUP, u'ERROR! Hubo un problema al capturar la imagen')
+		bot.sendMessage(CHAT_GROUP, u'ERROR! Hubo un problema al capturar la imagen', reply_markup=ReplyKeyboardHide())
 		pass
 
 	finally:
@@ -332,7 +360,7 @@ def on_chat_message(msg):
 		if chat_id!=CHAT_GROUP:	#TODO: allow admin user
 			bot.sendMessage(
 				chat_id, 
-		    	u'Lo siento, pero por ahora el control de @{} por chat privado está desactivado (es pa\' controlar el percal \U0001f609).'.format(bot.getMe()['username']))
+		    	u'Lo siento, pero por ahora el control de @{} por chat privado está desactivado (es pa\' controlar el percal \U0001f609).'.format(bot.getMe()['username']), reply_markup=ReplyKeyboardHide())
 			return
 
 		#procesa comandos
@@ -355,12 +383,12 @@ def on_chat_message(msg):
 
 		#procesa menciones
 		if 'entities' in msg and msg['entities'][0]['type']=='mention':
-			bot.sendMessage(chat_id, u'¿Qué dices de mí?')	#FIXME: poner frases aleatorias
+			bot.sendMessage(chat_id, u'¿Qué dices de mí?', reply_markup=ReplyKeyboardHide())	#FIXME: poner frases aleatorias
 			return	
 
 		#No es un comando o respuesta reconocida
 		bot.sendMessage(chat_id, u'\U0001f21a\ufe0f \U0001f236\U0001f236 \U0001f238\u203c\ufe0f')
-		bot.sendMessage(chat_id, u'¿Te has enterado? Pues yo tampoco se lo que quieres. Anda, hazme el favor de escribir los comandos correctamente, solo uno por mensaje y utilizar el teclado emergente para responder, que si no no se puede, aaaaaaaaes?.', reply_to_message_id=msg['message_id'])
+		bot.sendMessage(chat_id, u'¿Te has enterado? Pues yo tampoco se lo que quieres. Anda, hazme el favor de escribir los comandos correctamente, solo uno por mensaje y utilizar el teclado emergente para responder, que si no no se puede, aaaaaaaaes?.', reply_to_message_id=msg['message_id'], reply_markup=ReplyKeyboardHide())
 
 	else:
 		#TODO: nuevo usuario, permitir?
@@ -434,10 +462,11 @@ CHAT_GROUP    = int(os.environ['TELEGRAM_CHAT_GROUP'])
 ALLOWED_USERS = map(int,os.environ['TELEGRAM_ALLOWED_USERS'].split(','))
 BANNED_USERS  = [] if not os.environ['TELEGRAM_BANNED_USERS'] else map(int,os.environ['TELEGRAM_BANNED_USERS'].split(','))
 
-
 if not TOKEN or not CHAT_GROUP or not ALLOWED_USERS:
 	print >> sys.stderr, "[{}] {}: ERROR! Variables de entorno TELEGRAM_TOKEN, TELEGRAM_CHAT_GROUP y TELEGRAM_ALLOWED_USERS deben estar definidas".format(datetime.datetime.now(), __file__)
 	exit(1)
+
+timerMotion = None
 
 bot = telepot.Bot(TOKEN)
 bot.message_loop({'chat': on_chat_message, 'inline_query': on_inline_query, 'chosen_inline_result': on_chosen_inline_result}, relax=1, timeout=60)
