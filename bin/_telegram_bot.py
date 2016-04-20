@@ -320,23 +320,37 @@ def getCommand(msg):
 
 
 def send_photo(device):
-	fileout="/tmp/snapshot.jpg"
-	f=None
-
-	try:
-		proc.call([os.environ['FSWEBCAM_BIN'], "--config", os.environ['FSWEBCAM_CONFIG'], "--device", device, "/tmp/snapshot.jpg"],shell=True)	
-		f=open(fileout, 'rb')	#open read-only in binary mode
-		bot.sendPhoto(CHAT_GROUP, f, caption=str(datetime.datetime.now()))
-		f.close()
-
-	except Exception as e:
-		print e
-		bot.sendMessage(CHAT_GROUP, u'ERROR! Hubo un problema al capturar la imagen', reply_markup=ReplyKeyboardHide())
-		pass
-
-	finally:
-		if f:
+	if get_motion_status():
+		snapshot = os.environ['MOTION_DIR'] + '.snapshot-' + str(int(device[-1:])+1) + '.jpg'
+		
+		if os.path.isfile(snapshot):
+			try:
+				f=open(snapshot, 'r')
+				bot.sendPhoto(CHAT_GROUP, f, datetime.datetime.now(), reply_markup=ReplyKeyboardHide())
+				f.close()
+				
+			except:
+				bot.sendMessage(CHAT_GROUP, u'ERROR! Hubo un error inesperado al mandar la foto (?!)', reply_markup=ReplyKeyboardHide())
+				pass
+	
+	else:
+		fileout="/tmp/snapshot.jpg"
+		f=None
+	
+		try:
+			proc.check_call([os.environ['FSWEBCAM_BIN'], "--config", os.environ['FSWEBCAM_CONFIG'], "--device", device, "/tmp/snapshot.jpg"],shell=True)	
+			f=open(fileout, 'rb')	#open read-only in binary mode
+			bot.sendPhoto(CHAT_GROUP, f, caption=str(datetime.datetime.now()))
 			f.close()
+	
+		except Exception as e:
+			print e
+			bot.sendMessage(CHAT_GROUP, u'ERROR! Hubo un problema al capturar la imagen', reply_markup=ReplyKeyboardHide())
+			pass
+	
+		finally:
+			if f:
+				f.close()
 
 	return
 
