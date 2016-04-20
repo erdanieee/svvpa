@@ -177,30 +177,34 @@ case $1 in
 	process_image)
 		echo "[$(date)] $0: Servicio '$1': Procesando imagen $2"
 		fileIn=$2
-
-		if [[ $# -gt 1 ]]
+		snapshot=$(echo $fileIn|grep snapshot)
+	
+		if [[ ! "${snapshot}" ]]
 		then
-			if [[ ! -e $fileIn || ! -f $fileIn ]]
+			if [[ $# -gt 1 ]]
 			then
-				echo "[$(date)] $0: Servicio '$1': ERROR! Archivo de origen no existe o es un directorio: $fileIn"
-				RETVAL=1
+				if [[ ! -e $fileIn || ! -f $fileIn ]]
+				then
+					echo "[$(date)] $0: Servicio '$1': ERROR! Archivo de origen no existe o es un directorio: $fileIn"
+					RETVAL=1
 			
-			else
-				mkdir -p ${MOTION_DIR} 2>/dev/null
+				else
+					mkdir -p ${MOTION_DIR} 2>/dev/null
 
-				python -u _sendEmailImage.py $fileIn
-				RETVAL=$(($RETVAL|$?))		
+					python -u _sendEmailImage.py $fileIn
+					RETVAL=$(($RETVAL|$?))		
 	
-				chmod 666 $fileIn
-				RETVAL=$(($RETVAL|$?))
+					chmod 666 $fileIn
+					RETVAL=$(($RETVAL|$?))
 				
-				mv $fileIn ${MOTION_DIR}$(basename $fileIn)
-				RETVAL=$(($RETVAL|$?))
-			fi
+					mv $fileIn ${MOTION_DIR}$(basename $fileIn)
+					RETVAL=$(($RETVAL|$?))
+				fi
 	
-		else
-			echo "[$(date)] $0: Servicio '$1': ERROR! Invalid number of arguments: $#"
-			RETVAL=1
+			else
+				echo "[$(date)] $0: Servicio '$1': ERROR! Invalid number of arguments: $#"
+				RETVAL=1
+			fi
 		fi
 	;;
 
