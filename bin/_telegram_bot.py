@@ -108,6 +108,10 @@ la captura.
         user_id = msg['from']['id']
         #print 'Normal message:\n%s', dumps(msg, sort_keys=True, indent=4, separators=(',', ': '))
         
+        #FIXME: ELIMINARR!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        self.ask_AddNewUser(msg)
+        return
+        
         # solo permite mensajes de texto y de usuarios NO baneados o admin
         if user_id == self.ADMIN_USER or (content_type == 'text' and user_id not in self.BANNED_USERS):
             if user_id == self.ADMIN_USER or user_id in self.ALLOWED_USERS:                
@@ -246,16 +250,54 @@ la captura.
     def cmd_shutdown(self,msg, chat_id):
         self.sendMessage(self.CHAT_GROUP, u'FIXME! cmd_shutdown función no implementada')
         
+    '''
+-#####################################
+-##  C A L L B A C K    Q U E R Y   ##
+-#####################################
+-{
+-    "data": "notification",
+-    "from": {
+-        "first_name": "Daniel",
+-        "id": 202714763,
+-        "last_name": "L\u00f3pez",
+-        "username": "svvpa"
+-    },
+-    "id": "870653277835729620",
+-    "message": {
+-        "chat": {
+-            "first_name": "Daniel",
+-            "id": 202714763,
+-            "last_name": "L\u00f3pez",
+-            "type": "private",
+-            "username": "svvpa"
+-        },
+-        "date": 1461331145,
+-        "from": {
+-            "first_name": "svvpa",
+-            "id": 183543111,
+-            "username": "svvpaBot"
+-        },
+-        "message_id": 891,
+-        "text": "Inline keyboard with various buttons"
+-    }
+-}
     
+    '''            
     
     def cbq_AddUser(self, msg, user_id):
-        query_id, from_id, data = telepot.glance(msg, flavor='callback_query')
+        query_id        = msg['id']
+        from_id         = msg['from']['id'] 
+        from_name       = msg['from']['first_name']
+        orig_chat_id    = msg['message']['chat']['id']
+        orig_msg_id     = msg['message']['message_id']
+        
         current_users  = check_output('grep TELEGRAM_ALLOWED_USERS {} |egrep -o \'[0-9,]+\''.format(self.FILE_CONSTANTS), shell=True).strip()
         cmd            = 'sed -i -r \'s/TELEGRAM_ALLOWED_USERS="([0-9,]+)"/TELEGRAM_ALLOWED_USERS="{},{}"/g\' {}'.format(current_users, user_id, self.FILE_CONSTANTS)
         call(cmd, shell=True)
         self.ALLOWED_USERS.append(user_id)
-        bot.answerCallbackQuery(query_id, text='No previous message to edit')
-        bot.sendMessage(self.CHAT_GROUP, u'contacto añadido!', reply_markup=ReplyKeyboardHide())
+        bot.answerCallbackQuery(query_id, text='Usuario añadido')
+        bot.editMessageText((orig_chat_id, orig_msg_id), 'Usuario añadido correctamente.', reply_markup=ReplyKeyboardHide())
+        bot.sendMessage(self.CHAT_GROUP, u'{} ha añadido un nuevo usuario!', reply_markup=ReplyKeyboardHide())
         
         
         
@@ -290,7 +332,7 @@ la captura.
         if arg:
             arg = self.CBQ_FUNCTION_SPLITTER + str(arg)
         
-        return function.__name__ + arg
+        return function + arg
     
     
     def string2callback(self, data):
