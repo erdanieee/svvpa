@@ -70,3 +70,6 @@ export GOOGLE_DRIVE_CREDENTIALS=${CONFIG_DIR}"google_drive_client_secret.json"
 export CAMERA_DEVICES="/dev/video0, /dev/video1"
 export FSWEBCAM_BIN="/usr/bin/fswebcam"
 export FSWEBCAM_CONFIG=${CONFIG_DIR}"fswebcam.conf"
+
+export TELEGRAM_MSG_TIMEOUT="600"
+
