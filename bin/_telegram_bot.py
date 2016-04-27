@@ -92,7 +92,8 @@ el usuario (!?)'
     CBQ_MOTION_ASK_TIME     = u'cbq_MotionAskTime'        
     CBQ_MOTION_START        = u'cbq_motionStart'
     CBQ_MOTION_STOP         = u'cbq_motionStop'
-    CBQ_MOTION_STATUS       = u'cbq_motionStatus'  
+    CBQ_MOTION_STATUS       = u'cbq_motionStatus'
+    CBQ_SNAPSHOT            = u'cbq_snapshot'  
      
     
     def __init__(self, *args, **kwargs):    
@@ -112,7 +113,7 @@ el usuario (!?)'
         
             
         self.CALLBACKS={
-                        self.CBQ_FUNCTION_CANCEL            : self.cbq_cancel,
+                        self.CBQ_FUNCTION_CANCEL        : self.cbq_cancel,
                         self.CBQ_ADD_USER               : self.cbq_AddUser,
                         self.CBQ_BLOCK_USER_ONE_TIME    : self.cbq_BlockUserOneTime,
                         self.CBQ_BAN_USER               : self.cbq_BanUser,
@@ -120,7 +121,8 @@ el usuario (!?)'
                         self.CBQ_MOTION_ASK_TIME        : self.cbq_MotionAskTime,
                         self.CBQ_MOTION_START           : self.cbq_motionStart,
                         self.CBQ_MOTION_STOP            : self.cbq_motionStop,
-                        self.CBQ_MOTION_STATUS          : self.cbq_motionStatus
+                        self.CBQ_MOTION_STATUS          : self.cbq_motionStatus,
+                        self.CBQ_SNAPSHOT               : self.cbq_snapshot
                         }
   
         # Commands
@@ -172,7 +174,7 @@ el usuario (!?)'
                 
                 #No es un comando o respuesta reconocida               
                 else:                
-                    self.sendMessage(chat_id, self.MSG_DONT_UNDERSTAND, reply_to_message_id=msg['message_id']())
+                    self.sendMessage(chat_id, self.MSG_DONT_UNDERSTAND, reply_to_message_id=msg['message_id'])
                     
             else:
                 # Si es nuevo usuario... ¿Añadir a la lista de usuarios permitidos?
@@ -278,7 +280,24 @@ el usuario (!?)'
         
         
     def cmd_photo(self,msg, chat_id):
-        self.sendMessage(self.CHAT_GROUP, u'FIXME! cmd_photo función no implementada')
+        devices = os.environ['CAMERA_DEVICES'].split(",")
+        
+        if len(devices)==0:
+            bot.sendMessage(msg['chat']['id'], u'ERROR! No hay cámaras configuradas')
+        
+        elif len(devices)==1:
+            self.cbq_snapshot(None, devices[0])
+
+        else:
+            buttons=[]
+            for d in devices:
+                d=d.strip()
+                buttons.append([ InlineKeyboardButton( text=d, callback_data=self.callback2string(self.CBQ_SNAPSHOT, [d])) ])    
+        
+            markup = InlineKeyboardMarkup(inline_keyboard=buttons)
+            bot.sendMessage(CHAT_GROUP, u'Selecciona la cámara que usar para tomar la foto', reply_markup=markup)            
+
+        
                     
     def cmd_upload_video(self,msg, chat_id):
         self.sendMessage(self.CHAT_GROUP, u'FIXME! cmd_upload_video función no implementada')
@@ -347,7 +366,11 @@ el usuario (!?)'
         elif not self._motionDelay.isSecondsSetted():
             self.cbq_MotionAskTime(msg, self.MOTION_SECONDS)
             
-        else:            
+        else:
+            if self._motionDelay.getTime()==0:
+                bot.editMessageText(self.getMsgChatId(msg), u'ERROR! DIVISIÓN ENTRE CERO!.\nSVVPA está a punto de echar a arder por intentar pausar cero segundos!! \U0001f602\U0001f602\U0001f602')
+                return
+               
             self.cbq_motionStop()
             
             text = u'La detección de movimiento se iniciará automáticamente dentro de {}.'.format(self._motionDelay.toString())
@@ -409,10 +432,8 @@ el usuario (!?)'
         
         #TODO: add Timer para borrar el mensaje si no se contesta en un tiempo prudencial        
         chat = self.CHAT_GROUP if INLINE_KEYBOARDS_GROUP_ACTIVE else msg['from']['id']
-        print chat
-        print self.getMsgChatId(msg)
-        print self.CHAT_GROUP
-        bot.editMessageText( self.getMsgChatId(msg), u'Selecciona el número de {} que quieres pausar el servicio'.format(text.upper()), reply_markup=markup)
+        t = u"\n(Actualmente: " + self._motionDelay.toString() + u")" if self._motionDelay.getTime()>0 else ""        
+        bot.editMessageText( self.getMsgChatId(msg), u'Selecciona el número de {} que quieres pausar el servicio {}'.format(text.upper(), t), reply_markup=markup)
         self.addMsgTimeout(*self.getMsgChatId(msg))
       
       
@@ -457,7 +478,7 @@ el usuario (!?)'
         
     def cbq_motionStatus(self, msg):
         try:
-            if proc.call('echo sudo service motion status', shell=True) == 0:
+            if self.isMotionEnabled():
                 bot.editMessageText(self.getMsgChatId(msg),  u'La detección de movimiento está activa \U0001f440')
             
             else:
@@ -545,7 +566,49 @@ el usuario (!?)'
         except Exception as e:
             print e            
             bot.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_BANNING_USER) 
-          
+      
+      
+      
+    def cbq_snapshot(self, msg, device):                
+        if msg:
+            bot.editMessageText(self.getMsgChatId(msg), u'Capturando foto...')
+        
+        if self.isMotionEnabled():
+            snapshot = os.environ['MOTION_DIR'] + '.snapshot-' + str(int(device[-1])+1) + '.jpg'
+            
+            if os.path.isfile(snapshot):
+                try:
+                    f=open(snapshot, 'r')
+                    bot.sendPhoto(CHAT_GROUP, f, datetime.datetime.now())
+                    f.close()
+                    
+                except:
+                    bot.sendMessage(CHAT_GROUP, u'ERROR! Hubo un error inesperado al abrir la foto (?!)')
+                    pass
+                
+            else:
+                print >> sys.stderr, "ERROR! No existe el archivo {} utilizado para el device {}".format(snapshot, device)
+                bot.sendMessage(self.CHAT_GROUP, u'ERROR! Hubo un error inesperado al cargar la foto (?!)')
+        
+        else:
+            fileout="/tmp/snapshot.jpg"
+            f=None
+        
+            try:
+                proc.check_call([os.environ['FSWEBCAM_BIN'], "--config", os.environ['FSWEBCAM_CONFIG'], "--device", device, "/tmp/snapshot.jpg"],shell=True)    
+                f=open(fileout, 'rb')    #open read-only in binary mode
+                bot.sendPhoto(CHAT_GROUP, f, caption=str(datetime.datetime.now()))
+                f.close()
+        
+            except Exception as e:
+                print e
+                bot.sendMessage(CHAT_GROUP, u'ERROR! Hubo un problema al capturar la imagen')
+                pass
+        
+            finally:
+                if f:
+                    f.close()
+                    
             
        
     def callback2string(self,function, arg=None):
@@ -608,11 +671,22 @@ el usuario (!?)'
             chat_id = msg['chat']['id']
                         
         return chat_id, msg_id   
+    
+    
+    def isMotionEnabled(self):
+        try:
+            if proc.call('echo sudo service motion status', shell=True) == 0:
+                return True
+        
+        except:
+            pass
+        
+        return False
 
         
 class TimeDelay:
     """ Test """
-    labels = {86400.0 : ("días","día"), 3600.0 : ("horas","hora"), 60.0 : ("minutos","minuto"), 1.0 : ("segundos","segundo")}
+    labels = {86400.0 : (u"días",u"día"), 3600.0 : (u"horas",u"hora"), 60.0 : (u"minutos",u"minuto"), 1.0 : (u"segundos",u"segundo")}
     
     def __init__(self):
         self._days    = None
@@ -647,7 +721,7 @@ class TimeDelay:
                     resp.append( str(d) + ' ' + (self.labels[i][0] if d>1 else self.labels[i][1]) )
                     time -= d*i
 
-        return (resp[0] if len(resp)==1 else ", ".join(resp[:-1]) + ' y ' + resp[-1])
+        return (resp[0] if len(resp)==1 else u", ".join(resp[:-1]) + u' y ' + resp[-1])
 
         
     def setDays(self, days):
@@ -687,7 +761,7 @@ if __name__ == "__main__":
     TOKEN = os.environ['TELEGRAM_TOKEN']
     bot = Telegram_bot(TOKEN)
     #bot.message_loop({'chat': bot.on_chat_message, 'callback_query': bot.on_callback_query, 'inline_query': bot.on_inline_query, 'chosen_inline_result': bot.on_chosen_inline_result}, relax=1, timeout=60)
-    bot.message_loop()    
+    bot.message_loop(relax=1, timeout=120)    
     
     print 'Listening ...'
     
