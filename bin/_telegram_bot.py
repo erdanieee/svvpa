@@ -90,9 +90,9 @@ el usuario (!?)'
     CBQ_BAN_USER            = u'cbq_BanUser'
     CBQ_MOTION_SET_TIME     = u'cbq_MotionSetTime'
     CBQ_MOTION_ASK_TIME     = u'cbq_MotionAskTime'        
-    CBQ_MOTION_START        = u'motionStart'
-    CBQ_MOTION_STOP         = u'motionStop'
-    CBQ_MOTION_STATUS       = u'motionStatus'  
+    CBQ_MOTION_START        = u'cbq_motionStart'
+    CBQ_MOTION_STOP         = u'cbq_motionStop'
+    CBQ_MOTION_STATUS       = u'cbq_motionStatus'  
      
     
     def __init__(self, *args, **kwargs):    
@@ -347,14 +347,22 @@ el usuario (!?)'
         elif not self._motionDelay.isSecondsSetted():
             self.cbq_MotionAskTime(msg, self.MOTION_SECONDS)
             
-        else:
-            self.motionStop()        
+        else:            
+            self.cbq_motionStop()
+            
+            text = u'La detección de movimiento se iniciará automáticamente dentro de {}.'.format(self._motionDelay.toString())
+            bot.editMessageText(self.getMsgChatId(msg), text)
+            if not INLINE_KEYBOARDS_GROUP_ACTIVE:
+               bot.sendMessage(self.CHAT_GROUP, text)
+            
+                    
             
             m = self._timers.pop(self.MOTION_TIMER, None)
             if m:
                 m.cancel()
                                             
-            self._timers[self.MOTION_TIMER] = Timer(self._motionDelay.getTime(), self.motionStart)
+            self._timers[self.MOTION_TIMER] = Timer(self._motionDelay.getTime(), self.cbq_motionStart)
+            self._timers[self.MOTION_TIMER].start()
             
             
             
@@ -386,7 +394,7 @@ el usuario (!?)'
         i=1
         for a in units:
             t = a + unit.upper()            
-            aux.append( InlineKeyboardButton( text=t, callback_data=self.callback2string(self.CBQ_MOTION_SET_TIME, [a, unit]) ))
+            aux.append( InlineKeyboardButton( text=t, callback_data=self.callback2string(self.CBQ_MOTION_SET_TIME, [unit, a]) ))
                                 
             if not i%5 or i==len(units):
                 buttons.append(aux)
@@ -401,34 +409,62 @@ el usuario (!?)'
         
         #TODO: add Timer para borrar el mensaje si no se contesta en un tiempo prudencial        
         chat = self.CHAT_GROUP if INLINE_KEYBOARDS_GROUP_ACTIVE else msg['from']['id']
-        bot.editMessageText( self.getMsgChatId(msg), u'Selecciona el número de _{}_ que quieres pausar el servicio'.format(text.upper()), reply_markup=markup, parse_mode="Markdown")
+        print chat
+        print self.getMsgChatId(msg)
+        print self.CHAT_GROUP
+        bot.editMessageText( self.getMsgChatId(msg), u'Selecciona el número de {} que quieres pausar el servicio'.format(text.upper()), reply_markup=markup)
         self.addMsgTimeout(*self.getMsgChatId(msg))
       
       
-    def cbq_motionStart(self, msg):
-        self.motionStart()
+    def cbq_motionStart(self, msg=None):
+        try:
+            proc.call('echo sudo service motion restart', shell=True)
+            
+            text = u'La detección de movimiento se ha activado correctamente \U0001f440.'
+            
+            if msg and INLINE_KEYBOARDS_GROUP_ACTIVE:
+                bot.editMessageText(self.getMsgChatId(msg), text)
+            
+            else:        
+                bot.sendMessage(self.CHAT_GROUP, text)            
         
-        text = u'La detección de movimiento se ha activado correctamente \U0001f440. Utiliza el comando /movimiento para detenerla o pausarla'
-        bot.editMessageText(self.getMsgChatId(msg), text)
-        if not INLINE_KEYBOARDS_GROUP_ACTIVE:
-            bot.sendMessage(self.CHAT_GROUP, text)
+        except Exception as e:
+            bot.sendMessage(self.CHAT_GROUP, u'ERROR! Hubo un problema al iniciar el servicio de detección de movimiento (!?)')
+            
+  
+        
                 
         
-    def cbq_motionStop(self, msg):
-        self.motionStop()        
+    def cbq_motionStop(self, msg=None):
+        try:
+            proc.call('echo sudo service motion stop', shell=True)
+            
+            text = u'La detección de movimiento se ha detenido \U0001f648 '
+            
+            if msg and INLINE_KEYBOARDS_GROUP_ACTIVE:
+                bot.editMessageText(self.getMsgChatId(msg), text)
+            
+            else:
+               bot.sendMessage(self.CHAT_GROUP, text)
+                      
+ 
+            
+        except Exception as e:
+            bot.sendMessage(self.CHAT_GROUP, u'ERROR! Hubo un problema al parar el servicio de detección de movimiento (!?)')
+            
+         
         
-        text = u'La detección de movimiento se ha detenido. Utiliza el comando /movimiento para volver a iniciarla.'
-        bot.editMessageText(self.getMsgChatId(msg), text)
-        if not INLINE_KEYBOARDS_GROUP_ACTIVE:
-           bot.sendMessage(self.CHAT_GROUP, text)
-                  
         
     def cbq_motionStatus(self, msg):
-        if self.motionStatus():
-            bot.editMessageText(self.getMsgChatId(msg),  u'La detección de movimiento está activa \U0001f440')
+        try:
+            if proc.call('echo sudo service motion status', shell=True) == 0:
+                bot.editMessageText(self.getMsgChatId(msg),  u'La detección de movimiento está activa \U0001f440')
             
-        else:
-            bot.editMessageText(self.getMsgChatId(msg),  u'La detección de movimiento está inactiva \U0001f648')
+            else:
+                bot.editMessageText(self.getMsgChatId(msg),  u'La detección de movimiento está inactiva \U0001f648')
+            
+        except:         
+            bot.sendMessage(self.CHAT_GROUP, u'ERROR! Hubo un problema al comprobar el estado del servicio de detección de movimiento (!?)')
               
         
         
@@ -559,32 +595,7 @@ el usuario (!?)'
         if timer:
             timer.cancel()
              
-        
-    def motionStop(self):
-        try:
-            return proc.call('sudo service motion stop', shell=True)
-            
-        except Exception as e:
-            bot.sendMessage(self.CHAT_GROUP, u'ERROR! Hubo un problema al parar el servicio de detección de movimiento (!?)')
-            return False
-        
-        
-    def motionStart(self):
-        try:
-            return proc.call('sudo service motion restart', shell=True)            
-        
-        except Exception as e:
-            bot.sendMessage(self.CHAT_GROUP, u'ERROR! Hubo un problema al iniciar el servicio de detección de movimiento (!?)')
-            return False
-    
-
-    def motionStatus(self):
-        try:
-            return proc.call('sudo service motion status', shell=True)
-            
-        except:         
-            bot.sendMessage(self.CHAT_GROUP, u'ERROR! Hubo un problema al comprobar el estado del servicio de detección de movimiento (!?)')
-            return False
+      
 
 
     def getMsgChatId(self, msg):
@@ -640,19 +651,19 @@ class TimeDelay:
 
         
     def setDays(self, days):
-        self._days = days
+        self._days = int(days)
         self._time = None
         
     def setHours(self, hours):
-        self._hours = hours
+        self._hours = int(hours)
         self._time = None
         
     def setMinutes(self, minutes):
-        self._minutes = minutes
+        self._minutes = int(minutes)
         self._time = None
         
     def setSeconds(self, seconds):
-        self._seconds = seconds
+        self._seconds = int(seconds)
         self._time = None
          
     def isDaysSetted(self):
