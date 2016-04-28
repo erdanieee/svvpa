@@ -95,7 +95,10 @@ el usuario (!?)'
     CBQ_MOTION_STOP         = u'cbq_motionStop'
     CBQ_MOTION_STATUS       = u'cbq_motionStatus'
     CBQ_SNAPSHOT            = u'cbq_snapshot'  
-     
+    
+    RETRIES_MAX     = 10
+    RETRIES_WAIT    = 50
+    
     
     def __init__(self, *args, **kwargs):    
         super(Telegram_bot, self).__init__(*args, **kwargs)
@@ -159,7 +162,7 @@ el usuario (!?)'
                 if cmd in self.COMMANDS:
                     # solo permite comandos por mensaje privado o de admin
                     if user_id == self.ADMIN_USER or chat_id == self.CHAT_GROUP:
-                        self.COMMANDS[cmd](msg, chat_id)
+                        self.COMMANDS[cmd](msg)
                             
                     else:                
                         self.sendMessage(chat_id, self.MSG_BLOCKED_PRIVATE_CHAT.format(self.BOT_NAME()))
@@ -204,6 +207,7 @@ el usuario (!?)'
         if from_id in self.ALLOWED_USERS and from_id not in self.BANNED_USERS:                
             self.sendChatAction(self.CHAT_GROUP, 'typing')
             
+            #FIXME: guardar una copia de los IDs, URL, width and height en MySQL para no tener que conectarnos aquí
             lines=proc.check_output('node {}_google_drive_last_uploads.js'.format(os.environ['BIN_DIR']), shell=True)[:-1]        # TODO: meter datos en MySQL para que la consulta sea rápida...
             f=[]
             for l in lines.split('\n'):
@@ -252,17 +256,19 @@ el usuario (!?)'
         
         else:
             raise telepot.BadFlavor(msg)
- 
- 
+
+
+
+
 
 
  
-    def cmd_help(self,msg, chat_id):        
+    def cmd_help(self,msg):        
         self.sendMessage(self.CHAT_GROUP, self.MSG_CMD_HELP.format(self.BOT_NAME, parse_mode="Markdown"))
         
 
     
-    def cmd_motion(self,msg, chat_id):
+    def cmd_motion(self,msg):
         self._motionDelay = TimeDelay()
         #self.cbq_MotionAskTime(msg, self.MOTION_DAYS)   #FIXME: Preguntar si quiere iniciar, parar o pausar
             
@@ -276,9 +282,8 @@ el usuario (!?)'
         chat = self.CHAT_GROUP if INLINE_KEYBOARDS_GROUP_ACTIVE else self.ADMIN_USER    
         m = bot.sendMessage(chat, self.MSG_CMD_MOTION, reply_markup=markup)
         self.addMsgTimeout(*self.getMsgChatId(msg))
-  
-        
-        
+ 
+      
         
     def cmd_photo(self,msg, chat_id):
         devices = os.environ['CAMERA_DEVICES'].split(",")
@@ -296,26 +301,7 @@ el usuario (!?)'
                 buttons.append([ InlineKeyboardButton( text=d, callback_data=self.callback2string(self.CBQ_SNAPSHOT, [d])) ])    
         
             markup = InlineKeyboardMarkup(inline_keyboard=buttons)
-            bot.sendMessage(CHAT_GROUP, u'Selecciona la cámara que usar para tomar la foto', reply_markup=markup)            
-
-
-
-    
-    def close_ssh():
-        try:            
-            o = proc.check_output('ps aux', shell=True)
-            for l in o.splitlines():
-                if ('ssh' and os.environ['SSH_REMOTE_SERVER'] and 'localhost') in l:
-                    pid = int(l.split()[1])
-                    os.kill(pid, SIGKILL)
-                    print "matado ssh con PID %s" % str(pid)
-                    break
-        
-        except:
-            pass
-        
-    
-        
+            bot.sendMessage(self.CHAT_GROUP, u'Selecciona la cámara que usar para tomar la foto', reply_markup=markup)            
 
 
         
@@ -346,16 +332,47 @@ el usuario (!?)'
                 self._timers[self.SSH_TIMER].start()
                 
             else:
-                bot.sendMessage(CHAT_GROUP, u'ERROR! No se ha podido abrir el túnel ssh (ret={})'.format(ret))
+                bot.sendMessage(self.CHAT_GROUP, u'ERROR! No se ha podido abrir el túnel ssh (ret={})'.format(ret))
             
         except:
-            bot.sendMessage(CHAT_GROUP, u'ERROR! Hubo un error inesperado al abrir el túnel ssh')
+            bot.sendMessage(self.CHAT_GROUP, u'ERROR! Hubo un error inesperado al abrir el túnel ssh')
 
 
+
+    #FIXME: hacer todas las funciones que tomen algo de tiempo THREAD_SAFE
+    def upload_file(file):
+        print u"[{}] {}: Subiendo archivo a google drive (id:{})".format(datetime.datetime.now(), __file__, eventId)
+        cmd = [ os.environ['RCLONE_BIN'], "--config", os.environ['RCLONE_CONFIG'], "copy", file, "google:SVVPA/videos" ]
+        
+        try:                
+            i=0
+            while i<self.RETRIES_MAX:
+                ret = proc.call(cmd, shell=True)            
+                if ret==0:
+                    bot.sendMessage(self.CHAT_GROUP, u'El archivo {} se ha subido correctamente a google drive. Recuerda que puedes ver los archivos subidos a google drive en [este enlace](https://drive.google.com/folderview?id=0Bwse_WnehFNKT2I3N005YmlYMms&usp=sharing)'.format(os.path.basename(file)), parse_mode=Markdown)
+                    return
+                
+                i+=1
+                Time.sleep(self.RETRIES_WAIT)
+                    
+            bot.sendMessage(self.CHAT_GROUP, u'ERROR! No se ha podido subir el archivo {} a google drive. Inténtalo de nuevo más tarde'.format(os.path.basename(file)))
+                            
+        except Exception as e:
+            print >> sys.stderr, u"[{}] {}: ERROR! Se produjeron errores al subir el vídeo a google drive: {}".format(datetime.datetime.now(), __file__, repr(e))
+            bot.sendMessage(self.CHAT_GROUP, u'ERROR! Se ha producido un error inesperado al subir el archivo {} a google drive'.format(os.path.basename(file)))
+            
+
+                
+    
+    
         
                     
-    def cmd_upload_video(self,msg, chat_id):
-        self.sendMessage(self.CHAT_GROUP, u'FIXME! cmd_upload_video función no implementada')
+    def cmd_upload_video(self, msg):
+        return
+        
+        
+        
+        
         
     def cmd_sensors(self,msg, chat_id):
         self.sendMessage(self.CHAT_GROUP, u'FIXME! cmd_sensors función no implementada')
@@ -390,10 +407,12 @@ el usuario (!?)'
         chat = self.CHAT_GROUP if INLINE_KEYBOARDS_GROUP_ACTIVE else self.ADMIN_USER    
         m = bot.sendMessage(chat, self.MSG_NEW_USER.format(name, lastname, self.BOT_NAME, id), reply_markup=markup)
         self.addMsgTimeout(*self.getMsgChatId(msg))
+
         
       
     def cbq_cancel(self, msg):
         self.deleteMsg(*self.getMsgChatId(msg))
+
       
     
     def cbq_MotionSetTime(self, msg, unit, num):        
@@ -485,6 +504,7 @@ el usuario (!?)'
         t = u"\n(Actualmente: " + self._motionDelay.toString() + u")" if self._motionDelay.getTime()>0 else ""        
         bot.editMessageText( self.getMsgChatId(msg), u'Selecciona el número de {} que quieres pausar el servicio {}'.format(text.upper(), t), reply_markup=markup)
         self.addMsgTimeout(*self.getMsgChatId(msg))
+
       
       
     def cbq_motionStart(self, msg=None):
@@ -501,8 +521,6 @@ el usuario (!?)'
         
         except Exception as e:
             bot.sendMessage(self.CHAT_GROUP, u'ERROR! Hubo un problema al iniciar el servicio de detección de movimiento (!?)')
-            
-  
         
                 
         
@@ -525,7 +543,6 @@ el usuario (!?)'
             
          
         
-        
     def cbq_motionStatus(self, msg):
         try:
             if self.isMotionEnabled():
@@ -536,7 +553,6 @@ el usuario (!?)'
             
         except:         
             bot.sendMessage(self.CHAT_GROUP, u'ERROR! Hubo un problema al comprobar el estado del servicio de detección de movimiento (!?)')
-              
         
         
           
@@ -586,6 +602,7 @@ el usuario (!?)'
         
         if not INLINE_KEYBOARDS_GROUP_ACTIVE:
             bot.sendMessage(self.CHAT_GROUP, text)
+
         
         
     def cbq_BanUser(self, msg, arg): 
@@ -629,11 +646,11 @@ el usuario (!?)'
             if os.path.isfile(snapshot):
                 try:
                     f=open(snapshot, 'r')
-                    bot.sendPhoto(CHAT_GROUP, f, datetime.datetime.now())
+                    bot.sendPhoto(self.CHAT_GROUP, f, datetime.datetime.now())
                     f.close()
                     
                 except:
-                    bot.sendMessage(CHAT_GROUP, u'ERROR! Hubo un error inesperado al abrir la foto (?!)')
+                    bot.sendMessage(self.CHAT_GROUP, u'ERROR! Hubo un error inesperado al abrir la foto (?!)')
                     pass
                 
             else:
@@ -647,12 +664,12 @@ el usuario (!?)'
             try:
                 proc.check_call([os.environ['FSWEBCAM_BIN'], "--config", os.environ['FSWEBCAM_CONFIG'], "--device", device, "/tmp/snapshot.jpg"],shell=True)    
                 f=open(fileout, 'rb')    #open read-only in binary mode
-                bot.sendPhoto(CHAT_GROUP, f, caption=str(datetime.datetime.now()))
+                bot.sendPhoto(self.CHAT_GROUP, f, caption=str(datetime.datetime.now()))
                 f.close()
         
             except Exception as e:
                 print e
-                bot.sendMessage(CHAT_GROUP, u'ERROR! Hubo un problema al capturar la imagen')                
+                bot.sendMessage(self.CHAT_GROUP, u'ERROR! Hubo un problema al capturar la imagen')                
                 if f:
                     f.close()
                     
@@ -665,6 +682,7 @@ el usuario (!?)'
                 ret += self.FUNCTION_SPLITTER + str(i)
         
         return ret
+
     
     
     def string2callback(self, data):
@@ -688,16 +706,19 @@ el usuario (!?)'
                 return r[0]
                 
         return None
+
     
     
     def deleteMsg(self, chat_id, msg_id):
         self.cancelMsgTimeout(chat_id, msg_id)
         bot.editMessageText( (chat_id, msg_id), u'\U0001f914')
+
     
     
     def addMsgTimeout(self, chat_id, msg_id):
         self._timers[chat_id, msg_id] = Timer(self.MSG_TIMEOUT, self.deleteMsg, [chat_id, msg_id])        
         self._timers[chat_id, msg_id].start()        
+
            
            
     def cancelMsgTimeout(self, chat_id, msg_id):
@@ -706,7 +727,6 @@ el usuario (!?)'
             timer.cancel()
              
       
-
 
     def getMsgChatId(self, msg):
         if 'message' in msg:
@@ -718,6 +738,7 @@ el usuario (!?)'
             chat_id = msg['chat']['id']
                         
         return chat_id, msg_id   
+
     
     
     def isMotionEnabled(self):
@@ -729,6 +750,32 @@ el usuario (!?)'
             pass
         
         return False
+
+    
+    
+    def close_ssh():
+        try:            
+            o = proc.check_output('ps aux', shell=True)
+            for l in o.splitlines():
+                if ('ssh' and os.environ['SSH_REMOTE_SERVER'] and 'localhost') in l:
+                    pid = int(l.split()[1])
+                    os.kill(pid, SIGKILL)
+                    print "matado ssh con PID %s" % str(pid)
+                    break
+        
+        except:
+            pass
+        
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
         
 class TimeDelay:
