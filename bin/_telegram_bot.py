@@ -82,6 +82,7 @@ el usuario (!?)'
     MOTION_MINUTES     = 'm'
     MOTION_SECONDS     = 's'
     MOTION_TIMER       = u'motionTimer'
+    SSH_TIMER          = u'sshTimer'
     
     # Callback functions usadas para procesar las respuestas de los inline keyboards.
     CBQ_FUNCTION_CANCEL     = u'Cancelar'           
@@ -297,6 +298,60 @@ el usuario (!?)'
             markup = InlineKeyboardMarkup(inline_keyboard=buttons)
             bot.sendMessage(CHAT_GROUP, u'Selecciona la cámara que usar para tomar la foto', reply_markup=markup)            
 
+
+
+    
+    def close_ssh():
+        try:            
+            o = proc.check_output('ps aux', shell=True)
+            for l in o.splitlines():
+                if ('ssh' and os.environ['SSH_REMOTE_SERVER'] and 'localhost') in l:
+                    pid = int(l.split()[1])
+                    os.kill(pid, SIGKILL)
+                    print "matado ssh con PID %s" % str(pid)
+                    break
+        
+        except:
+            pass
+        
+    
+        
+
+
+        
+    def cmd_open_ssh(self, msg, chat_id):
+        try:            
+            m = self._timers.pop(self.SSH_TIMER, None)
+            if m:
+                m.cancel()
+            
+            #cerramos puerto ssh si ya está abierto para evitar problemas
+            close_ssh()
+            
+            cmd="sshpass -e ssh -p {port} -fCNR {tunelPort}:localhost:22 {user}@{server}".format(
+                            port      = os.environ['SSH_REMOTE_PORT'],
+                            tunelPort = os.environ['SSH_REMOTE_TUNEL_PORT'],
+                            user      = os.environ['SSH_REMOTE_USER'],
+                            server    = os.environ['SSH_REMOTE_SERVER'])    
+            ret = proc.call(cmd,shell=True)
+            
+            if ret==0:
+                text = u'Se ha abierto un túnel reverso ssh que será accesible desde {}:{} durante {} segundos'.format(os.environ['SSH_REMOTE_SERVER'], os.environ['SSH_REMOTE_TUNEL_PORT'], os.environ['SSH_REMOTE_TIMEOUT'])
+                bot.editMessageText(self.getMsgChatId(msg), text)
+                
+                if not INLINE_KEYBOARDS_GROUP_ACTIVE:
+                    bot.sendMessage(self.CHAT_GROUP, text)                
+                                                
+                self._timers[self.SSH_TIMER] = Timer(int(os.environ['SSH_REMOTE_TIMEOUT']), self.close_ssh)
+                self._timers[self.SSH_TIMER].start()
+                
+            else:
+                bot.sendMessage(CHAT_GROUP, u'ERROR! No se ha podido abrir el túnel ssh (ret={})'.format(ret))
+            
+        except:
+            bot.sendMessage(CHAT_GROUP, u'ERROR! Hubo un error inesperado al abrir el túnel ssh')
+
+
         
                     
     def cmd_upload_video(self,msg, chat_id):
@@ -307,9 +362,6 @@ el usuario (!?)'
         
     def cmd_notif_emails(self,msg, chat_id):
         self.sendMessage(self.CHAT_GROUP, u'FIXME! cmd_notif_emails función no implementada')
-        
-    def cmd_open_ssh(self,msg, chat_id):
-        self.sendMessage(self.CHAT_GROUP, u'FIXME! cmd_open_ssh función no implementada')
         
     def cmd_update(self,msg, chat_id):
         self.sendMessage(self.CHAT_GROUP, u'FIXME! cmd_update función no implementada')
@@ -377,8 +429,6 @@ el usuario (!?)'
             bot.editMessageText(self.getMsgChatId(msg), text)
             if not INLINE_KEYBOARDS_GROUP_ACTIVE:
                bot.sendMessage(self.CHAT_GROUP, text)
-            
-                    
             
             m = self._timers.pop(self.MOTION_TIMER, None)
             if m:
@@ -456,7 +506,7 @@ el usuario (!?)'
         
                 
         
-    def cbq_motionStop(self, msg=None):
+    def cbq_motionStop(self, msg=None):            
         try:
             proc.call('echo sudo service motion stop', shell=True)
             
@@ -602,10 +652,7 @@ el usuario (!?)'
         
             except Exception as e:
                 print e
-                bot.sendMessage(CHAT_GROUP, u'ERROR! Hubo un problema al capturar la imagen')
-                pass
-        
-            finally:
+                bot.sendMessage(CHAT_GROUP, u'ERROR! Hubo un problema al capturar la imagen')                
                 if f:
                     f.close()
                     
