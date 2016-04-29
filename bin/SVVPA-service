@@ -197,7 +197,9 @@ case $1 in
 			
 				else
 					mkdir -p ${MOTION_DIR} 2>/dev/null
-
+					
+					#FIXME: subir automáticamente a google drive. Guardar en MySQL ID, URL, width, heigth
+					#FIXME: comprobar si está activada la notificación por email. Enviar en el email la URL de google drive en lugar de la imagen
 					python -u _sendEmailImage.py $fileIn
 					RETVAL=$(($RETVAL|$?))		
 	
