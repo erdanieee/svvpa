@@ -2,7 +2,7 @@
 
 
 from json import dumps
-import os
+import os, sys
 from re import match, findall, compile
 import subprocess as proc
 import telepot
@@ -11,7 +11,9 @@ from telepot.namedtuple import InlineQueryResultPhoto, ReplyKeyboardHide,\
 from time import sleep
 import threading
 from threading import Timer
-import pdb
+import MySQLdb
+import signal
+import datetime
 
 #poner a TRUE cuando deje de estar en fase Beta!!!!
 INLINE_KEYBOARDS_GROUP_ACTIVE = False
@@ -300,7 +302,7 @@ el usuario (!?)'
                 d=d.strip()
                 buttons.append([ InlineKeyboardButton( text=d, callback_data=self.callback2string(self.CBQ_SNAPSHOT, [d])) ])
                 
-            buttons.append( InlineKeyboardButton( text=self.BUT_CANCEL, callback_data=self.callback2string(self.CBQ_FUNCTION_CANCEL) ))    
+            buttons.append([ InlineKeyboardButton( text=self.BUT_CANCEL, callback_data=self.callback2string(self.CBQ_FUNCTION_CANCEL) ) ])    
         
             markup = InlineKeyboardMarkup(inline_keyboard=buttons)
             chat = self.CHAT_GROUP if INLINE_KEYBOARDS_GROUP_ACTIVE else msg['from']['id']
@@ -317,7 +319,7 @@ el usuario (!?)'
                 m.cancel()
             
             #cerramos puerto ssh si ya está abierto para evitar problemas
-            close_ssh()
+            self.close_ssh()
             
             cmd="sshpass -e ssh -p {port} -fCNR {tunelPort}:localhost:22 {user}@{server}".format(
                             port      = os.environ['SSH_REMOTE_PORT'],
@@ -336,13 +338,14 @@ el usuario (!?)'
             else:
                 bot.sendMessage(self.CHAT_GROUP, u'ERROR! No se ha podido abrir el túnel ssh (ret={})'.format(ret))
             
-        except:
+        except Exception as e:
+            print e
             bot.sendMessage(self.CHAT_GROUP, u'ERROR! Hubo un error inesperado al abrir el túnel ssh')
     
         
                     
     def cmd_upload_video(self, msg):
-        pattern = re.compile('([0-9]+_){12,}[0-9]+.(({})|({}))'.format(os.environ['MOTION_IMAGE_EXT'], os.environ['MOTION_VIDEO_EXT']))
+        pattern = compile('([0-9]+_){12,}[0-9]+.(({})|({}))'.format(os.environ['MOTION_IMAGE_EXT'], os.environ['MOTION_VIDEO_EXT']))
         files   = sorted([f for f in listdir(os.environ['MOTION_DIR']) if pattern.search(f) and isfile(join(os.environ['MOTION_DIR'], f))])
         
         if len(files)==0:
@@ -365,30 +368,34 @@ el usuario (!?)'
             
         
         
-    def cmd_sensors(self,msg, chat_id):
+    def cmd_sensors(self,msg):
         query = "select * from sensors order by date desc limit 1"        
         date, cpu_temp, bmp180_temp, bmp180_press, dht22_temp, dht22_hr = self.run_query(query)[0]
         
-        text = u'''{}
-        Temperatura CPU: {}ºC
-        Temperatura DHT22: {}ºC
-        Temperatura BMP180: {}ºC
-        Humedad relativa: {}%
-        Presión atmosférica: {}mmHg'''.format(date.strftime("%Y/%m/%d %H:%M"), cpu_temp, dht22_temp, bmp180_temp, dht22_hr, bmp180_press)
-        self.sendMessage(self.CHAT_GROUP, text)
+        text = u'''A continuación se muestran los datos tomados  el día *{}* a las *{}*:
+        
+```
+T. CPU: {}ºC
+T. ext: {}ºC
+T. int: {}ºC
+H. rel: {}%
+P. atm: {}mmHg
+```
+'''.format(date.strftime("%Y/%m/%d"), date.strftime("%H:%M"), cpu_temp, dht22_hr, dht22_temp, bmp180_press, bmp180_temp)
+        self.sendMessage(self.CHAT_GROUP, text, parse_mode="Markdown")
         
         
         
-    def cmd_notif_emails(self,msg, chat_id):
+    def cmd_notif_emails(self,msg):
         self.sendMessage(self.CHAT_GROUP, u'FIXME! cmd_notif_emails función no implementada')
         
-    def cmd_update(self,msg, chat_id):
+    def cmd_update(self,msg):
         self.sendMessage(self.CHAT_GROUP, u'FIXME! cmd_update función no implementada')
         
-    def cmd_reboot(self,msg, chat_id):
+    def cmd_reboot(self,msg):
         self.sendMessage(self.CHAT_GROUP, u'FIXME! cmd_reboot función no implementada')
         
-    def cmd_shutdown(self,msg, chat_id):
+    def cmd_shutdown(self,msg):
         self.sendMessage(self.CHAT_GROUP, u'FIXME! cmd_shutdown función no implementada')
 
         
@@ -747,18 +754,18 @@ el usuario (!?)'
 
     
     
-    def close_ssh():
+    def close_ssh(self):
         try:            
             o = proc.check_output('ps aux', shell=True)
             for l in o.splitlines():
                 if ('ssh' and os.environ['SSH_REMOTE_SERVER'] and 'localhost') in l:
                     pid = int(l.split()[1])
-                    os.kill(pid, SIGKILL)
+                    os.kill(pid, signal.SIGKILL)
                     print "matado ssh con PID %s" % str(pid)
                     break
         
-        except:
-            pass
+        except Exception as e:
+            print e
 
 
 
@@ -792,7 +799,8 @@ el usuario (!?)'
                 bot.sendPhoto(self.CHAT_GROUP, fd, datetime.datetime.now())
                 fd.close()
                 
-            except:
+            except Exception as e:
+                print e
                 if fd:
                     fd.close()
                 bot.sendMessage(self.CHAT_GROUP, u'ERROR! Hubo un error inesperado al enviar la foto (?!)')
@@ -805,7 +813,7 @@ el usuario (!?)'
             
 
     
-    def run_query(query=''): 
+    def run_query(self, query=''): 
         datos = ['localhost', os.environ['MYSQL_USER'], os.environ['MYSQL_PASS'], os.environ['MYSQL_DB']] 
         
         conn = MySQLdb.connect(*datos) # Conectar a la base de datos 
