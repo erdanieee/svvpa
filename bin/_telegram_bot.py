@@ -365,12 +365,19 @@ el usuario (!?)'
             
         
         
-        
-        
-        
-        
     def cmd_sensors(self,msg, chat_id):
-        self.sendMessage(self.CHAT_GROUP, u'FIXME! cmd_sensors función no implementada')
+        query = "select * from sensors order by date desc limit 1"        
+        date, cpu_temp, bmp180_temp, bmp180_press, dht22_temp, dht22_hr = self.run_query(query)[0]
+        
+        text = u'''{}
+        Temperatura CPU: {}ºC
+        Temperatura DHT22: {}ºC
+        Temperatura BMP180: {}ºC
+        Humedad relativa: {}%
+        Presión atmosférica: {}mmHg'''.format(date.strftime("%Y/%m/%d %H:%M"), cpu_temp, dht22_temp, bmp180_temp, dht22_hr, bmp180_press)
+        self.sendMessage(self.CHAT_GROUP, text)
+        
+        
         
     def cmd_notif_emails(self,msg, chat_id):
         self.sendMessage(self.CHAT_GROUP, u'FIXME! cmd_notif_emails función no implementada')
@@ -796,10 +803,28 @@ el usuario (!?)'
             bot.sendMessage(self.CHAT_GROUP, u'ERROR! Hubo un error inesperado al cargar la foto (?!)')
             
             
+
+    
+    def run_query(query=''): 
+        datos = ['localhost', os.environ['MYSQL_USER'], os.environ['MYSQL_PASS'], os.environ['MYSQL_DB']] 
+        
+        conn = MySQLdb.connect(*datos) # Conectar a la base de datos 
+        cursor = conn.cursor()         # Crear un cursor 
+        cursor.execute(query)          # Ejecutar una consulta 
+        
+        if query.upper().startswith('SELECT'): 
+            data = cursor.fetchall()   # Traer los resultados de un select 
+        else: 
+            conn.commit()              # Hacer efectiva la escritura de datos 
+            data = None 
+        
+        cursor.close()                 # Cerrar el cursor 
+        conn.close()                   # Cerrar la conexión 
+        
+        return data            
             
-            
-            
-       
+        
+   
     
     
     
