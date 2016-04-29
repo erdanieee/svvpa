@@ -94,7 +94,8 @@ el usuario (!?)'
     CBQ_MOTION_START        = u'cbq_motionStart'
     CBQ_MOTION_STOP         = u'cbq_motionStop'
     CBQ_MOTION_STATUS       = u'cbq_motionStatus'
-    CBQ_SNAPSHOT            = u'cbq_snapshot'  
+    CBQ_SNAPSHOT            = u'cbq_snapshot'
+    CBQ_UPLOAD_FILE         = u'cbq_uploadFile'  
     
     RETRIES_MAX     = 10
     RETRIES_WAIT    = 50
@@ -126,7 +127,8 @@ el usuario (!?)'
                         self.CBQ_MOTION_START           : self.cbq_motionStart,
                         self.CBQ_MOTION_STOP            : self.cbq_motionStop,
                         self.CBQ_MOTION_STATUS          : self.cbq_motionStatus,
-                        self.CBQ_SNAPSHOT               : self.cbq_snapshot
+                        self.CBQ_SNAPSHOT               : self.cbq_snapshot,
+                        self.CBQ_UPLOAD_FILE            : self.cbq_uploadFile
                         }
   
         # Commands
@@ -260,8 +262,6 @@ el usuario (!?)'
 
 
 
-
-
  
     def cmd_help(self,msg):        
         self.sendMessage(self.CHAT_GROUP, self.MSG_CMD_HELP.format(self.BOT_NAME, parse_mode="Markdown"))
@@ -279,13 +279,13 @@ el usuario (!?)'
             [InlineKeyboardButton( text=self.BUT_MOTION_STATUS, callback_data=self.callback2string( self.CBQ_MOTION_STATUS ) )],
         ])                
                         
-        chat = self.CHAT_GROUP if INLINE_KEYBOARDS_GROUP_ACTIVE else self.ADMIN_USER    
+        chat = self.CHAT_GROUP if INLINE_KEYBOARDS_GROUP_ACTIVE else msg['from']['id']    
         m = bot.sendMessage(chat, self.MSG_CMD_MOTION, reply_markup=markup)
         self.addMsgTimeout(*self.getMsgChatId(msg))
  
       
         
-    def cmd_photo(self,msg, chat_id):
+    def cmd_photo(self,msg):
         devices = os.environ['CAMERA_DEVICES'].split(",")
         
         if len(devices)==0:
@@ -298,14 +298,19 @@ el usuario (!?)'
             buttons=[]
             for d in devices:
                 d=d.strip()
-                buttons.append([ InlineKeyboardButton( text=d, callback_data=self.callback2string(self.CBQ_SNAPSHOT, [d])) ])    
+                buttons.append([ InlineKeyboardButton( text=d, callback_data=self.callback2string(self.CBQ_SNAPSHOT, [d])) ])
+                
+            buttons.append( InlineKeyboardButton( text=self.BUT_CANCEL, callback_data=self.callback2string(self.CBQ_FUNCTION_CANCEL) ))    
         
             markup = InlineKeyboardMarkup(inline_keyboard=buttons)
-            bot.sendMessage(self.CHAT_GROUP, u'Selecciona la cámara que usar para tomar la foto', reply_markup=markup)            
+            chat = self.CHAT_GROUP if INLINE_KEYBOARDS_GROUP_ACTIVE else msg['from']['id']
+            m = bot.sendMessage(chat, u'Selecciona la cámara que usar para tomar la foto', reply_markup=markup)
+            self.addMsgTimeout(*self.getMsgChatId(m))            
 
 
-        
-    def cmd_open_ssh(self, msg, chat_id):
+
+    #FIXME: abrir el ssh puede tardar en algunas ocasiones. Hacer en thread independiente     
+    def cmd_open_ssh(self, msg):
         try:            
             m = self._timers.pop(self.SSH_TIMER, None)
             if m:
@@ -323,10 +328,7 @@ el usuario (!?)'
             
             if ret==0:
                 text = u'Se ha abierto un túnel reverso ssh que será accesible desde {}:{} durante {} segundos'.format(os.environ['SSH_REMOTE_SERVER'], os.environ['SSH_REMOTE_TUNEL_PORT'], os.environ['SSH_REMOTE_TIMEOUT'])
-                bot.editMessageText(self.getMsgChatId(msg), text)
-                
-                if not INLINE_KEYBOARDS_GROUP_ACTIVE:
-                    bot.sendMessage(self.CHAT_GROUP, text)                
+                bot.sendMessage(self.CHAT_GROUP, text)
                                                 
                 self._timers[self.SSH_TIMER] = Timer(int(os.environ['SSH_REMOTE_TIMEOUT']), self.close_ssh)
                 self._timers[self.SSH_TIMER].start()
@@ -336,39 +338,32 @@ el usuario (!?)'
             
         except:
             bot.sendMessage(self.CHAT_GROUP, u'ERROR! Hubo un error inesperado al abrir el túnel ssh')
-
-
-
-    #FIXME: hacer todas las funciones que tomen algo de tiempo THREAD_SAFE
-    def upload_file(file):
-        print u"[{}] {}: Subiendo archivo a google drive (id:{})".format(datetime.datetime.now(), __file__, eventId)
-        cmd = [ os.environ['RCLONE_BIN'], "--config", os.environ['RCLONE_CONFIG'], "copy", file, "google:SVVPA/videos" ]
-        
-        try:                
-            i=0
-            while i<self.RETRIES_MAX:
-                ret = proc.call(cmd, shell=True)            
-                if ret==0:
-                    bot.sendMessage(self.CHAT_GROUP, u'El archivo {} se ha subido correctamente a google drive. Recuerda que puedes ver los archivos subidos a google drive en [este enlace](https://drive.google.com/folderview?id=0Bwse_WnehFNKT2I3N005YmlYMms&usp=sharing)'.format(os.path.basename(file)), parse_mode=Markdown)
-                    return
-                
-                i+=1
-                Time.sleep(self.RETRIES_WAIT)
-                    
-            bot.sendMessage(self.CHAT_GROUP, u'ERROR! No se ha podido subir el archivo {} a google drive. Inténtalo de nuevo más tarde'.format(os.path.basename(file)))
-                            
-        except Exception as e:
-            print >> sys.stderr, u"[{}] {}: ERROR! Se produjeron errores al subir el vídeo a google drive: {}".format(datetime.datetime.now(), __file__, repr(e))
-            bot.sendMessage(self.CHAT_GROUP, u'ERROR! Se ha producido un error inesperado al subir el archivo {} a google drive'.format(os.path.basename(file)))
-            
-
-                
-    
     
         
                     
     def cmd_upload_video(self, msg):
-        return
+        pattern = re.compile('([0-9]+_){12,}[0-9]+.(({})|({}))'.format(os.environ['MOTION_IMAGE_EXT'], os.environ['MOTION_VIDEO_EXT']))
+        files   = sorted([f for f in listdir(os.environ['MOTION_DIR']) if pattern.search(f) and isfile(join(os.environ['MOTION_DIR'], f))])
+        
+        if len(files)==0:
+            bot.sendMessage(self.CHAT_GROUP, u'No hay eventos capturados')
+        
+        else:
+            buttons=[]
+            for f in files:
+                y,m,d,H,M = f.split("_")[:5]
+                t = u'{}/{}/{} {}:{}'.format(y,m,d,H,M)
+                
+                buttons.append([ InlineKeyboardButton( text=t, callback_data=self.callback2string(self.CBQ_UPLOAD_FILE, [f])) ])
+                          
+            buttons.append( InlineKeyboardButton( text=self.BUT_CANCEL, callback_data=self.callback2string(self.CBQ_FUNCTION_CANCEL) ))
+                      
+            markup  = InlineKeyboardMarkup(inline_keyboard=buttons)    
+            chat    = self.CHAT_GROUP if INLINE_KEYBOARDS_GROUP_ACTIVE else msg['from']['id']        
+            m       = bot.sendMessage( chat, u'Selecciona el número de {} que quieres pausar el servicio {}'.format(text.upper(), t), reply_markup=markup)
+            self.addMsgTimeout(*self.getMsgChatId(m))             
+            
+        
         
         
         
@@ -388,27 +383,41 @@ el usuario (!?)'
         
     def cmd_shutdown(self,msg, chat_id):
         self.sendMessage(self.CHAT_GROUP, u'FIXME! cmd_shutdown función no implementada')
-        
- 
-        
-    def ask_AddNewUser(self, msg):
-        user_id  = msg['from']['id']
-        name     = msg['from']['first_name']
-        lastname = msg['from']['last_name']
-    
-        markup = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton( text=self.BUT_ALLOW_USER_YES,            callback_data=self.callback2string(self.CBQ_ADD_USER,            [user_id]) )],
-            [InlineKeyboardButton( text=self.BUT_ALLOW_USER_NO_THIS_TIME,   callback_data=self.callback2string(self.CBQ_BLOCK_USER_ONE_TIME, [user_id]) )],
-            [InlineKeyboardButton( text=self.BUT_ALLOW_USER_NO_NEVER,       callback_data=self.callback2string(self.CBQ_BAN_USER,            [user_id]) )],
-            [InlineKeyboardButton( text=self.BUT_CANCEL,                    callback_data=self.callback2string(self.CBQ_FUNCTION_CANCEL)  )],
-        ])                
-        
-        #TODO: add Timer para borrar el mensaje si no se contesta en un tiempo prudencial        
-        chat = self.CHAT_GROUP if INLINE_KEYBOARDS_GROUP_ACTIVE else self.ADMIN_USER    
-        m = bot.sendMessage(chat, self.MSG_NEW_USER.format(name, lastname, self.BOT_NAME, id), reply_markup=markup)
-        self.addMsgTimeout(*self.getMsgChatId(msg))
 
         
+          
+    def cbq_AddUser(self, msg, arg):
+        user_id         = int(arg)
+        from_name       = msg['from']['first_name']
+        tk              = msg['message']['text'].split(" ")
+        user_name       = tk[0]
+        user_lastname   = tk[1]
+        
+        
+        #añadimos usuario en la ejecución actual
+        self.ALLOWED_USERS.append( user_id )
+        
+        try:
+            #Añadimos usuario en el fichero de configuración
+            cmd     = 'grep TELEGRAM_ALLOWED_USERS {}'.format(self.FILE_CONSTANTS)
+            p       = proc.check_output(cmd, shell=True).strip()
+            users   = set(findall('[0-9]+', p))
+            users.add(str(user_id))
+            
+            cmd     = 'sed -i -r \'s/TELEGRAM_ALLOWED_USERS="([0-9,]+)"/TELEGRAM_ALLOWED_USERS="{}"/g\' {}'.format(",".join(users), self.FILE_CONSTANTS)
+            proc.call(cmd, shell=True) 
+                        
+            text = self.MSG_USER_ADDED.format(from_name, user_name, user_lastname, user_name)        
+            bot.editMessageText( self.getMsgChatId(msg), text)
+            
+            if not INLINE_KEYBOARDS_GROUP_ACTIVE:
+                bot.sendMessage(self.CHAT_GROUP, text)
+                 
+        except Exception as e:
+            print e            
+            bot.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_ADDING_USER) 
+        
+      
       
     def cbq_cancel(self, msg):
         self.deleteMsg(*self.getMsgChatId(msg))
@@ -555,39 +564,6 @@ el usuario (!?)'
             bot.sendMessage(self.CHAT_GROUP, u'ERROR! Hubo un problema al comprobar el estado del servicio de detección de movimiento (!?)')
         
         
-          
-    def cbq_AddUser(self, msg, arg):
-        user_id         = int(arg)
-        from_name       = msg['from']['first_name']
-        tk              = msg['message']['text'].split(" ")
-        user_name       = tk[0]
-        user_lastname   = tk[1]
-        
-        
-        #añadimos usuario en la ejecución actual
-        self.ALLOWED_USERS.append( user_id )
-        
-        try:
-            #Añadimos usuario en el fichero de configuración
-            cmd     = 'grep TELEGRAM_ALLOWED_USERS {}'.format(self.FILE_CONSTANTS)
-            p       = proc.check_output(cmd, shell=True).strip()
-            users   = set(findall('[0-9]+', p))
-            users.add(str(user_id))
-            
-            cmd     = 'sed -i -r \'s/TELEGRAM_ALLOWED_USERS="([0-9,]+)"/TELEGRAM_ALLOWED_USERS="{}"/g\' {}'.format(",".join(users), self.FILE_CONSTANTS)
-            proc.call(cmd, shell=True) 
-                        
-            text = self.MSG_USER_ADDED.format(from_name, user_name, user_lastname, user_name)        
-            bot.editMessageText( self.getMsgChatId(msg), text)
-            
-            if not INLINE_KEYBOARDS_GROUP_ACTIVE:
-                bot.sendMessage(self.CHAT_GROUP, text)
-                 
-        except Exception as e:
-            print e            
-            bot.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_ADDING_USER) 
-        
-        
         
     def cbq_BlockUserOneTime(self, msg, arg):
         user_id         = int(arg)
@@ -634,45 +610,56 @@ el usuario (!?)'
             print e            
             bot.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_BANNING_USER) 
       
-      
+   
       
     def cbq_snapshot(self, msg, device):                
         if msg:
             bot.editMessageText(self.getMsgChatId(msg), u'Capturando foto...')
         
         if self.isMotionEnabled():
-            snapshot = os.environ['MOTION_DIR'] + '.snapshot-' + str(int(device[-1])+1) + '.jpg'
+            fileout = os.environ['MOTION_DIR'] + '.snapshot-' + str(int(device[-1])+1) + '.jpg'
             
-            if os.path.isfile(snapshot):
-                try:
-                    f=open(snapshot, 'r')
-                    bot.sendPhoto(self.CHAT_GROUP, f, datetime.datetime.now())
-                    f.close()
-                    
-                except:
-                    bot.sendMessage(self.CHAT_GROUP, u'ERROR! Hubo un error inesperado al abrir la foto (?!)')
-                    pass
-                
-            else:
-                print >> sys.stderr, "ERROR! No existe el archivo {} utilizado para el device {}".format(snapshot, device)
-                bot.sendMessage(self.CHAT_GROUP, u'ERROR! Hubo un error inesperado al cargar la foto (?!)')
-        
         else:
             fileout="/tmp/snapshot.jpg"
-            f=None
-        
+            
             try:
-                proc.check_call([os.environ['FSWEBCAM_BIN'], "--config", os.environ['FSWEBCAM_CONFIG'], "--device", device, "/tmp/snapshot.jpg"],shell=True)    
-                f=open(fileout, 'rb')    #open read-only in binary mode
-                bot.sendPhoto(self.CHAT_GROUP, f, caption=str(datetime.datetime.now()))
-                f.close()
-        
+                proc.check_call([os.environ['FSWEBCAM_BIN'], "--config", os.environ['FSWEBCAM_CONFIG'], "--device", device, "/tmp/snapshot.jpg"],shell=True)
+                
             except Exception as e:
                 print e
                 bot.sendMessage(self.CHAT_GROUP, u'ERROR! Hubo un problema al capturar la imagen')                
-                if f:
-                    f.close()
-                    
+                 
+        t = threading.Thread(target=self.send_photo, args=(fileout,))
+        t.start()
+           
+      
+    def cbq_uploadFile(self, msg, basenameFile):
+        file = os.environ['MOTION_DIR'] + basenameFile
+        
+        t = threading.Thread(target=self.upload_file, args=(file,))
+        t.start()
+        
+        bot.editMessageText(self.getMsgChatId(msg), u'Subiendo archivo {}'.format(basenameFile))        
+
+
+        
+    def ask_AddNewUser(self, msg):
+        user_id  = msg['from']['id']
+        name     = msg['from']['first_name']
+        lastname = msg['from']['last_name']
+    
+        markup = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton( text=self.BUT_ALLOW_USER_YES,            callback_data=self.callback2string(self.CBQ_ADD_USER,            [user_id]) )],
+            [InlineKeyboardButton( text=self.BUT_ALLOW_USER_NO_THIS_TIME,   callback_data=self.callback2string(self.CBQ_BLOCK_USER_ONE_TIME, [user_id]) )],
+            [InlineKeyboardButton( text=self.BUT_ALLOW_USER_NO_NEVER,       callback_data=self.callback2string(self.CBQ_BAN_USER,            [user_id]) )],
+            [InlineKeyboardButton( text=self.BUT_CANCEL,                    callback_data=self.callback2string(self.CBQ_FUNCTION_CANCEL)  )],
+        ])                
+        
+        #TODO: add Timer para borrar el mensaje si no se contesta en un tiempo prudencial        
+        chat = self.CHAT_GROUP if INLINE_KEYBOARDS_GROUP_ACTIVE else self.ADMIN_USER    
+        m = bot.sendMessage(chat, self.MSG_NEW_USER.format(name, lastname, self.BOT_NAME, id), reply_markup=markup)
+        self.addMsgTimeout(*self.getMsgChatId(msg))
+
             
        
     def callback2string(self,function, arg=None):
@@ -765,11 +752,54 @@ el usuario (!?)'
         
         except:
             pass
-        
 
+
+
+    def upload_file(file):
+        print u"[{}] {}: Subiendo archivo a google drive (id:{})".format(datetime.datetime.now(), __file__, eventId)
+        cmd = [ os.environ['RCLONE_BIN'], "--config", os.environ['RCLONE_CONFIG'], "copy", file, "google:SVVPA/videos" ]
+        
+        try:                
+            i=0
+            while i<self.RETRIES_MAX:
+                ret = proc.call(cmd, shell=True)            
+                if ret==0:
+                    bot.sendMessage(self.CHAT_GROUP, u'El archivo {} se ha subido correctamente a google drive. Recuerda que puedes ver los archivos subidos a google drive en [este enlace](https://drive.google.com/folderview?id=0Bwse_WnehFNKT2I3N005YmlYMms&usp=sharing)'.format(os.path.basename(file)), parse_mode=Markdown)
+                    return
+                
+                i+=1
+                Time.sleep(self.RETRIES_WAIT)
+                    
+            bot.sendMessage(self.CHAT_GROUP, u'ERROR! No se ha podido subir el archivo {} a google drive. Inténtalo de nuevo más tarde'.format(os.path.basename(file)))
+                            
+        except Exception as e:
+            print >> sys.stderr, u"[{}] {}: ERROR! Se produjeron errores al subir el vídeo a google drive: {}".format(datetime.datetime.now(), __file__, repr(e))
+            bot.sendMessage(self.CHAT_GROUP, u'ERROR! Se ha producido un error inesperado al subir el archivo {} a google drive'.format(os.path.basename(file)))
+            
     
     
-    
+    def send_photo(self, file):
+        if os.path.isfile(file):
+            try:
+                fd = open(file, 'rb')
+                bot.sendPhoto(self.CHAT_GROUP, fd, datetime.datetime.now())
+                fd.close()
+                
+            except:
+                if fd:
+                    fd.close()
+                bot.sendMessage(self.CHAT_GROUP, u'ERROR! Hubo un error inesperado al enviar la foto (?!)')
+                pass
+            
+        else:
+            print >> sys.stderr, "ERROR! No existe el archivo {}".format(file)
+            bot.sendMessage(self.CHAT_GROUP, u'ERROR! Hubo un error inesperado al cargar la foto (?!)')
+            
+            
+            
+            
+            
+       
     
     
     
