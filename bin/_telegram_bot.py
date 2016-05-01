@@ -77,6 +77,10 @@ el usuario (!?)'
     BUT_MOTION_STOP             = u'\u23f9 Parar'
     BUT_MOTION_PAUSE            = u'\u23f8 Pausar'
     BUT_MOTION_STATUS           = u'\u2753 Comprobar estado'
+    BUT_SHUTDOWN_NO             = u'\u2620 No'
+    BUT_SHUTDOWN_NOTSURE        = u'\u2620 No totalmente'
+    BUT_SHUTDOWN_MAYBE          = u'\u2620 Creo que sí'
+    BUT_SHUTDOWN_YES            = u'\U0001f44c\U0001f3fc Absolutamente'
                      
     FUNCTION_SPLITTER  = u'*'                 
     MOTION_DAYS        = 'd'
@@ -85,6 +89,7 @@ el usuario (!?)'
     MOTION_SECONDS     = 's'
     MOTION_TIMER       = u'motionTimer'
     SSH_TIMER          = u'sshTimer'
+    SHUTDOWN_CONFIRM   = u'True'
     
     # Callback functions usadas para procesar las respuestas de los inline keyboards.
     CBQ_FUNCTION_CANCEL     = u'Cancelar'           
@@ -97,7 +102,8 @@ el usuario (!?)'
     CBQ_MOTION_STOP         = u'cbq_motionStop'
     CBQ_MOTION_STATUS       = u'cbq_motionStatus'
     CBQ_SNAPSHOT            = u'cbq_snapshot'
-    CBQ_UPLOAD_FILE         = u'cbq_uploadFile'  
+    CBQ_UPLOAD_FILE         = u'cbq_uploadFile'
+    CBQ_SHUTDOWN            = u'cbq_shutdown'  
     
     RETRIES_MAX     = 10
     RETRIES_WAIT    = 50
@@ -130,7 +136,8 @@ el usuario (!?)'
                         self.CBQ_MOTION_STOP            : self.cbq_motionStop,
                         self.CBQ_MOTION_STATUS          : self.cbq_motionStatus,
                         self.CBQ_SNAPSHOT               : self.cbq_snapshot,
-                        self.CBQ_UPLOAD_FILE            : self.cbq_uploadFile
+                        self.CBQ_UPLOAD_FILE            : self.cbq_uploadFile,
+                        self.CBQ_SHUTDOWN               : self.cbq_shutdown
                         }
   
         # Commands
@@ -386,18 +393,44 @@ P. atm: {}mmHg
         
         
         
-    def cmd_notif_emails(self,msg):
-        self.sendMessage(self.CHAT_GROUP, u'FIXME! cmd_notif_emails función no implementada')
-        
     def cmd_update(self,msg):
-        self.sendMessage(self.CHAT_GROUP, u'FIXME! cmd_update función no implementada')
+        try:
+            output = proc.check_output('cd {}; git pull'.format(os.environ['SVVPA_DIR']), shell=True)
+            self.sendMessage(self.CHAT_GROUP, u'''Repositorio actualizado con éxito\n```{}```'''.format(output))
+            
+        except Exception as e:
+            self.sendMessage(self.CHAT_GROUP, u'ERROR! Hubo un problema al actualizar el repositorio\n```{}```'.format(rep(e)))
+        
+ 
         
     def cmd_reboot(self,msg):
-        self.sendMessage(self.CHAT_GROUP, u'FIXME! cmd_reboot función no implementada')
-        
-    def cmd_shutdown(self,msg):
-        self.sendMessage(self.CHAT_GROUP, u'FIXME! cmd_shutdown función no implementada')
+        self.sendMessage(self.CHAT_GROUP, u'Se está reiniciando el sistema. Este proceso debería tardar unos 45s')
+        try:
+            proc.check_call('sudo /sbin/shutdown -r now', shell=True)
+            
+        except Exception as e:
+            self.sendMessage(self.CHAT_GROUP, u'ERROR! Hubo un problema al reiniciar el sistema\n```{}```'.format(rep(e)))
 
+
+        
+    def cmd_shutdown(self,msg):            
+        markup = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton( text=self.BUT_SHUTDOWN_NO,       callback_data=self.callback2string( self.CBQ_FUNCTION_CANCEL ) )],
+            [InlineKeyboardButton( text=self.BUT_SHUTDOWN_NOTSURE,  callback_data=self.callback2string( self.CBQ_FUNCTION_CANCEL ) )],
+            [InlineKeyboardButton( text=self.BUT_SHUTDOWN_MAYBE,    callback_data=self.callback2string( self.CBQ_FUNCTION_CANCEL ) )],
+            [InlineKeyboardButton( text=self.BUT_SHUTDOWN_YES,      callback_data=self.callback2string( self.CBQ_SHUTDOWN ) )],
+        ])                
+                        
+        chat = self.CHAT_GROUP if INLINE_KEYBOARDS_GROUP_ACTIVE else msg['from']['id']    
+        m = bot.sendMessage(chat, u'Se va a proceder a apagar SVVPA. Este comando debería ejecutarse *SIEMPRE* desde E.C., ya que para volver a iniciar el sistema es necesario desactivar y volver a activar físicamente el miniinterruptor que está junto a las baterías. ¿Realmente quieres apagar el sistema? ', reply_markup=markup)
+        self.addMsgTimeout(*self.getMsgChatId(msg))
+
+
+        
+    def cmd_notif_emails(self,msg):
+        self.sendMessage(self.CHAT_GROUP, u'Este comando sirve para activar o desactivar las notificaciones de eventos (nuevo movimiento, arranque/parada sistema, errores, ...) mediante correo electrónico. Actualmente este servicio está {}')
+        
+        
         
           
     def cbq_AddUser(self, msg, arg):
@@ -655,6 +688,18 @@ P. atm: {}mmHg
         
         bot.editMessageText(self.getMsgChatId(msg), u'Subiendo archivo {}'.format(basenameFile))        
 
+
+
+    def cbq_shutdown(self, msg):
+        bot.editMessageText(self.getMsgChatId(msg), u'El sistema se está apagando.Recuerda que para volver a iniciar es necesario desactivar y activar físicamente el miniinterruptor que está junto a las baterías')
+        try:
+            proc.check_call('sudo /sbin/shutdown -r now', shell=True)
+            
+        except Exception as e:
+            bot.editMessageText(self.getMsgChatId(msg), u'ERROR! Hubo un problema al intentar apagar el sistema```{}```'.format(rep(e)))
+            
+        
+            
 
         
     def ask_AddNewUser(self, msg):
