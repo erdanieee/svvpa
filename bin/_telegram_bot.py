@@ -772,7 +772,7 @@ P. atm: {}mmHg
     def cbq_emailNotif(self, msg, state):            
         try:
             print u"[{}] {}: {}ctivando las notificaciones por email".format(u"A" if state==self.EMAIL_NOTIF_ON else u"Desa", datetime.datetime.now(), __file__)
-            cmd = u"sed -r 's/export EMAIL_NOTIF=\"([a-zA-Z]+)\"/export EMAIL_NOTIF=\"{}\"/g' {}".format(state, self.FILE_CONSTANTS)
+            cmd = u"sed -ir 's/export EMAIL_NOTIF=\"([a-zA-Z]+)\"/export EMAIL_NOTIF=\"{}\"/g' {}".format(state, self.FILE_CONSTANTS)
             proc.call(cmd, shell=True)
             
         except Exception as e:
