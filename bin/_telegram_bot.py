@@ -1,16 +1,15 @@
 # encoding: utf-8
 
 
-from json import dumps
+import json
 import os, sys
-from re import match, findall, compile
+import re
 import subprocess as proc
 import telepot
 from telepot.namedtuple import InlineQueryResultPhoto, ReplyKeyboardHide,\
     InlineKeyboardMarkup, InlineKeyboardButton
-from time import sleep
+import time
 import threading
-from threading import Timer
 import MySQLdb
 import signal
 import datetime
@@ -55,18 +54,76 @@ la captura.
 /reiniciar - reinicia el sistema
 /apagar - Apaga el sistema
     '''
-    MSG_USER_ADDED = u'{} ha añadido a {} {} a la lista de usuarios autorizados. \
-A partir de este momento {} puede ejecutar comandos a través de telegram!'
-    MSG_ERROR_ADDING_USER = u'ERROR! Hubo un problema al añadir el usuario a la \
-lista de usuarios autorizados (!?)'
-    MSG_BLOCKED_USER = u'Se ha bloqueado a {} {}. Este usuario no podrá enviar \
-comandos por telegram hasta la próxima vez que se reinicie el sistema'
-    MSG_BANN_USER = u'{} ha bloqueado permanentemente a {} {}. Este usuario no \
-podrá volver a enviar comandos a través de telegram!'
-    MSG_ERROR_BANNING_USER = u'ERROR! Hubo un problema al bloquear permanentemente \
-el usuario (!?)'
-    MSG_CMD_MOTION = u'Este comando sirve para controlar la detección de movimiento. \
-¿Qué quieres hacer?'
+    MSG_USER_ADDED = u'''{} ha añadido a {} {} a la lista de usuarios autorizados. \
+A partir de este momento {} puede ejecutar comandos a través de telegram!'''
+    MSG_ERROR_ADDING_USER = u'''ERROR! Hubo un problema al añadir el usuario a la \
+lista de usuarios autorizados (!?)'''
+    MSG_BLOCKED_USER = u'''Se ha bloqueado a {} {}. Este usuario no podrá enviar \
+comandos por telegram hasta la próxima vez que se reinicie el sistema'''
+    MSG_BANN_USER = u'''{} ha bloqueado permanentemente a {} {}. Este usuario no \
+podrá volver a enviar comandos a través de telegram!'''
+    MSG_ERROR_BANNING_USER = u'''ERROR! Hubo un problema al bloquear permanentemente \
+el usuario (!?)'''
+    MSG_CMD_MOTION = u'''Este comando sirve para controlar la detección de movimiento. \
+¿Qué quieres hacer?'''
+    MSG_ERROR_NO_CAMERAS = u'''ERROR! No hay cámaras configuradas'''
+    MSG_SELECT_DEVICE = u'''Selecciona la cámara que quieras usar para tomar la foto'''
+    MSG_SSH_OPENED = u'''Se ha abierto un túnel reverso ssh que será accesible \
+desde {}:{} durante {} segundos'''
+    MSG_ERROR_SSH = u'ERROR! No se ha podido abrir el túnel ssh (ret={})'
+    MSG_ERROR_UNEXPECTED = u'''ERROR! Se ha producido un error inesperado (?!):
+```{}```'''
+    MSG_MOTION_NO_EVENTS = u'''Todavía no hay eventos capturados'''
+    MSG_CMD_UPLOAD = u'''Este comando sirve para subir los vídeos capturados a \
+Google Drive (las imágenes más representativas se suben automáticamente). \
+Selecciona el vídeo del evento que quieres subir a Google Drive (el gasto \
+actual de datos es de {} de los {}MB que incluye la tarifa).'''
+    MSG_CMD_SENSORS = u'''A continuación se muestran los datos tomados  el día \
+*{}* a las *{}*:
+        
+```
+T. CPU: {}ºC
+T. ext: {}ºC
+T. int: {}ºC
+H. rel: {}%
+P. atm: {}mmHg
+```
+'''
+    MSG_CMD_UPDATE = u'''Repositorio actualizado con éxito\n```{}```'''
+    MSG_CMD_REBOOT = u'''Se está reiniciando el sistema. Este proceso debería \
+tardar unos 45s'''
+    MSG_CMD_SHUTDOWN = u'''Se va a proceder a apagar SVVPA. Este comando debería \
+ejecutarse *SIEMPRE* desde E.C., ya que para volver a iniciar el sistema es \
+necesario desactivar y volver a activar físicamente el miniinterruptor que está \
+junto a las baterías. ¿Realmente quieres apagar el sistema? '''
+    MSG_CMD_EMAIL_NOTIF =u'''Este comando sirve para activar o desactivar las \
+notificaciones (nuevo movimiento, arranque/parada sistema, errores, ...) \
+mediante correo electrónico. Actualmente este servicio está {}. 
+¿Qué deseas hacer?'''
+    MSG_ERROR_FAKE = u'''ERROR! DIVISIÓN ENTRE CERO!.\nSVVPA está a punto de \
+echar a arder por intentar pausar cero segundos!! \U0001f602\U0001f602\U0001f602'''
+    MSG_CMD_MOTION_PAUSE = u'''La detección de movimiento se iniciará \
+automáticamente dentro de {}.'''
+    MSG_CMD_MOTION_TIME_SET = u'''Selecciona el número de {} que quieres pausar \
+el servicio {}'''
+    MSG_MOTION_START = u'''La detección de movimiento se ha activado \
+correctamente \U0001f440.'''
+    MSG_CMD_MOTION_STOP = u'''La detección de movimiento se ha detenido \U0001f648 '''
+    MSG_CMD_MOTION_ENABLED = u'''La detección de movimiento está activa \U0001f440'''
+    MSG_CMD_MOTION_DISABLED = u'''La detección de movimiento está inactiva \U0001f648'''
+    MSG_CMD_SNAPSHOT = u'''Capturando foto...'''
+    MSG_CMD_SHUTDOWN = u'''El sistema se está apagando.Recuerda que para volver \
+a iniciar es necesario desactivar y activar físicamente el miniinterruptor que \
+está junto a las baterías'''
+    MSG_CMD_EMAIL_NOTIF_ENABLED = u'''Las notificaciones por email están \
+actualmente activadas \u2709\ufe0f'''
+    MSG_CMD_EMAIL_NOTIF_DISABLED = u'''Las notificaciones por email están \
+actualmente desactivadas \U0001f64a'''
+    MSG_CMD_UPLOAD_DONE = u'El archivo {} se ha subido correctamente a google \
+drive. Recuerda que puedes ver los archivos subidos a google drive en \
+[este enlace](https://drive.google.com/folderview?id=0Bwse_WnehFNKT2I3N005YmlYMms&usp=sharing)'
+    MSG_ERROR_UPLOAD_MAX_TRIES = u'ERROR! No se ha podido subir el archivo {} a \
+google drive. Inténtalo de nuevo más tarde'
 
     
     BUT_CANCEL                  = u'Cancelar'
@@ -113,6 +170,11 @@ el usuario (!?)'
     RETRIES_MAX     = 10
     RETRIES_WAIT    = 50
     
+    SIZE_KB = 1024.0
+    SIZE_MB = 1048576.0 
+    SIZE_GB = 1073741824.0 
+    SIZE_TB = 1099511627776.0 
+    
     
     def __init__(self, *args, **kwargs):    
         super(Telegram_bot, self).__init__(*args, **kwargs)
@@ -126,7 +188,7 @@ el usuario (!?)'
         self.FILE_CONSTANTS = os.environ['BIN_DIR']+'CONSTANTS.sh' 
         self.BOT_NAME       = self.getMe()['username']
         #self.MSG_TIMEOUT    = int(os.environ['TELEGRAM_MSG_TIMEOUT'])
-        self.MSG_TIMEOUT    = 15#3600
+        self.MSG_TIMEOUT    = 3600
         
         self._timers        = {}
         self._motionDelay   = None
@@ -169,7 +231,8 @@ el usuario (!?)'
         
     def handle(self, msg):
         flavor = telepot.flavor(msg)
-        print dumps(msg, sort_keys=True, indent=4, separators=(',', ': '))
+        #print json.dumps(msg, sort_keys=True, indent=4, separators=(',', ': '))
+        print u"[{}] {}: Msg:\n{}".format(datetime.datetime.now(), __file__, msg)
         print u"[{}] {}: Flavor: {}".format(datetime.datetime.now(), __file__, flavor)
         
         if flavor == 'chat':
@@ -199,7 +262,7 @@ el usuario (!?)'
     def on_chat_message(self, msg):
         content_type, chat_type, chat_id = telepot.glance(msg)
         user_id = msg['from']['id']
-        #print 'Normal message:\n%s', dumps(msg, sort_keys=True, indent=4, separators=(',', ': '))
+        #print 'Normal message:\n%s', json.dumps(msg, sort_keys=True, indent=4, separators=(',', ': '))
         
         # solo permite mensajes de texto y de usuarios NO baneados o admin
         if content_type == 'text' and user_id not in self.BANNED_USERS:
@@ -271,7 +334,7 @@ el usuario (!?)'
                     photo_width = int(tk[2]), 
                     photo_height = int(tk[3])))
             
-            #print 'Inline Query:\n:', dumps(msg, sort_keys=True, indent=4, separators=(',', ': '))    
+            #print 'Inline Query:\n:', json.dumps(msg, sort_keys=True, indent=4, separators=(',', ': '))    
             
             self.answerInlineQuery(query_id, f)        
             
@@ -286,7 +349,7 @@ el usuario (!?)'
     ################################    
     def on_chosen_inline_result(self, msg):
         result_id, from_id, query_string = telepot.glance(msg, flavor='chosen_inline_result')
-        #print 'Chosen Inline Result:\n%s', dumps(msg, sort_keys=True, indent=4, separators=(',', ': '))        
+        #print 'Chosen Inline Result:\n%s', json.dumps(msg, sort_keys=True, indent=4, separators=(',', ': '))        
         self.cbq_uploadVideo(msg)
 
 
@@ -322,8 +385,8 @@ el usuario (!?)'
         devices = os.environ['CAMERA_DEVICES'].split(",")
         
         if len(devices)==0:
-            print >>sys.stderr, u"[{}] {}: ERROR! No existen dispositivos de cámaras configurados".format(datetime.datetime.now(), __file__)
-            bot.sendMessage(msg['chat']['id'], u'ERROR! No hay cámaras configuradas')
+            print >>sys.stderr, u"[{}] {}: ERROR! No existen dispositivos de cámaras configurados".format(datetime.datetime.now(), __file__)            
+            bot.sendMessage(msg['chat']['id'], self.MSG_ERROR_NO_CAMERAS)
         
         elif len(devices)==1:
             self.cbq_snapshot(None, devices[0])
@@ -337,8 +400,8 @@ el usuario (!?)'
             buttons.append([ InlineKeyboardButton( text=self.BUT_CANCEL, callback_data=self.callback2string(self.CBQ_FUNCTION_CANCEL) ) ])    
         
             markup  = InlineKeyboardMarkup(inline_keyboard=buttons)
-            chat    = self.CHAT_GROUP if INLINE_KEYBOARDS_GROUP_ACTIVE else msg['from']['id']
-            m       = bot.sendMessage(chat, u'Selecciona la cámara que quieras usar para tomar la foto', reply_markup=markup)
+            chat    = self.CHAT_GROUP if INLINE_KEYBOARDS_GROUP_ACTIVE else msg['from']['id']            
+            m       = bot.sendMessage(chat, self.MSG_SELECT_DEVICE, reply_markup=markup)
             self.addMsgTimeout(*self.getMsgChatId(m))            
 
 
@@ -362,83 +425,87 @@ el usuario (!?)'
             
             if ret==0:
                 print u"[{}] {}: Túnel ssh abierto".format(datetime.datetime.now(), __file__)
-                text = u'Se ha abierto un túnel reverso ssh que será accesible desde {}:{} durante {} segundos'.format(os.environ['SSH_REMOTE_SERVER'], os.environ['SSH_REMOTE_TUNEL_PORT'], os.environ['SSH_REMOTE_TIMEOUT'])
-                bot.sendMessage(self.CHAT_GROUP, text)
+                bot.sendMessage(self.CHAT_GROUP, self.MSG_SSH_OPENED.format(os.environ['SSH_REMOTE_SERVER'], 
+                                                                            os.environ['SSH_REMOTE_TUNEL_PORT'], 
+                                                                            os.environ['SSH_REMOTE_TIMEOUT']))
                                                 
-                self._timers[self.SSH_TIMER] = Timer(int(os.environ['SSH_REMOTE_TIMEOUT']), self.close_ssh)
+                self._timers[self.SSH_TIMER] = threading.Timer(int(os.environ['SSH_REMOTE_TIMEOUT']), self.close_ssh)
                 self._timers[self.SSH_TIMER].start()
                 
             else:
-                print >>sys.stderr, u"[{}] {}: ERROR! Hubo un problema al abrir el puerto ssh (ret={})".format(datetime.datetime.now(), __file__, ret)
-                bot.sendMessage(self.CHAT_GROUP, u'ERROR! No se ha podido abrir el túnel ssh (ret={})'.format(ret))
+                print >>sys.stderr, u"[{}] {}: ERROR! Hubo un problema al abrir el puerto ssh (ret={})".format(datetime.datetime.now(), __file__, ret)                
+                bot.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_SSH.format(ret))
             
         except Exception as e:
-            print >>sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al abrir el túnel ssh:\n{}".format(datetime.datetime.now(), __file__, repr(e))
-            bot.sendMessage(self.CHAT_GROUP, u'ERROR! Hubo un error inesperado al abrir el túnel ssh (?!)')
+            print >>sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al abrir el túnel ssh:\n{}".format(datetime.datetime.now(), __file__, repr(e))            
+            bot.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))
+        
         
                     
     def cmd_upload_video(self, msg):
-        pattern = compile('([0-9]+_){12,}[0-9]+.{}'.format(os.environ['MOTION_VIDEO_EXT']))
-        files   = sorted([f for f in listdir(os.environ['MOTION_DIR']) if pattern.search(f) and isfile(join(os.environ['MOTION_DIR'], f))])
+        pattern = re.compile('([0-9]+_){12,}[0-9]+.' + os.environ['MOTION_VIDEO_EXT'])
+        files   = sorted([f for f in os.listdir(os.environ['MOTION_DIR']) if pattern.search(f) and os.path.isfile(os.path.join(os.environ['MOTION_DIR'], f))])
+        os.path
         
         if len(files)==0:
-            print u"[{}] {}: Todavía no hay eventos capturados".format(datetime.datetime.now(), __file__)
-            bot.sendMessage(self.CHAT_GROUP, u'Todavía no hay eventos capturados')
+            print u"[{}] {}: Todavía no hay eventos capturados".format(datetime.datetime.now(), __file__)            
+            bot.sendMessage(self.CHAT_GROUP, self.MSG_MOTION_NO_EVENTS)
         
         else:
             buttons=[]
             for f in files:
                 y,m,d,H,M = f.split("_")[:5]
-                t = u'{}/{}/{} {}:{}'.format(y,m,d,H,M)
+                t = u'{}/{}/{} {}:{} ({})'.format(y,m,d,H,M, self.get_fileSize(os.path.join(os.environ['MOTION_DIR'], f)))
                 
                 buttons.append([ InlineKeyboardButton( text=t, callback_data=self.callback2string(self.CBQ_UPLOAD_FILE, [f[:-4]])) ])
                           
-            buttons.append( InlineKeyboardButton( text=self.BUT_CANCEL, callback_data=self.callback2string(self.CBQ_FUNCTION_CANCEL) ))
+            buttons.append([ InlineKeyboardButton( text=self.BUT_CANCEL, callback_data=self.callback2string(self.CBQ_FUNCTION_CANCEL) ) ])
                       
             markup  = InlineKeyboardMarkup(inline_keyboard=buttons)    
-            chat    = self.CHAT_GROUP if INLINE_KEYBOARDS_GROUP_ACTIVE else msg['from']['id']        
-            m       = bot.sendMessage( chat, u'Selecciona el vídeo del evento que quieres subir a Google Drive', reply_markup=markup)
+            chat    = self.CHAT_GROUP if INLINE_KEYBOARDS_GROUP_ACTIVE else msg['from']['id']            
+            m       = bot.sendMessage( chat, self.MSG_CMD_UPLOAD.format(self.get_datosConsumidos(), os.environ['DATOS_MENSUALES']), reply_markup=markup)
             self.addMsgTimeout(*self.getMsgChatId(m))             
            
         
     def cmd_sensors(self,msg):
         print u"[{}] {}: Enviando información sobre los sensores".format(datetime.datetime.now(), __file__)
+        self.sendChatAction(self.CHAT_GROUP, 'typing')
         query = "select * from sensors order by date desc limit 1"        
-        date, cpu_temp, bmp180_temp, bmp180_press, dht22_temp, dht22_hr = self.run_query(query)[0]
+        date, cpu_temp, bmp180_temp, bmp180_press, dht22_temp, dht22_hr = self.run_query(query)[0]        
         
-        text = u'''A continuación se muestran los datos tomados  el día *{}* a las *{}*:
-        
-```
-T. CPU: {}ºC
-T. ext: {}ºC
-T. int: {}ºC
-H. rel: {}%
-P. atm: {}mmHg
-```
-'''.format(date.strftime("%Y/%m/%d"), date.strftime("%H:%M"), cpu_temp, dht22_hr, dht22_temp, bmp180_press, bmp180_temp)
-        self.sendMessage(self.CHAT_GROUP, text, parse_mode="Markdown")
+        self.sendMessage(self.CHAT_GROUP, self.MSG_CMD_SENSORS.format(date.strftime("%Y/%m/%d"), 
+                                                                      date.strftime("%H:%M"), 
+                                                                      cpu_temp, 
+                                                                      dht22_hr, 
+                                                                      dht22_temp, 
+                                                                      bmp180_press, 
+                                                                      bmp180_temp), parse_mode="Markdown")
         
         
+    #FIXME: meter en un thread para no bloquear el bot
     def cmd_update(self,msg):
+        self.sendChatAction(self.CHAT_GROUP, 'typing')
         try:
             print u"[{}] {}: Actualizando repositorio".format(datetime.datetime.now(), __file__)
-            output = proc.check_output('cd {}; git pull'.format(os.environ['SVVPA_DIR']), shell=True)
-            self.sendMessage(self.CHAT_GROUP, u'''Repositorio actualizado con éxito\n```{}```'''.format(output))
+            output = proc.check_output('cd {}; git pull'.format(os.environ['SVVPA_DIR']), shell=True)            
+            self.sendMessage(self.CHAT_GROUP, self.MSG_CMD_UPDATE.format(output))
             
         except Exception as e:
             print >>sys.stderr, u"[{}] {}: ERROR! Se ha producido un error inesperado al actualizar el repositorio git:\n{}".format(datetime.datetime.now(), __file__, repr(e))
-            self.sendMessage(self.CHAT_GROUP, u'ERROR! Hubo un problema al actualizar el repositorio\n```{}```'.format(rep(e)))
+            self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(rep(e)))
+        
         
         
     def cmd_reboot(self,msg):
-        print u"[{}] {}: Reiniciando el sistema...".format(datetime.datetime.now(), __file__)
-        self.sendMessage(self.CHAT_GROUP, u'Se está reiniciando el sistema. Este proceso debería tardar unos 45s')
+        print u"[{}] {}: Reiniciando el sistema...".format(datetime.datetime.now(), __file__)        
+        self.sendMessage(self.CHAT_GROUP, self.MSG_CMD_REBOOT)
         try:
             proc.check_call('sudo /sbin/shutdown -r now', shell=True)
             
         except Exception as e:
             print >>sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al intentar reiniciar el sistema:\n{}".format(datetime.datetime.now(), __file__, repr(e))
-            self.sendMessage(self.CHAT_GROUP, u'ERROR! Hubo un problema al reiniciar el sistema\n```{}```'.format(rep(e)))
+            self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(rep(e)))
+
 
 
     def cmd_shutdown(self,msg):            
@@ -450,15 +517,12 @@ P. atm: {}mmHg
             [InlineKeyboardButton( text=self.BUT_CANCEL,            callback_data=self.callback2string( self.CBQ_FUNCTION_CANCEL) )],
         ])                
                         
-        chat    = self.CHAT_GROUP if INLINE_KEYBOARDS_GROUP_ACTIVE else msg['from']['id']    
-        m       = bot.sendMessage(chat, u'Se va a proceder a apagar SVVPA. Este comando debería ejecutarse *SIEMPRE* desde E.C., ya que para volver a iniciar el sistema es necesario desactivar y volver a activar físicamente el miniinterruptor que está junto a las baterías. ¿Realmente quieres apagar el sistema? ', reply_markup=markup)
+        chat    = self.CHAT_GROUP if INLINE_KEYBOARDS_GROUP_ACTIVE else msg['from']['id']
+        m       = bot.sendMessage(chat, self.MSG_CMD_SHUTDOWN, reply_markup=markup)
         self.addMsgTimeout(*self.getMsgChatId(m))
 
         
     def cmd_notif_emails(self, msg):
-        text =u'''Este comando sirve para activar o desactivar las notificaciones (nuevo movimiento, arranque/parada sistema, errores, ...) mediante correo electrónico. Actualmente este servicio está {}. 
-¿Qué deseas hacer?''' 
-
         markup = InlineKeyboardMarkup(inline_keyboard=[
             [InlineKeyboardButton( text=self.BUT_NOTIF_ENABLE,  callback_data=self.callback2string( self.CBQ_EMAIL_NOTIF, [self.EMAIL_NOTIF_ON] ) )],
             [InlineKeyboardButton( text=self.BUT_NOTIF_DISABLE, callback_data=self.callback2string( self.CBQ_EMAIL_NOTIF, [self.EMAIL_NOTIF_OFF] ) )],
@@ -466,7 +530,7 @@ P. atm: {}mmHg
         ])                
                         
         chat    = self.CHAT_GROUP if INLINE_KEYBOARDS_GROUP_ACTIVE else msg['from']['id']    
-        m       = self.sendMessage(self.CHAT_GROUP, text.format(u"activado" if self.isEmailNotif() else u"desactivado"), reply_markup=markup)
+        m       = self.sendMessage(self.CHAT_GROUP, self.MSG_CMD_EMAIL_NOTIF.format(u"activado" if self.isEmailNotif() else u"desactivado"), reply_markup=markup)
         self.addMsgTimeout(*self.getMsgChatId(m))
 
      
@@ -495,7 +559,7 @@ P. atm: {}mmHg
             #Añadimos usuario en el fichero de configuración
             cmd     = 'grep TELEGRAM_ALLOWED_USERS {}'.format(self.FILE_CONSTANTS)
             p       = proc.check_output(cmd, shell=True).strip()
-            users   = set(findall('[0-9]+', p))
+            users   = set(re.findall('[0-9]+', p))
             users.add(str(user_id))
             
             cmd     = 'sed -i -r \'s/TELEGRAM_ALLOWED_USERS="([0-9,]+)"/TELEGRAM_ALLOWED_USERS="{}"/g\' {}'.format(",".join(users), self.FILE_CONSTANTS)
@@ -547,13 +611,13 @@ P. atm: {}mmHg
             
         else:
             if self._motionDelay.getTime()==0:
-                #huevo de pascua
-                bot.editMessageText(self.getMsgChatId(msg), u'ERROR! DIVISIÓN ENTRE CERO!.\nSVVPA está a punto de echar a arder por intentar pausar cero segundos!! \U0001f602\U0001f602\U0001f602')
+                #huevo de pascua                
+                bot.editMessageText(self.getMsgChatId(msg), self.MSG_ERROR_FAKE)
                 return
                
             self.cbq_motionStop()
             
-            text = u'La detección de movimiento se iniciará automáticamente dentro de {}.'.format(self._motionDelay.toString())
+            text = self.MSG_CMD_MOTION_PAUSE.format(self._motionDelay.toString())
             bot.editMessageText(self.getMsgChatId(msg), text)
             
             if not INLINE_KEYBOARDS_GROUP_ACTIVE:
@@ -564,7 +628,7 @@ P. atm: {}mmHg
                 print u"[{}] {}: Timer motion cancelado".format(datetime.datetime.now(), __file__)
                 m.cancel()
                                             
-            self._timers[self.MOTION_TIMER] = Timer(self._motionDelay.getTime(), self.cbq_motionStart)
+            self._timers[self.MOTION_TIMER] = threading.Timer(self._motionDelay.getTime(), self.cbq_motionStart)
             self._timers[self.MOTION_TIMER].start()
             
             
@@ -611,8 +675,8 @@ P. atm: {}mmHg
         markup = InlineKeyboardMarkup(inline_keyboard=buttons)                
         
         chat    = self.CHAT_GROUP if INLINE_KEYBOARDS_GROUP_ACTIVE else msg['from']['id']
-        t       = u"\n(Actualmente: " + self._motionDelay.toString() + u")" if self._motionDelay.getTime()>0 else ""        
-        m       = bot.editMessageText( self.getMsgChatId(msg), u'Selecciona el número de {} que quieres pausar el servicio {}'.format(text.upper(), t), reply_markup=markup)
+        t       = u"\n(Actualmente: " + self._motionDelay.toString() + u")" if self._motionDelay.getTime()>0 else ""
+        m       = bot.editMessageText( self.getMsgChatId(msg), self.MSG_CMD_MOTION_TIME_SET.format(text.upper(), t), reply_markup=markup)
         self.addMsgTimeout(*self.getMsgChatId(m))
 
       
@@ -622,17 +686,15 @@ P. atm: {}mmHg
             print u"[{}] {}: Reiniciando servicio motion".format(datetime.datetime.now(), __file__)
             proc.call('sudo service motion restart', shell=True)
             
-            text = u'La detección de movimiento se ha activado correctamente \U0001f440.'
-            
             if msg:
-                bot.editMessageText(self.getMsgChatId(msg), text)
+                bot.editMessageText(self.getMsgChatId(msg), self.MSG_MOTION_START)
             
             if not INLINE_KEYBOARDS_GROUP_ACTIVE:        
-                bot.sendMessage(self.CHAT_GROUP, text)            
+                bot.sendMessage(self.CHAT_GROUP, self.MSG_MOTION_START)            
         
         except Exception as e:
             print >> sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al trata de reiniciar motion:\n{}".format(datetime.datetime.now(), __file__, repr(e))
-            bot.sendMessage(self.CHAT_GROUP, u'ERROR! Hubo un problema al iniciar el servicio de detección de movimiento (!?)')
+            bot.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))
         
                 
         
@@ -641,31 +703,29 @@ P. atm: {}mmHg
             print u"[{}] {}: Parando servicio motion".format(datetime.datetime.now(), __file__)
             proc.call('sudo service motion stop', shell=True)
             
-            text = u'La detección de movimiento se ha detenido \U0001f648 '
-            
             if msg:
-                bot.editMessageText(self.getMsgChatId(msg), text)
+                bot.editMessageText(self.getMsgChatId(msg), self.MSG_CMD_MOTION_STOP)
             
             if not INLINE_KEYBOARDS_GROUP_ACTIVE:
-               bot.sendMessage(self.CHAT_GROUP, text)
+               bot.sendMessage(self.CHAT_GROUP, self.MSG_CMD_MOTION_STOP)
             
         except Exception as e:
             print >>sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al detener el servicio motion:\n{}".format(datetime.datetime.now(), __file__, repr(e))
-            bot.sendMessage(self.CHAT_GROUP, u'ERROR! Hubo un problema al parar el servicio de detección de movimiento (!?)')
+            bot.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))
             
          
         
     def cbq_motionStatus(self, msg):
         try:
-            if self.isMotionEnabled():
-                bot.editMessageText(self.getMsgChatId(msg),  u'La detección de movimiento está activa \U0001f440')
+            if self.isMotionEnabled():                
+                bot.editMessageText(self.getMsgChatId(msg),  self.MSG_CMD_MOTION_ENABLED)
             
-            else:
-                bot.editMessageText(self.getMsgChatId(msg),  u'La detección de movimiento está inactiva \U0001f648')
+            else:                
+                bot.editMessageText(self.getMsgChatId(msg),  self.MSG_CMD_MOTION_DISABLED)
             
         except:         
             print >> sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al comprobar el estado del servicio motion:\n{}".format(datetime.datetime.now(), __file__, repr(e))
-            bot.sendMessage(self.CHAT_GROUP, u'ERROR! Hubo un problema al comprobar el estado del servicio de detección de movimiento (!?)')
+            bot.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))
         
         
         
@@ -702,7 +762,7 @@ P. atm: {}mmHg
         try:
             #Añadimos usuario en el fichero de configuración
             cmd     = 'grep TELEGRAM_BANNED_USERS {}'.format(self.FILE_CONSTANTS)
-            users   = set(findall('[0-9]+', proc.check_output(cmd, shell=True).strip()))
+            users   = set(re.findall('[0-9]+', proc.check_output(cmd, shell=True).strip()))
             users.add(str(user_id))
             
             cmd     = 'sed -i -r \'s/TELEGRAM_BANNED_USERS="([0-9,]*)"/TELEGRAM_BANNED_USERS="{}"/g\' {}'.format(",".join(users), self.FILE_CONSTANTS)
@@ -716,13 +776,13 @@ P. atm: {}mmHg
                  
         except Exception as e:
             print >>sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al bloquear permanentemente un usuario".format(datetime.datetime.now(), __file__)           
-            bot.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_BANNING_USER) 
+            bot.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e))) 
       
    
       
     def cbq_snapshot(self, msg, device):                
-        if msg:
-            bot.editMessageText(self.getMsgChatId(msg), u'Capturando foto...')
+        if msg:            
+            bot.editMessageText(self.getMsgChatId(msg), self.MSG_CMD_SNAPSHOT)
         
         if self.isMotionEnabled():
             print u"[{}] {}: Capturando foto de motion_snapshots".format(datetime.datetime.now(), __file__)
@@ -737,7 +797,7 @@ P. atm: {}mmHg
                 
             except Exception as e:
                 print >> sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al capturar la imagen:\n{}".format(datetime.datetime.now(), __file__, repr(e))
-                bot.sendMessage(self.CHAT_GROUP, u'ERROR! Hubo un problema al capturar la imagen')                
+                bot.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))                
                  
         t = threading.Thread(target=self.send_photo, args=(fileout,))
         t.start()
@@ -750,22 +810,21 @@ P. atm: {}mmHg
         
         file = os.environ['MOTION_DIR'] + eventId + '.' + os.environ['MOTION_VIDEO_EXT']
         
-        t = threading.Thread(target=self.upload_video, args=(file,))
+        t = threading.Thread(target=self.upload_video, args=(file,msg,))
         t.start()
-        
-        bot.sendMessage(self.CHAT_GROUP, u'Subiendo archivo {}'.format(eventId))        
+              
 
 
 
-    def cbq_shutdown(self, msg):
-        bot.editMessageText(self.getMsgChatId(msg), u'El sistema se está apagando.Recuerda que para volver a iniciar es necesario desactivar y activar físicamente el miniinterruptor que está junto a las baterías')
+    def cbq_shutdown(self, msg):        
+        bot.editMessageText(self.getMsgChatId(msg), self.MSG_CMD_SHUTDOWN)
         try:
             print u"[{}] {}: Apagando el sistema".format(datetime.datetime.now(), __file__)
             proc.check_call('sudo /sbin/shutdown -r now', shell=True)
             
         except Exception as e:
             print >> sys.stderr, u"[{}] {}: ERROR! Hubo un problema inesperado al tratar de apagar el sistema:\n{}".format(datetime.datetime.now(), __file__, repr(e))
-            bot.editMessageText(self.getMsgChatId(msg), u'ERROR! Hubo un problema al intentar apagar el sistema```{}```'.format(rep(e)))
+            bot.editMessageText(self.getMsgChatId(msg), self.MSG_ERROR_UNEXPECTED.format(rep(e)))
      
         
         
@@ -775,9 +834,16 @@ P. atm: {}mmHg
             cmd = u"sed -ir 's/export EMAIL_NOTIF=\"([a-zA-Z]+)\"/export EMAIL_NOTIF=\"{}\"/g' {}".format(state, self.FILE_CONSTANTS)
             proc.call(cmd, shell=True)
             
+            if self.isEmailNotif():                
+                bot.editMessageText(self.getMsgChatId(msg), self.MSG_CMD_EMAIL_NOTIF_ENABLED)
+                
+            else:                
+                bot.editMessageText(self.getMsgChatId(msg), self.MSG_CMD_EMAIL_NOTIF_DISABLED)
+                
+            
         except Exception as e:
             print >> sys.stderr, u"[{}] {}: ERROR! Hubo un problema inesperado al modificar la notificación por email:\n{}".format(datetime.datetime.now(), __file__, repr(e))
-                              
+            bot.editMessageText(self.getMsgChatId(msg), self.MSG_ERROR_UNEXPECTED.format(rep(e)))
 
 
 
@@ -828,7 +894,7 @@ P. atm: {}mmHg
     
     def getCommand(self, msg):
         if 'entities' in msg and msg['entities'][0]['type']=='bot_command':
-            regex = compile('/[a-zA-Z0-9_]+')
+            regex = re.compile('/[a-zA-Z0-9_]+')
             r = regex.findall(msg['text'])
             if r:
                 print u"[{}] {}: Comando {} recibido".format(datetime.datetime.now(), __file__, r[0])
@@ -847,7 +913,7 @@ P. atm: {}mmHg
     
     def addMsgTimeout(self, chat_id, msg_id):
         print u"[{}] {}: Añadiendo msg_timeout {} {}".format(datetime.datetime.now(), __file__, chat_id, msg_id)
-        self._timers[chat_id, msg_id] = Timer(self.MSG_TIMEOUT, self.deleteMsg, [chat_id, msg_id])        
+        self._timers[chat_id, msg_id] = threading.Timer(self.MSG_TIMEOUT, self.deleteMsg, [chat_id, msg_id])        
         self._timers[chat_id, msg_id].start()        
 
            
@@ -902,33 +968,37 @@ P. atm: {}mmHg
 
 
 
-    def upload_video(self, file):
+    def upload_video(self, file, msg):
         cmd = [ os.environ['RCLONE_BIN'], "--config", os.environ['RCLONE_CONFIG'], "copy", file, "google:SVVPA/videos" ]
+
+        self.editMessageText(self.getMsgChatId(msg), u'Subiendo archivo {}...'.format(eventId))
         
         try:                
             i=0
             while i<self.RETRIES_MAX:
                 print u"[{}] {}: Subiendo archivo a google drive ({})".format(datetime.datetime.now(), __file__, file)
+                self.sendChatAction(msg['chat']['id'], 'upload_video')
                 ret = proc.call(cmd, shell=True)            
-                if ret==0:
-                    bot.sendMessage(self.CHAT_GROUP, u'El archivo {} se ha subido correctamente a google drive. Recuerda que puedes ver los archivos subidos a google drive en [este enlace](https://drive.google.com/folderview?id=0Bwse_WnehFNKT2I3N005YmlYMms&usp=sharing)'.format(os.path.basename(file)), parse_mode=Markdown)
+                if ret==0:                    
+                    self.editMessageText(self.getMsgChatId(msg), self.MSG_CMD_UPLOAD_DONE.format(os.path.basename(file)), parse_mode=Markdown)
                     return
                 
                 i+=1
-                sleep(self.RETRIES_WAIT)
+                time.sleep(self.RETRIES_WAIT)
             
-            print >> sys.stderr, u"[{}] {}: ERROR! No se ha podido subir el archivo {} a google drive. Se han agotado los intentos".format(datetime.datetime.now(), __file__, file)        
-            bot.sendMessage(self.CHAT_GROUP, u'ERROR! No se ha podido subir el archivo {} a google drive. Inténtalo de nuevo más tarde'.format(os.path.basename(file)))
+            print >> sys.stderr, u"[{}] {}: ERROR! No se ha podido subir el archivo {} a google drive. Se han agotado los intentos".format(datetime.datetime.now(), __file__, file)
+            bot.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UPLOAD_MAX_TRIES.format(os.path.basename(file)))
                             
         except Exception as e:
             print >> sys.stderr, u"[{}] {}: ERROR! Se produjo un error inesperado al subir el vídeo a google drive:\n{}".format(datetime.datetime.now(), __file__, repr(e))
-            bot.sendMessage(self.CHAT_GROUP, u'ERROR! Se ha producido un error inesperado al subir el archivo {} a google drive'.format(os.path.basename(file)))
+            bot.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))
             
     
     
     def send_photo(self, file):
         if os.path.isfile(file):
             try:
+                self.sendChatAction(self.CHAT_GROUP, 'upload_photo')
                 fd = open(file, 'rb')
                 bot.sendPhoto(self.CHAT_GROUP, fd, datetime.datetime.now())
                 fd.close()
@@ -937,12 +1007,12 @@ P. atm: {}mmHg
                 print >> sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al enviar la foto: \n{}".format(datetime.datetime.now(), __file__, repr(e))
                 if fd:
                     fd.close()
-                bot.sendMessage(self.CHAT_GROUP, u'ERROR! Hubo un error inesperado al enviar la foto (?!)')
+                bot.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))
                 pass
             
         else:
             print >> sys.stderr, u"ERROR! No existe el archivo {}".format(file)
-            bot.sendMessage(self.CHAT_GROUP, u'ERROR! Hubo un error inesperado al cargar la foto (?!)')
+            bot.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))
             
             
 
@@ -970,7 +1040,7 @@ P. atm: {}mmHg
     def isEmailNotif(self):
         try:
             output = proc.check_output(u'egrep EMAIL_NOTIF {}'.format(self.FILE_CONSTANTS), shell=True)
-            f = findall('"([a-zA-Z]+)"', output)
+            f = re.findall('"([a-zA-Z]+)"', output)
             
             if len(f)>0 and f[0] == self.EMAIL_NOTIF_ON:
                 print u"[{}] {}: La notificación por email está activada".format(datetime.datetime.now(), __file__)
@@ -981,9 +1051,31 @@ P. atm: {}mmHg
         
         print u"[{}] {}: La notificación por email está desactivada".format(datetime.datetime.now(), __file__)
         
-        
-            
+ 
+ 
+ 
+    def get_fileSize(self, file):
+       'Return the file size as a human friendly KB, MB, GB, or TB string'
+       B = float(os.path.getsize(file))
     
+       if B < self.SIZE_KB:
+          return '{0} {1}'.format(B,'Bytes' if 0 == B > 1 else 'Byte')
+       elif self.SIZE_KB <= B < self.SIZE_MB:
+          return '{0:.2f} KB'.format(B/self.SIZE_KB)
+       elif self.SIZE_MB <= B < self.SIZE_GB:
+          return '{0:.2f} MB'.format(B/self.SIZE_MB)
+       elif self.SIZE_GB <= B < self.SIZE_TB:
+          return '{0:.2f} GB'.format(B/self.SIZE_GB)
+       elif self.SIZE_TB <= B:
+          return '{0:.2f} TB'.format(B/self.SIZE_TB)
+            
+
+
+    def get_datosConsumidos(self):
+        kb = proc.check_output([os.environ['BIN_DIR'], "_getInternetUsage.sh"], shell=True).strip()        
+        return '{0:.2f}MB'.format(kb/1024.0)
+
+
     
     
     
@@ -1071,7 +1163,7 @@ if __name__ == "__main__":
         
     # Keep the program running.
     while 1:
-        sleep(10)
+        time.sleep(10)
     
     #sys.exit(main(sys.argv))
 
