@@ -31,7 +31,8 @@ cmd_help_html=u'''
 				<li><b>AYUDA</b> - Envía este email, recordándote los comandos y argumentos disponibles y ejemplos de cómo usarlos. Haciendo click en los enlaces de los <a href="mailto:{correo}?subject=CMD_SVVPA AYUDA">ejemplos como éste</a>, se compone automáticamente un email que puede ser enviado tal cual o modificado a criterio.</li>	
 				<li><b>GUARDAR_EN_GOOGLE_DRIVE codigoDelEvento</b> - Guarda en google drive la imagen y el vídeo que corresponde al evento con código <i>codigoDelEvento</i>. El código del evento se puede obtener del asunto del email que se envía automáticamente cuando se detecta un movimiento. <a href="mailto:{correo}?subject=CMD_SVVPA GUARDAR_EN_GOOGLE_DRIVE 2016_01_02_15_30_13_12332_123_543_23_5543_12">Ver ejemplo</a></li>
 				<li><b>ESTADO_DEL_SISTEMA</b> - Envía un email con información sobre SVVP, como el espacio disponible, la temperatura de la CPU, el registro de eventos del sistema, ... <a href="mailto:{correo}?subject=CMD_SVVPA ESTADO_DEL_SISTEMA">Ver ejemplo</a></li>
-			<li><b>DETECTAR_MOVIMIENTO acción tiempo</b> - Comando para iniciar, parar o pausar el servicio de detección de movimiento. Útil cuando estás en E.C. y no deseas ser grabado :). Si la acción es <i>PARAR</i> (<a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO PARAR">Ver ejemplo</a>), el servicio se detiene hasta que se reciba la acción <i>INICIAR</i> (<a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO INICIAR">Ver ejemplo</a>). Si la acción es <i>PAUSAR</i> (<a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO PAUSAR 5H">Ver ejemplo</a>), el servicio se detiene temporalmente. En este último caso se requiere también el argumento <i>tiempo</i>, que determina la pausa en formato <i>nU</i>, siendo <i>n</i> la cantidad, y <i>U</i> la unidad (S, M, H o D para segundos, minutos, horas o días. Ej: 10H para pausar durante 10 horas. 3D para pausar durante 3 días)</li>	
+			<li><b>DETECTAR_MOVIMIENTO acción tiempo</b> - Comando para iniciar, parar o pausar el servicio de detección de movimiento. Útil cuando estás en E.C. y no deseas ser grabado :). Si la acción es <i>PARAR</i> (<a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO PARAR">Ver ejemplo</a>), el servicio se detiene hasta que se reciba la acción <i>INICIAR</i> (<a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO INICIAR">Ver ejemplo</a>). Si la acción es <i>PAUSAR</i> (<a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO PAUSAR 5H">Ver ejemplo</a>), el servicio se detiene temporalmente. En este último caso se requiere también el argumento <i>tiempo</i>, que determina la pausa en formato <i>nU</i>, siendo <i>n</i> la cantidad, y <i>U</i> la unidad (S, M, H o D para segundos, minutos, horas o días. Ej: 10H para pausar durante 10 horas. 3D para pausar durante 3 días)</li>
+			<li><b>NOTIFICAR_EMAIL acción</b> - Este comando sirve para controlar las notificaciones que se reciben por email (detección de nuevos movimientos, arranque/parada del sistema, errores, ...), donde <i>acción</i> puede tomar los valores <i>INICIAR</i> para activar (<a href="mailto:{correo}?subject=CMD_SVVPA NOTIFICAR_EMAIL INICIAR">Ver ejemplo</a>), <i>PARAR</i> para desactivar (<a href="mailto:{correo}?subject=CMD_SVVPA NOTIFICAR_EMAIL PARAR">Ver ejemplo</a>) o <i>ESTADO</i> para comprobar el estado (<a href="mailto:{correo}?subject=CMD_SVVPA NOTIFICAR_EMAIL ESTADO">Ver ejemplo</a>).</li>	
 			<li><b>ACTUALIZAR_REPOSITORIO</b> - Actualiza el repositorio Github de SVVPA. Normalmente este comando solo lo ejecuta Er Danié. <a href="mailto:{correo}?subject=CMD_SVVPA ACTUALIZAR_REPOSITORIO">Ver ejemplo</a></li>
 			<li><b>ACTIVAR_GESTION_REMOTA</b> - Abre un puerto en un servidor remoto para realizar un ssh reverso. Esta opción es útil para administrar SVVPA cuando no tiene conexión a internet a través de una IP pública real (ej: conexión 3g). Normalmente este comando solo lo ejecuta Er Danié. <a href="mailto:{correo}?subject=CMD_SVVPA ACTIVAR_GESTION_REMOTA">Ver ejemplo</a></li>
 			<li><b>REINICIAR</b> - Reinicia el sistema. Este comando es útil cuando algo no está funcionando correctamente. El reinicio tarda aproximádamente 1 minuto. <a href="mailto:{correo}?subject=CMD_SVVPA REINICIAR">Ver ejemplo</a></li>
@@ -78,6 +79,11 @@ cmd_motionDetection_html_REANUDAR=u'<html><body><p>La detección de movimiento s
 cmd_updateRepository_subject=u'SVVPA - Repositorio actualizado correctamente'
 cmd_updateRepository_html=u'<html><body>El repositorio se ha actualizado correctamente</body></html>'
 
+cmd_emailNotif_subject_INICIAR=u'SVVPA - Notificaciones activadas'
+cmd_emailNotif_subject_PARAR=u'SVVPA - Notificaciones desactivadas'
+cmd_emailNotif_html_INICIAR=u'<html><body>Las notificaciones por email están activadas</body></html>'
+cmd_emailNotif_html_PARAR=u'<html><body>Las notificaciones por email están desactivadas</body></html>'
+
 
 error_general_subject=u'SVVPA - Error al procesar el comando {command}'
 error_general_html=u'<html><body>Se ha producido el siguiente error al procesar el comando "{command}":<br><i>{error}</i></body></html>'
@@ -88,7 +94,7 @@ error_sintaxis_html=u'<html><body>Error al procesar el comando <i>{command}</i>.
 
 
 
-
+FILE_CONSTANTS = os.environ['BIN_DIR']+'CONSTANTS.sh' 
 
 
 
@@ -333,11 +339,52 @@ def cmd_updateRepository(args):
 	proc.call('cd {}; git pull'.format(os.environ['SVVPA_DIR']), shell=True)
 
 	msg_subject	= cmd_updateRepository_subject
-	msg_html		= cmd_updateRepository_html
+	msg_html	= cmd_updateRepository_html
 	notificar_email(msg_subject, msg_html)	
 
 
 
+def cmd_notifEmail(args):
+	regex = re.compile('(INICIAR)|(PARAR)|(ESTADO)')
+
+	r = regex.search(args)
+	if r:
+		if 'INICIAR' in r.group():
+			msg_subject	= cmd_emailNotif_subject_INICIAR
+			msg_html	= cmd_emailNotif_html_INICIAR
+			print u'[{}] {}: Activando las notificaciones por emails'.format(datetime.datetime.now(), __file__)
+			cmd = u"sed -i -r 's/export EMAIL_NOTIF=\"([a-zA-Z]+)\"/export EMAIL_NOTIF=\"{}\"/g' {}".format('ON', FILE_CONSTANTS)
+			proc.call(cmd, shell=True)			
+			
+		elif 'PARAR' in r.group():
+			msg_subject	= cmd_emailNotif_subject_PARAR
+			msg_html	= cmd_emailNotif_html_PARAR
+			print u'[{}] {}: Parando las notificaciones por emails'.format(datetime.datetime.now(), __file__)
+			cmd = u"sed -i -r 's/export EMAIL_NOTIF=\"([a-zA-Z]+)\"/export EMAIL_NOTIF=\"{}\"/g' {}".format('OFF', FILE_CONSTANTS)
+			proc.call(cmd, shell=True)			
+			
+		else:
+			try:
+				output = proc.check_output(u'egrep EMAIL_NOTIF {}'.format(FILE_CONSTANTS), shell=True)
+				f = re.findall('"([a-zA-Z]+)"', output)
+	            
+				if len(f)>0 and 'ON' in f[0]:						
+					msg_subject	= cmd_emailNotif_subject_INICIAR
+					msg_html	= cmd_emailNotif_html_INICIAR
+	        		
+				else:
+					msg_subject	= cmd_emailNotif_subject_PARAR
+					msg_html	= cmd_emailNotif_html_PARAR
+
+			except Exception as e:
+				print >> sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado: \n {}".format(datetime.datetime.now(), __file__, e)
+	        	        
+		notificar_email(msg_subject, msg_html)			
+
+	else:
+		e=u"Error en el formato del comando DETECTAR_MOVIMIENTO."
+		print >> sys.stderr, u"[{}] {}: ERROR! {}".format(datetime.datetime.now(), __file__, e)
+		raise Exception(e)
 
 
 
@@ -362,7 +409,8 @@ CMD_SVVPA={
 #		'VISTA_EN_DIRECTO' 			: cmd_lifeView,	#Configurar motion para que guarde una captura periódica que se sobreescriba, y enviar dicho archivo
 		'ACTUALIZAR_REPOSITORIO'	: cmd_updateRepository,
 		'REINICIAR' 					: cmd_reboot,
-		'APAGAR'							: cmd_shutdown		
+		'APAGAR'							: cmd_shutdown,
+		'NOTIFICAR_EMAIL'				: cmd_notifEmail		
 		}
 
 
