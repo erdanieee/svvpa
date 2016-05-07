@@ -198,8 +198,9 @@ case $1 in
 				else
 					mkdir -p ${MOTION_DIR} 2>/dev/null
 					
-					#FIXME: subir automáticamente a google drive. Guardar en MySQL ID, URL, width, heigth (ver final de lactobacillus@temp/quickstart.py)
-					#FIXME: comprobar si está activada la notificación por email. Enviar en el email la URL de google drive en lugar de la imagen
+					#FIXME: subir automáticamente a google drive. 
+					#FIXME: Guardar en MySQL ID, URL, width, heigth y size
+					#FIXME: Mandar notificación (telegram o email según configuración)
 					python -u _sendEmailImage.py $fileIn
 					RETVAL=$(($RETVAL|$?))		
 	
@@ -238,6 +239,8 @@ case $1 in
 			else
 				mkdir -p ${MOTION_DIR} 2>/dev/null
 
+                #FIXME: Guardar en MySQL ID, duration y size
+                #FIXME: Mandar notificación (telegram o email según configuración)
 				fileOutName=$( basename ${fileIn/\.${MOTION_VIDEO_EXT_RAW}/\.${MOTION_VIDEO_EXT}} )
 				fileOut=${MOTION_DIR}${fileOutName}
 				#TODO: usar avconv que está en los repositorios 

@@ -4,27 +4,12 @@
 import os, sys
 import random
 import telepot
-import httplib2
-from apiclient import discovery
-from apiclient.http import MediaFileUpload
-import oauth2client
-#from oauth2client import client
-#from oauth2client import tools
-import json
-
-
-# If modifying these scopes, delete your previously saved credentials
-# at ~/.credentials/drive-python-quickstart.json
-SCOPES = 'https://www.googleapis.com/auth/drive'
-CLIENT_SECRET_FILE = os.environ['CONFIG_DIR'] + 'google_drive_client_secret.json'
-APPLICATION_NAME = 'SVVPA'
-
+import datetime
 
 SIZE_KB = 1024.0
 SIZE_MB = 1048576.0 
 SIZE_GB = 1073741824.0 
 SIZE_TB = 1099511627776.0 
-
 
 EMAIL_STARTUP_SUBJECT=u'SVVPA - Inicio del sistema'
 EMAIL_STARTUP_BODY=u'El sistema SVVPA se acaba de iniciar'
@@ -57,7 +42,7 @@ EMAIL_MOTION_BODY=u"""\
     </body>
 </html>
 """
-TLG_MOTION=u'Se ha detectado un nuevo movimiento. La imagen más representativa ha sido subida automáticamente a google drive. Para subir también el vídeo utiliza el comando /subir\n[{} {}]({})'
+TLG_MOTION=u'Se ha detectado un nuevo movimiento. La imagen más representativa ha sido subida automáticamente a google drive. Para subir también el vídeo utiliza el comando /subir\n[{}]({})'
 
 EMAIL_CAMERA_FAILURE_SUBJECT=u'SVVPA - Error en la cámara'
 EMAIL_CAMERA_FAILURE_BODY=u'''\
@@ -94,7 +79,7 @@ def get_datos():
 
 def get_duration(id):
     f=""     
-    ret = os.popen(os.environ['FFMPEG_BIN'] + ' -i /var/www/svvpa/www/motion/2016_03_19_13_29_09_8665_13_64_194_32_325_1.mp4 2>&1|egrep -o "Duration: [0-9:]+"|egrep -o "[0-9]{2}:[0-9]{2}$"').readlines()
+    ret = os.popen(os.environ['FFMPEG_BIN'] + ' -i ' + os.environ['MOTION_DIR'] + id + '.' + os.environ['MOTION_IMAGE_EXT'] + '2>&1|egrep -o "Duration: [0-9:]+"|egrep -o "[0-9]{2}:[0-9]{2}$"').readlines()
     return ret[0].strip()
 
 
@@ -133,8 +118,18 @@ def isEmailNotif():
 
 
 
-def sendNotif(email_msg, tlg_msg):
-    if isEmailNotif():
+def sendNotif(tlg_msg, email_msg=None):    
+    for n in range(1,20):        
+        try:
+            bot = telepot.Bot(os.environ['TELEGRAM_TOKEN'])
+            bot.sendMessage(int(os.environ['TELEGRAM_CHAT_GROUP']), tlg_msg, parse_mode="Markdown")
+            return
+            
+        except Exception as e:
+            print u"[{}] {}: WARNING! No se ha podido enviar mensaje de telegram. Reintento: {}".format(datetime.datetime.now(), __file__, n)                
+            time.sleep(random.randint(20,60))
+    
+    if isEmailNotif() and email_msg:
         s = gsender.GMail(os.environ['SMPT_USER'], os.environ['SMPT_PASS'])
         for n in range(1,20):
             if s.is_connected():                
@@ -151,56 +146,7 @@ def sendNotif(email_msg, tlg_msg):
                 time.sleep(random.randint(20,60))
                 s.connect()
                 
-    else:
-        for n in range(1,20):        
-            try:
-                bot = telepot.Bot(os.environ['TELEGRAM_TOKEN'])
-                bot.sendMessage(int(os.environ['TELEGRAM_CHAT_GROUP']), tlg_msg)
-                return
-                
-            except Exception as e:
-                print u"[{}] {}: WARNING! No se ha podido enviar mensaje de telegram. Reintento: {}".format(datetime.datetime.now(), __file__, n)                
-                time.sleep(random.randint(20,60))
         
-        
-        
-def get_credentials():
-    """Gets valid user credentials from storage.
-
-    If nothing has been stored, or if the stored credentials are invalid,
-    the OAuth2 flow is completed to obtain the new credentials.
-
-    Returns:
-        Credentials, the obtained credential.
-    """    
-    credential_path = os.path.join(os.environ['CONFIG_DIR'], 'google-drive-credentials.json')
-    store           = oauth2client.file.Storage(credential_path)
-    credentials     = store.get()
-    if not credentials or credentials.invalid:
-        flow            = client.flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
-        flow.user_agent = APPLICATION_NAME        
-        credentials     = tools.run(flow, store)
-        print u"[{}] {}: Guardando credenciales en {}".format(datetime.datetime.now(), __file__, credential_path)
-    return credentials
-        
-        
-   
-def uploadFile(file):
-    try:
-        credentials     = get_credentials()
-        http            = credentials.authorize(httplib2.Http())
-        service         = discovery.build('drive', 'v3', http=http)
-        file_metadata   = { 'name' : os.path.basename(file)}
-        media           = MediaFileUpload(file, mimetype='image/jpg')#, resumable=True)
-        data            = service.files().create(body=file_metadata,        #FIXME: en principio solo hace falta el id y la URL
-                                                 media_body=media, 
-                                                 fields=('id','webContentLink')).execute()
-        #print ('File ID: %s' % data.get('id'))
-        return data
-    
-    except Exception as e:
-        print u"[{}] {}: ERROR! Hubo un error inesperado al subir el archivo a google drive:\n{}".format(datetime.datetime.now(), __file__, repr(e))
-    
 
         
 
@@ -213,7 +159,7 @@ def on_startup(arg=None):
         to = os.environ['EMAIL_ADDR'],
         text = EMAIL_STARTUP_BODY)
     
-    sendNotif(email_msg, tlg_msg)
+    sendNotif(tlg_msg, email_msg)
 
 
 def on_shutdown(arg=None):
@@ -224,7 +170,7 @@ def on_shutdown(arg=None):
         to = os.environ['EMAIL_ADDR'],
         text = EMAIL_SHUTDOWN_BODY)
     
-    sendNotif(email_msg, tlg_msg)
+    sendNotif(tlg_msg,email_msg)
 
 
 
@@ -236,7 +182,7 @@ def on_cameraFailure(arg=None):
         to = os.environ['EMAIL_ADDR'],
         html = EMAIL_CAMERA_FAILURE_BODY)
     
-    sendNotif(email_msg, tlg_msg)
+    sendNotif(tlg_msg,email_msg)
 
 
 
@@ -246,22 +192,34 @@ def on_motion(file):
         data = uploadFile(file)
         
         if data:
-            y,m,d,H,M = os.path.basename(file).split("_")[:5]
+            date        = datetime.datetime(*map(int,os.path.basename(file).split("_")[:6]))
+            id          = os.path.basename(file).split(".")[0].strip()            
+            tlg_msg     = TLG_MOTION.format(date.strftime("%Y/%m/%d %H:%M:%S"), data['webContentLink'])
+            email_msg   = None
             
-            tlg_msg     = TLG_MOTION.format()   #FIXME!!!!!!
-            
-            email_msg   = gsender.Message(    
-                subject = EMAIL_MOTION_SUBJECT,
-                to = os.environ['EMAIL_ADDR'],
-                text = EMAIL_MOTION_BODY.format())      #FIXME!!!!
+            if isEmailNotif():      #FIXME: Redundante porque se comprueba luego en sendNotif, pero por ahora se queda así :)            
+                email_msg = gsender.Message(subject = EMAIL_MOTION_SUBJECT,
+                                            to = os.environ['EMAIL_ADDR'],
+                                            html = EMAIL_MOTION_BODY.format(ip=get_ip(), 
+                                                                            datetime=date.strftime("%Y/%m/%d %H:%M:%S"), 
+                                                                            dom=os.environ['DUCKDNS_DOMAIN'], 
+                                                                            port=os.environ['APACHE_PORT'], 
+                                                                            id=id, 
+                                                                            datos=get_datos(), 
+                                                                            datosMensuales=os.environ['DATOS_MENSUALES'],
+                                                                            email=os.environ['GMAIL_ACCOUNT_ALIAS'],
+                                                                            duration=get_duration(id),
+                                                                            size=get_size(id)),
+                                            attachments    = [file])
             
             sendNotif(email_msg, tlg_msg)
+            
         
         else:
             time.sleep(random.randint(20,60))
     
-
-
+    
+    
 
 
 

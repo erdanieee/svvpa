@@ -98,7 +98,8 @@ def get_datos():
 
 def get_duration(id):
 	f=""
-	 
+	
+	#FIXME!!!! 	 
 	ret = os.popen(os.environ['FFMPEG_BIN'] + ' -i /var/www/svvpa/www/motion/2016_03_19_13_29_09_8665_13_64_194_32_325_1.mp4 2>&1|egrep -o "Duration: [0-9:]+"|egrep -o "[0-9]{2}:[0-9]{2}$"').readlines()
 	return ret[0].strip()
 
