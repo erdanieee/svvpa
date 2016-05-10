@@ -176,45 +176,36 @@ case $1 in
 	# Procesa la imagen capturada desde MOTION. Este commando está pensado para ser llamado desde el envento 'on_picture_save' de MOTION
 	process_image)
 		echo "[$(date)] $0: Servicio '$1': Procesando imagen $2"
-		fileIn=$2
-		snapshot=$(echo $fileIn|grep snapshot)
-	
-		if [[ "${snapshot}" ]]
+
+		if [[ $# -gt 1 ]]
 		then
+			fileIn=$2
+			mkdir -p ${MOTION_DIR} 2>/dev/null
+
+			#test snapshot vs ordinary motion picture
+			if [[ "$(echo $fileIn|egrep '([0-9_]+){12,}')" ]]
+				sqlStm=$(echo "insert into images (id) values ($(basename ${fileIn:: -4}))")
+				mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo $sqlStm)
+				RETVAL=$(($RETVAL|$?))
+
+				#Sube automáticamente a google drive y actualiza mysql con el link y el tamaño de la imagen. 
+				python -u _google_drive_uploader.py $fileIn				
+				RETVAL=$(($RETVAL|$?))
+
+				#FIXME: Mandar notificación (telegram o email según configuración)
+				python -u _sendEmailImage.py $fileIn
+				RETVAL=$(($RETVAL|$?))							
+			fi
+		
 			chmod 666 $fileIn
 			RETVAL=$(($RETVAL|$?))
 
 			mv $fileIn ${MOTION_DIR}$(basename $fileIn)
-			RETVAL=$(($RETVAL|$?))	
+			RETVAL=$(($RETVAL|$?))
 
 		else
-			if [[ $# -gt 1 ]]
-			then
-				if [[ ! -e $fileIn || ! -f $fileIn ]]
-				then
-					echo "[$(date)] $0: Servicio '$1': ERROR! Archivo de origen no existe o es un directorio: $fileIn"
-					RETVAL=1
-			
-				else
-					mkdir -p ${MOTION_DIR} 2>/dev/null
-					
-					#FIXME: subir automáticamente a google drive. 
-					#FIXME: Guardar en MySQL ID, URL, width, heigth y size
-					#FIXME: Mandar notificación (telegram o email según configuración)
-					python -u _sendEmailImage.py $fileIn
-					RETVAL=$(($RETVAL|$?))		
-	
-					chmod 666 $fileIn
-					RETVAL=$(($RETVAL|$?))
-				
-					mv $fileIn ${MOTION_DIR}$(basename $fileIn)
-					RETVAL=$(($RETVAL|$?))
-				fi
-	
-			else
-				echo "[$(date)] $0: Servicio '$1': ERROR! Invalid number of arguments: $#"
-				RETVAL=1
-			fi
+			echo "[$(date)] $0: Servicio '$1': ERROR! Invalid number of arguments: $#"
+			RETVAL=1
 		fi
 	;;
 
