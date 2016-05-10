@@ -8,6 +8,7 @@ www/motion/*.jpg
 www/motion/*.mp4
 current_ip.txt
 svvpa-81b7a04fc4c2.json
+google-drive-credentials.json
 *.swp
 CONSTANTS.php
 CONSTANTS.sh
