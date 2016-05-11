@@ -184,7 +184,7 @@ case $1 in
 
 			#test snapshot vs ordinary motion picture
 			if [[ "$(echo $fileIn|egrep '([0-9_]+){12,}')" ]]
-				sqlStm=$(echo "insert into images (id) values ($(basename ${fileIn:: -4}))")
+				sqlStm=$(echo "insert into images (id) values ('$(basename ${fileIn:: -4})')")
 				mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo $sqlStm)
 				RETVAL=$(($RETVAL|$?))
 
@@ -230,10 +230,12 @@ case $1 in
 			else
 				mkdir -p ${MOTION_DIR} 2>/dev/null
 
-                #FIXME: Guardar en MySQL ID, duration y size
-                #FIXME: Mandar notificación (telegram o email según configuración)
-				fileOutName=$( basename ${fileIn/\.${MOTION_VIDEO_EXT_RAW}/\.${MOTION_VIDEO_EXT}} )
-				fileOut=${MOTION_DIR}${fileOutName}
+        #Guarda en MySQL ID
+				sqlStm=$(echo "insert into videos (id) values ('$(basename ${fileIn:: -4})')")
+				mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo $sqlStm)
+				RETVAL=$(($RETVAL|$?))
+				
+				fileOut=${MOTION_DIR}$( basename ${fileIn/\.${MOTION_VIDEO_EXT_RAW}/\.${MOTION_VIDEO_EXT}} )
 				#TODO: usar avconv que está en los repositorios 
 				#ej: avconv -i video.avi -c:v h264 -crf 22 -preset ultrafast -y -loglevel error video.mp4
 				${FFMPEG_BIN} -loglevel error -i $fileIn -preset ultrafast -y ${fileOut}	
@@ -245,6 +247,13 @@ case $1 in
 					RETVAL=1
 
 				else
+					size=$(du -h $fileOut)
+					duration=$( ${FFMPEG_BIN} -i $fileOut 2>&1|egrep -o "Duration: [0-9:]+"|egrep -o "[0-9]{2}:[0-9]{2}$" )
+					#Guarda en MySQL tamaño y duración del vídeo
+					sqlStm=$( echo "insert into videos (size, duration) values ('$size', '$duration')" )
+					mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo $sqlStm)
+					RETVAL=$(($RETVAL|$?))
+
 					chmod 666 $fileOut
 					RETVAL=$(($RETVAL|$?))
 					
