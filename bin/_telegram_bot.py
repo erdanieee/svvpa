@@ -13,6 +13,7 @@ import threading
 import MySQLdb
 import signal
 import datetime
+from _google_drive_uploader import main as fileuploader
 
 #poner a TRUE cuando deje de estar en fase Beta!!!!
 INLINE_KEYBOARDS_GROUP_ACTIVE = False
@@ -322,20 +323,18 @@ google drive. Inténtalo de nuevo más tarde'
             print u"[{}] {}: Procesando petición inline".format(datetime.datetime.now(), __file__)                
             self.sendChatAction(self.CHAT_GROUP, 'typing')
             
-            #FIXME: guardar una copia de los IDs, URL, width and height en MySQL para no tener que conectarnos aquí
-            lines=proc.check_output('node {}_google_drive_last_uploads.js'.format(os.environ['BIN_DIR']), shell=True)[:-1]        # TODO: meter datos en MySQL para que la consulta sea rápida...
+            query = 'select id,link,width,height from images where link is not NULL order by id desc limit 20;'
+            data = self.run_query(query)
+            
             f=[]
-            for l in lines.split('\n'):
-                tk = l.split('\t')
+            for d in data:
                 f.append(InlineQueryResultPhoto(
-                    id = tk[0], 
-                    photo_url = tk[1], 
-                    thumb_url = tk[1], 
-                    photo_width = int(tk[2]), 
-                    photo_height = int(tk[3])))
-            
-            #print 'Inline Query:\n:', json.dumps(msg, sort_keys=True, indent=4, separators=(',', ': '))    
-            
+                    id = d[0], 
+                    photo_url = d[1], 
+                    thumb_url = d[1], 
+                    photo_width = d[2], 
+                    photo_height = d[3] ))
+                            
             self.answerInlineQuery(query_id, f)        
             
         else:
@@ -968,26 +967,19 @@ google drive. Inténtalo de nuevo más tarde'
 
 
 
+    #TODO: CHECK!!!!!!!!!
     def upload_video(self, file, msg):
-        cmd = [ os.environ['RCLONE_BIN'], "--config", os.environ['RCLONE_CONFIG'], "copy", file, "google:SVVPA/videos" ]
-
         self.editMessageText(self.getMsgChatId(msg), u'Subiendo archivo {}...'.format(eventId))
         
-        try:                
-            i=0
-            while i<self.RETRIES_MAX:
+        try:
                 print u"[{}] {}: Subiendo archivo a google drive ({})".format(datetime.datetime.now(), __file__, file)
                 self.sendChatAction(msg['chat']['id'], 'upload_video')
-                ret = proc.call(cmd, shell=True)            
-                if ret==0:                    
+                if fileuploader(file):            
                     self.editMessageText(self.getMsgChatId(msg), self.MSG_CMD_UPLOAD_DONE.format(os.path.basename(file)), parse_mode=Markdown)
-                    return
-                
-                i+=1
-                time.sleep(self.RETRIES_WAIT)
-            
-            print >> sys.stderr, u"[{}] {}: ERROR! No se ha podido subir el archivo {} a google drive. Se han agotado los intentos".format(datetime.datetime.now(), __file__, file)
-            bot.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UPLOAD_MAX_TRIES.format(os.path.basename(file)))
+                    
+                else:
+                    print >> sys.stderr, u"[{}] {}: ERROR! No se ha podido subir el archivo {} a google drive. Se han agotado los intentos".format(datetime.datetime.now(), __file__, file)
+                    bot.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UPLOAD_MAX_TRIES.format(os.path.basename(file)))
                             
         except Exception as e:
             print >> sys.stderr, u"[{}] {}: ERROR! Se produjo un error inesperado al subir el vídeo a google drive:\n{}".format(datetime.datetime.now(), __file__, repr(e))
@@ -1354,4 +1346,4 @@ if __name__ == "__main__":
 -    }
 -}
 -
--'''
+'''
