@@ -9,12 +9,13 @@ import json
 import time
 import datetime
 import random
+import MySQLdb
 
 
 
 # If modifying these scopes, delete your previously saved credentials
 # at ~/.credentials/drive-python-quickstart.json
-SCOPES = 'https://www.googleapis.com/auth/drive'
+SCOPES = 'https://www.googleapis.com/auth/drive.file'
 CLIENT_SECRET_FILE = os.environ['CONFIG_DIR'] + 'google_drive_client_secret.json'
 APPLICATION_NAME = 'SVVPA'
         
@@ -37,33 +38,37 @@ def uploadImage(file):
         credentials     = get_credentials()
         http            = credentials.authorize(httplib2.Http())
         service         = discovery.build('drive', 'v3', http=http)
-        file_metadata   = { 'name' : os.path.basename(file), 'parents' : ["0Bwse_WnehFNKWERoYS1wYnMwVVk"]}
+        file_metadata   = { 'name' : os.path.basename(file), 'parents' : ["0Bwse_WnehFNKT0d2Wmp4cGhKSWs"]}
         media           = MediaFileUpload(file,  mimetype='image/jpg')#, resumable=True)
-        data            = service.files().create(body = file_metadata,        #TODO: CHECK: en principio solo hace falta la URL
-                                                 media_body = media).execute()#, 
+        data            = service.files().create(body = file_metadata, 
+                                                 media_body = media, 
+                                                 fields = 'id, imageMediaMetadata(height,width), webContentLink').execute()#, 
                                                  #fields = ('id', 'webViewLink')).execute()
-        #print ('File ID: %s' % data.get('id'))
+        data['metadata'] = data.pop('imageMediaMetadata')
+        data['link'] = data.pop('webContentLink')
         return data
     
     except Exception as e:
         print u"[{}] {}: ERROR! Hubo un error inesperado al subir el archivo a google drive:\n{}".format(datetime.datetime.now(), __file__, repr(e))
-    
+
     
 def uploadVideo(file):
     try:
         credentials     = get_credentials()
         http            = credentials.authorize(httplib2.Http())
         service         = discovery.build('drive', 'v3', http=http)
-        file_metadata   = { 'name' : 'SVVPA/videos' + os.path.basename(file)}
+        file_metadata   = { 'name' : os.path.basename(file), 'parents' : ["0Bwse_WnehFNKWERoYS1wYnMwVVk"]}
         media           = MediaFileUpload(file,  mimetype='video/mp4', resumable=True)
         request         = service.files().create(body = file_metadata,
                                                  media_body = media, 
-                                                 fields = ('id'))
+                                                 fields = 'id,videoMediaMetadata(height,width),webViewLink')
                                                  
         data = None
         while data is None:
             status, data = request.next_chunk()                                               
         #print ('File ID: %s' % data.get('id'))
+        data['metadata'] = data.pop('videoMediaMetadata')
+        data['link'] = data.pop('webViewLink')
         return data
     
     except Exception as e:
@@ -72,7 +77,7 @@ def uploadVideo(file):
 
 
 
-def run_query(self, query=''): 
+def run_query(query=''): 
     datos = ['localhost', os.environ['MYSQL_USER'], os.environ['MYSQL_PASS'], os.environ['MYSQL_DB']] 
     
     conn = MySQLdb.connect(*datos) # Conectar a la base de datos 
@@ -92,46 +97,37 @@ def run_query(self, query=''):
         
 
 
-      
-         
-         
-if __name__ == "__main__":
-    #TEMPORAL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    #file = '/home/dlopez/Downloads/2016_04_04_15_11_40_8745_14_52_234_566_305_1.jpg' #sys.argv[1]
-    file = '/home/dlopez/temp/video.mp4' #sys.argv[1]
-    
+def main(file):    
     id   = os.path.basename(file).split(".")[0].strip()
         
     for i in range(20):
         if file.endswith('.jpg'):
             data = uploadImage(file)
+            table = 'images'
             
         else:
             data = uploadVideo(file)
+            table = 'videos'
         
         if data:
             break
         else:
             time.sleep(random.randint(20,60))
     
-    #TODO: usar service.get(id) para obtener todos los datos del archivo y meter los interesantes en mysql
-        
-    if file.endswith('.jpg'):
-        query = 'update images set uid={}, link={}, width={}, height={} where id like \'{}\''.format(data['id'],
-                                                                                                   data['webContentLink'],
-                                                                                                   data['imageMediaMetadata.width'],
-                                                                                                   data['imageMediaMetadata.height'],
-                                                                                                   id )
-        
-    else:
-        query = 'update videos set uid={}, link={}, width={}, height={} where id like \'{}\''.format(data['id'],
-                                                                                                   data['webContentLink'],
-                                                                                                   data['videoMediaMetadata.width'],
-                                                                                                   data['videoMediaMetadata.height'],
-                                                                                                   id )
+    query = "update {} set uid='{}', link='{}', width={}, height={} where id like '{}'".format(table,
+                                                                                               data['id'],
+                                                                                               data['link'],
+                                                                                               data['metadata']['width'],
+                                                                                               data['metadata']['height'],
+                                                                                               id )
         
     run_query(query)
-        
+    return True
+      
+         
+         
+if __name__ == "__main__":
+    main(sys.argv[1])
 
 
      
