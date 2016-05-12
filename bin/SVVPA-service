@@ -41,7 +41,7 @@ case $1 in
 	# Apagar servicio. Se ejecuta automáticamente por Linux cuando se apaga el sistema (init 0 1 6)
 	stop|notify_shutdown)
 		echo "[$(date)] $0: Servicio '$1': El sistema se está apagando"
-		python -u _sendEmailShutdown.py
+		python -u _notificator.py "ON_SHUTDOWN"
 		RETVAL=$(($RETVAL|$?))
 	;;
 
@@ -51,7 +51,7 @@ case $1 in
 	# Encender servicio. Se ejecuta automáticamente por Linux cuando se inicia el sistema (init 2 3 4 5)
 	start|notify_startup)
 		echo "[$(date)] $0: Servicio '$1': El sistema se está arrancando"
-		python -u _sendEmailStartup.py
+		python -u _notificator.py "ON_STARTUP"
 		RETVAL=$(($RETVAL|$?))
 	;;
 	
@@ -62,7 +62,7 @@ case $1 in
 	# Este comando se llama cuando MOTION no puede acceder a la cámara. Se ejecuta cuando se activa el envento 'on_camera_lost' del archivo de configuración motion.conf
 	notify_camera_lost)
 		echo "[$(date)] $0: Servicio '$1': La conexión con la cámara se ha perdido"
-		python -u _sendEmailCameraLost.py
+		python -u _notificator.py "ON_CAMERA_FAILURE"
 		RETVAL=$(($RETVAL|$?))
 	;;
 
@@ -95,7 +95,7 @@ case $1 in
 
 
 
-	# Comprueba el espacio en disco disponible, y si es menor de un límite prefijado, borra vídeos antiguos. Este comando se llama desde MOTION cuando se activa el envento 'on_movie_start' 
+	# Comprueba el espacio en disco disponible, y si es menor de un límite prefijado, borra vídeos antiguos. Este comando se llama desde MOTION cuando se activa el envento 'on_movie_start'. Adicionalmente puede ser llamado desde cron
 	check_disk_space)
 		echo "[$(date)] $0: Servicio '$1': Comprobación de espacio libre en disco"
 		python -u _diskSpaceControl.py
@@ -192,8 +192,8 @@ case $1 in
 				python -u _google_drive_uploader.py $fileIn				
 				RETVAL=$(($RETVAL|$?))
 
-				#FIXME: Mandar notificación (telegram o email según configuración)
-				python -u _sendEmailImage.py $fileIn
+				#FIXME: Mandar notificación (por telegram y/o email según configuración)
+				python -u _notificator.py "ON_MOTION" $fileIn
 				RETVAL=$(($RETVAL|$?))							
 			fi
 		
@@ -230,8 +230,8 @@ case $1 in
 			else
 				mkdir -p ${MOTION_DIR} 2>/dev/null
 
-        #Guarda en MySQL ID
-				sqlStm=$(echo "insert into videos (id) values ('$(basename ${fileIn:: -4})')")
+        		#Guarda en MySQL ID
+				sqlStm=$(echo "insert into videos (id,duration,size) values ('$(basename ${fileIn:: -4})')", $duration, $size)
 				mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo $sqlStm)
 				RETVAL=$(($RETVAL|$?))
 				
@@ -247,7 +247,7 @@ case $1 in
 					RETVAL=1
 
 				else
-					size=$(du -h $fileOut)
+					size=$(du -b $fileOut)
 					duration=$( ${FFMPEG_BIN} -i $fileOut 2>&1|egrep -o "Duration: [0-9:]+"|egrep -o "[0-9]{2}:[0-9]{2}$" )
 					#Guarda en MySQL tamaño y duración del vídeo
 					sqlStm=$( echo "insert into videos (size, duration) values ('$size', '$duration')" )
