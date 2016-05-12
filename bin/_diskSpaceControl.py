@@ -55,7 +55,7 @@ def free_space_up_to(free_percent_required, rootfolder, extension):
 
 
 
-def main(argv=None): 
+def main(): 
 	try:
 		working_dir = str(os.environ['MOTION_DIR'])
 		percent_threshold = float(os.environ['FREE_DISK_PERCENT_THRESHOLD'])
@@ -65,7 +65,8 @@ def main(argv=None):
 		free_space_up_to(percent_threshold, working_dir, extension)
 
 	except Exception, e: 
-		print >> sys.stderr, "[{}] {}: ERROR! {}".format(datetime.datetime.now(), __file__, repr(e))
+		print >> sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado: ".format(datetime.datetime.now(), __file__)
+		traceback.print_exc()
 		return -1
 
 
