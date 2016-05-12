@@ -184,6 +184,7 @@ case $1 in
 
 			#test snapshot vs ordinary motion picture
 			if [[ "$(echo $fileIn|egrep '([0-9_]+){12,}')" ]]
+			then
 				sqlStm=$(echo "insert into images (id) values ('$(basename ${fileIn:: -4})')")
 				mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo $sqlStm)
 				RETVAL=$(($RETVAL|$?))
