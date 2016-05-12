@@ -2,7 +2,7 @@
 
 
 import json
-import os, sys
+import os, sys, traceback
 import re
 import subprocess as proc
 import telepot
@@ -437,7 +437,8 @@ google drive. Inténtalo de nuevo más tarde'
                 bot.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_SSH.format(ret))
             
         except Exception as e:
-            print >>sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al abrir el túnel ssh:\n{}".format(datetime.datetime.now(), __file__, repr(e))            
+            print >>sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al abrir el túnel ssh:".format(datetime.datetime.now(), __file__)
+            traceback.print_exc()            
             bot.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))
         
         
@@ -491,7 +492,8 @@ google drive. Inténtalo de nuevo más tarde'
             self.sendMessage(self.CHAT_GROUP, self.MSG_CMD_UPDATE.format(output))
             
         except Exception as e:
-            print >>sys.stderr, u"[{}] {}: ERROR! Se ha producido un error inesperado al actualizar el repositorio git:\n{}".format(datetime.datetime.now(), __file__, repr(e))
+            print >>sys.stderr, u"[{}] {}: ERROR! Se ha producido un error inesperado al actualizar el repositorio git:".format(datetime.datetime.now(), __file__)
+            traceback.print_exc()
             self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(rep(e)))
         
         
@@ -503,7 +505,8 @@ google drive. Inténtalo de nuevo más tarde'
             proc.check_call('sudo /sbin/shutdown -r now', shell=True)
             
         except Exception as e:
-            print >>sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al intentar reiniciar el sistema:\n{}".format(datetime.datetime.now(), __file__, repr(e))
+            print >>sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al intentar reiniciar el sistema:".format(datetime.datetime.now(), __file__)
+            traceback.print_exc()
             self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(rep(e)))
 
 
@@ -572,7 +575,8 @@ google drive. Inténtalo de nuevo más tarde'
                 bot.sendMessage(self.CHAT_GROUP, text)
                  
         except Exception as e:
-            print >>sys.stderr, u"[{}] {}: ERROR! Se produjo un error inesperado al añadir un nuevo usuario a la lista de usuarios autorizados:\n{}".format(datetime.datetime.now(), __file__, repr(e))            
+            print >>sys.stderr, u"[{}] {}: ERROR! Se produjo un error inesperado al añadir un nuevo usuario a la lista de usuarios autorizados:".format(datetime.datetime.now(), __file__)
+            traceback.print_exc()            
             bot.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_ADDING_USER) 
         
       
@@ -693,7 +697,8 @@ google drive. Inténtalo de nuevo más tarde'
                 bot.sendMessage(self.CHAT_GROUP, self.MSG_MOTION_START)            
         
         except Exception as e:
-            print >> sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al trata de reiniciar motion:\n{}".format(datetime.datetime.now(), __file__, repr(e))
+            print >> sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al trata de reiniciar motion:".format(datetime.datetime.now(), __file__)
+            traceback.print_exc()
             bot.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))
         
                 
@@ -710,7 +715,8 @@ google drive. Inténtalo de nuevo más tarde'
                bot.sendMessage(self.CHAT_GROUP, self.MSG_CMD_MOTION_STOP)
             
         except Exception as e:
-            print >>sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al detener el servicio motion:\n{}".format(datetime.datetime.now(), __file__, repr(e))
+            print >>sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al detener el servicio motion:".format(datetime.datetime.now(), __file__)
+            traceback.print_exc()
             bot.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))
             
          
@@ -724,7 +730,8 @@ google drive. Inténtalo de nuevo más tarde'
                 bot.editMessageText(self.getMsgChatId(msg),  self.MSG_CMD_MOTION_DISABLED)
             
         except:         
-            print >> sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al comprobar el estado del servicio motion:\n{}".format(datetime.datetime.now(), __file__, repr(e))
+            print >> sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al comprobar el estado del servicio motion:".format(datetime.datetime.now(), __file__)
+            traceback.print_exc()
             bot.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))
         
         
@@ -775,7 +782,8 @@ google drive. Inténtalo de nuevo más tarde'
                 bot.sendMessage(self.CHAT_GROUP, text)
                  
         except Exception as e:
-            print >>sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al bloquear permanentemente un usuario".format(datetime.datetime.now(), __file__)           
+            print >>sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al bloquear permanentemente un usuario".format(datetime.datetime.now(), __file__)
+            traceback.print_exc()           
             bot.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e))) 
       
    
@@ -795,7 +803,8 @@ google drive. Inténtalo de nuevo más tarde'
                 proc.check_call([os.environ['FSWEBCAM_BIN'], "--config", os.environ['FSWEBCAM_CONFIG'], "--device", device, fileout], shell=True)
                 
             except Exception as e:
-                print >> sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al capturar la imagen:\n{}".format(datetime.datetime.now(), __file__, repr(e))
+                print >> sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al capturar la imagen:".format(datetime.datetime.now(), __file__)
+                traceback.print_exc()
                 bot.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))                
                  
         t = threading.Thread(target=self.send_snapshot, args=(fileout,))
@@ -822,7 +831,8 @@ google drive. Inténtalo de nuevo más tarde'
             proc.check_call('sudo /sbin/shutdown -r now', shell=True)
             
         except Exception as e:
-            print >> sys.stderr, u"[{}] {}: ERROR! Hubo un problema inesperado al tratar de apagar el sistema:\n{}".format(datetime.datetime.now(), __file__, repr(e))
+            print >> sys.stderr, u"[{}] {}: ERROR! Hubo un problema inesperado al tratar de apagar el sistema:".format(datetime.datetime.now(), __file__)
+            traceback.print_exc()
             bot.editMessageText(self.getMsgChatId(msg), self.MSG_ERROR_UNEXPECTED.format(rep(e)))
      
         
@@ -841,7 +851,8 @@ google drive. Inténtalo de nuevo más tarde'
                 
             
         except Exception as e:
-            print >> sys.stderr, u"[{}] {}: ERROR! Hubo un problema inesperado al modificar la notificación por email:\n{}".format(datetime.datetime.now(), __file__, repr(e))
+            print >> sys.stderr, u"[{}] {}: ERROR! Hubo un problema inesperado al modificar la notificación por email:".format(datetime.datetime.now(), __file__)
+            traceback.print_exc()
             bot.editMessageText(self.getMsgChatId(msg), self.MSG_ERROR_UNEXPECTED.format(rep(e)))
 
 
@@ -945,7 +956,8 @@ google drive. Inténtalo de nuevo más tarde'
                 return True
         
         except:
-            pass
+            print >> sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al comprobar el estado de motion:".format(datetime.datetime.now(), __file__)
+            traceback.print_exc()
         
         print u"[{}] {}: Servicio motion está inactivo".format(datetime.datetime.now(), __file__)
 
@@ -962,7 +974,8 @@ google drive. Inténtalo de nuevo más tarde'
                     break
         
         except Exception as e:
-            print >> sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al cerrar el servicio ssh:\n{}".format(datetime.datetime.now(), __file__, repr(e))
+            print >> sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al cerrar el servicio ssh:".format(datetime.datetime.now(), __file__)
+            traceback.print_exc()
 
 
 
@@ -983,7 +996,8 @@ google drive. Inténtalo de nuevo más tarde'
                 bot.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UPLOAD_MAX_TRIES.format(os.path.basename(file)))
                             
         except Exception as e:
-            print >> sys.stderr, u"[{}] {}: ERROR! Se produjo un error inesperado al subir el vídeo a google drive:\n{}".format(datetime.datetime.now(), __file__, repr(e))
+            print >> sys.stderr, u"[{}] {}: ERROR! Se produjo un error inesperado al subir el vídeo a google drive:".format(datetime.datetime.now(), __file__)
+            traceback.print_exc()
             bot.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))
             
     
@@ -998,11 +1012,11 @@ google drive. Inténtalo de nuevo más tarde'
                 fd.close()
                 
             except Exception as e:
-                print >> sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al enviar la foto: \n{}".format(datetime.datetime.now(), __file__, repr(e))
+                print >> sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al enviar la foto:".format(datetime.datetime.now(), __file__)
+                traceback.print_exc()
                 if fd:
                     fd.close()
                 bot.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))
-                pass
             
         else:
             print >> sys.stderr, u"ERROR! No existe el archivo {}".format(file)
@@ -1041,7 +1055,7 @@ google drive. Inténtalo de nuevo más tarde'
                 return True
         
         except:
-            pass
+            traceback.print_exc()
         
         print u"[{}] {}: La notificación por email está desactivada".format(datetime.datetime.now(), __file__)
         
