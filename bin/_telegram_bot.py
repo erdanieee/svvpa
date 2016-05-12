@@ -120,9 +120,10 @@ está junto a las baterías'''
 actualmente activadas \u2709\ufe0f'''
     MSG_CMD_EMAIL_NOTIF_DISABLED = u'''Las notificaciones por email están \
 actualmente desactivadas \U0001f64a'''
-    MSG_CMD_UPLOAD_DONE = u'El archivo {} se ha subido correctamente a google \
-drive. Recuerda que puedes ver los archivos subidos a google drive en \
-[este enlace](https://drive.google.com/folderview?id=0Bwse_WnehFNKT2I3N005YmlYMms&usp=sharing)'
+    MSG_CMD_UPLOAD_DONE = u'El vídeo {} se ha subido correctamente a google \
+drive. A partir de ahora, puedes reproducirlo todas las veces que quieras y sin\
+ consumir datos en [este enlace]({}). Recuerda que puedes ver los archivos \
+subidos a google drive en [este enlace](https://drive.google.com/folderview?id=0Bwse_WnehFNKT2I3N005YmlYMms&usp=sharing)'
     MSG_ERROR_UPLOAD_MAX_TRIES = u'ERROR! No se ha podido subir el archivo {} a \
 google drive. Inténtalo de nuevo más tarde'
 
@@ -323,7 +324,7 @@ google drive. Inténtalo de nuevo más tarde'
             print u"[{}] {}: Procesando petición inline".format(datetime.datetime.now(), __file__)                
             self.sendChatAction(self.CHAT_GROUP, 'typing')
             
-            query = 'select id,link,width,height from images where link is not NULL order by id desc limit 20;'
+            query = 'select id,link,width,height from images where link is not NULL order by id desc limit 20'
             data = self.run_query(query)
             
             f=[]
@@ -783,13 +784,12 @@ google drive. Inténtalo de nuevo más tarde'
         if msg:            
             bot.editMessageText(self.getMsgChatId(msg), self.MSG_CMD_SNAPSHOT)
         
-        if self.isMotionEnabled():
+        fileout = os.environ['MOTION_DIR'] + '.snapshot-' + str(int(device[-1])+1) + os.environ['MOTION_IMAGE_EXT']        
+        if (time.time() - os.path.getctime(file)) < 600:    #snapshot tiene menos de 10 minutos
             print u"[{}] {}: Capturando foto de motion_snapshots".format(datetime.datetime.now(), __file__)
-            fileout = os.environ['MOTION_DIR'] + '.snapshot-' + str(int(device[-1])+1) + os.environ['MOTION_IMAGE_EXT']
             
         else:
-            print u"[{}] {}: Capturando foto directamente del device {}".format(datetime.datetime.now(), __file__, device)
-            fileout="/tmp/snapshot.jpg"
+            print u"[{}] {}: Capturando foto directamente del dispositivo {}".format(datetime.datetime.now(), __file__, device)
             
             try:
                 proc.check_call([os.environ['FSWEBCAM_BIN'], "--config", os.environ['FSWEBCAM_CONFIG'], "--device", device, fileout], shell=True)
@@ -798,7 +798,7 @@ google drive. Inténtalo de nuevo más tarde'
                 print >> sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al capturar la imagen:\n{}".format(datetime.datetime.now(), __file__, repr(e))
                 bot.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))                
                  
-        t = threading.Thread(target=self.send_photo, args=(fileout,))
+        t = threading.Thread(target=self.send_snapshot, args=(fileout,))
         t.start()
            
            
@@ -959,7 +959,6 @@ google drive. Inténtalo de nuevo más tarde'
                     pid = int(l.split()[1])
                     print u"[{}] {}: Cerrando servicio ssh".format(datetime.datetime.now(), __file__)
                     os.kill(pid, signal.SIGKILL)
-                    print "matado ssh con PID %s" % str(pid)
                     break
         
         except Exception as e:
@@ -969,17 +968,19 @@ google drive. Inténtalo de nuevo más tarde'
 
     #TODO: CHECK!!!!!!!!!
     def upload_video(self, file, msg):
+        print u"[{}] {}: Subiendo archivo a google drive ({})".format(datetime.datetime.now(), __file__, file)
         self.editMessageText(self.getMsgChatId(msg), u'Subiendo archivo {}...'.format(eventId))
         
-        try:
-                print u"[{}] {}: Subiendo archivo a google drive ({})".format(datetime.datetime.now(), __file__, file)
-                self.sendChatAction(msg['chat']['id'], 'upload_video')
-                if fileuploader(file):            
-                    self.editMessageText(self.getMsgChatId(msg), self.MSG_CMD_UPLOAD_DONE.format(os.path.basename(file)), parse_mode=Markdown)
-                    
-                else:
-                    print >> sys.stderr, u"[{}] {}: ERROR! No se ha podido subir el archivo {} a google drive. Se han agotado los intentos".format(datetime.datetime.now(), __file__, file)
-                    bot.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UPLOAD_MAX_TRIES.format(os.path.basename(file)))
+        try:            
+            self.sendChatAction(msg['chat']['id'], 'upload_video')
+            link = fileuploader(file)
+            
+            if link:            
+                self.editMessageText(self.getMsgChatId(msg), self.MSG_CMD_UPLOAD_DONE.format(os.path.basename(file), link), parse_mode=Markdown)
+                
+            else:
+                print >> sys.stderr, u"[{}] {}: ERROR! No se ha podido subir el archivo {} a google drive. Se han agotado los intentos".format(datetime.datetime.now(), __file__, file)
+                bot.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UPLOAD_MAX_TRIES.format(os.path.basename(file)))
                             
         except Exception as e:
             print >> sys.stderr, u"[{}] {}: ERROR! Se produjo un error inesperado al subir el vídeo a google drive:\n{}".format(datetime.datetime.now(), __file__, repr(e))
@@ -987,9 +988,10 @@ google drive. Inténtalo de nuevo más tarde'
             
     
     
-    def send_photo(self, file):
+    def send_snapshot(self, file):
         if os.path.isfile(file):
             try:
+                print u"[{}] {}: Enviando snapshot".format(datetime.datetime.now(), __file__)
                 self.sendChatAction(self.CHAT_GROUP, 'upload_photo')
                 fd = open(file, 'rb')
                 bot.sendPhoto(self.CHAT_GROUP, fd, datetime.datetime.now())
@@ -1051,7 +1053,7 @@ google drive. Inténtalo de nuevo más tarde'
        B = float(os.path.getsize(file))
     
        if B < self.SIZE_KB:
-          return '{0} {1}'.format(B,'Bytes' if 0 == B > 1 else 'Byte')
+          return '{0} {1}'.format(B,'Bytes' if B > 1 else 'Byte')
        elif self.SIZE_KB <= B < self.SIZE_MB:
           return '{0:.2f} KB'.format(B/self.SIZE_KB)
        elif self.SIZE_MB <= B < self.SIZE_GB:
@@ -1143,11 +1145,8 @@ class TimeDelay:
         return self._seconds != None
       
          
-         
-         
-         
-         
-if __name__ == "__main__":
+
+def main():
     TOKEN = os.environ['TELEGRAM_TOKEN']
     bot = Telegram_bot(TOKEN)
     #bot.message_loop({'chat': bot.on_chat_message, 'callback_query': bot.on_callback_query, 'inline_query': bot.on_inline_query, 'chosen_inline_result': bot.on_chosen_inline_result}, relax=1, timeout=60)
@@ -1157,8 +1156,12 @@ if __name__ == "__main__":
     while 1:
         time.sleep(10)
     
-    #sys.exit(main(sys.argv))
-
+             
+         
+         
+         
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))
 
      
         
