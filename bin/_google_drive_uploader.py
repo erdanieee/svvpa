@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-import sys, os
+import sys, os, traceback
 import httplib2
 from apiclient import discovery
 from apiclient.http import MediaFileUpload
@@ -48,7 +48,8 @@ def uploadImage(file):
         return data
     
     except Exception as e:
-        print u"[{}] {}: ERROR! Hubo un error inesperado al subir el archivo a google drive:\n{}".format(datetime.datetime.now(), __file__, repr(e))
+        print u"[{}] {}: ERROR! Hubo un error inesperado al subir el archivo a google drive:".format(datetime.datetime.now(), __file__)
+        traceback.print_exc()
 
     
 def uploadVideo(file):
@@ -72,7 +73,8 @@ def uploadVideo(file):
         return data
     
     except Exception as e:
-        print u"[{}] {}: ERROR! Hubo un error inesperado al subir el archivo a google drive:\n{}".format(datetime.datetime.now(), __file__, repr(e))
+        print u"[{}] {}: ERROR! Hubo un error inesperado al subir el archivo a google drive:".format(datetime.datetime.now(), __file__)
+        traceback.print_exc()
 
 
 
