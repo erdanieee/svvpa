@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #coding=utf-8
 
-import sys, os
+import sys, os, traceback
 import re
 import subprocess as proc
 import gmail_sender as gsender
@@ -152,14 +152,16 @@ def cmd_saveFile(eventId):
 	try:
 		imageCmdResult = proc.call(imageCmd, shell=True)
 	except Exception as e:
-		print >> sys.stderr, u"[{}] {}: ERROR! Se produjeron errores al subir la imagen a google drive: {}".format(datetime.datetime.now(), __file__, repr(e))
+		print >> sys.stderr, u"[{}] {}: ERROR! Se produjeron errores al subir la imagen a google drive:".format(datetime.datetime.now(), __file__)
+		traceback.print_exc()
 		errorMsg+=u'Error al enviar la imagen a google drive.\n{}\n'.format(repr(e))
 		#raise type(e)('Error al enviar el archivo a google drive.\n' + str(e) + '\n' + imageCmd)
 
 	try:
 		videoCmdResult = proc.call(videoCmd, shell=True)
 	except Exception as e:
-		print >> sys.stderr, u"[{}] {}: ERROR! Se produjeron errores al subir el vídeo a google drive: {}".format(datetime.datetime.now(), __file__, repr(e))
+		print >> sys.stderr, u"[{}] {}: ERROR! Se produjeron errores al subir el vídeo a google drive:".format(datetime.datetime.now(), __file__)
+		traceback.print_exc()
 		errorMsg+=u'Error al enviar el vídeo a google drive.\n{}\n'.format(repr(e))
 	
 	if imageCmdResult or videoCmdResult or errorMsg:
@@ -268,7 +270,8 @@ def cmd_openReverseSsh(args):
 			t+=step
 
 	except Exception as e:
-		print u"[{}] {}: Error al procesar comando ssh reverso:\n{}".format(datetime.datetime.now(), __file__, repr(e))
+		print u"[{}] {}: Error al procesar comando ssh reverso:".format(datetime.datetime.now(), __file__)
+		traceback.print_exc()
 	
 	finally:
 		print u"[{}] {}: Cerrando servicio SSH (pid={})".format(datetime.datetime.now(), __file__, pid)
@@ -377,7 +380,8 @@ def cmd_notifEmail(args):
 					msg_html	= cmd_emailNotif_html_PARAR
 
 			except Exception as e:
-				print >> sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado: \n {}".format(datetime.datetime.now(), __file__, e)
+				print >> sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado:".format(datetime.datetime.now(), __file__)
+				traceback.print_exc()
 	        	        
 		notificar_email(msg_subject, msg_html)			
 
