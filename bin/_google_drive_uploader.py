@@ -5,7 +5,6 @@ import httplib2
 from apiclient import discovery
 from apiclient.http import MediaFileUpload
 import oauth2client
-import json
 import time
 import datetime
 import random
@@ -14,7 +13,6 @@ import MySQLdb
 
 
 # If modifying these scopes, delete your previously saved credentials
-# at ~/.credentials/drive-python-quickstart.json
 SCOPES = 'https://www.googleapis.com/auth/drive.file'
 CLIENT_SECRET_FILE = os.environ['CONFIG_DIR'] + 'google_drive_client_secret.json'
 APPLICATION_NAME = 'SVVPA'
@@ -35,6 +33,7 @@ def get_credentials():
    
 def uploadImage(file):
     try:
+        print u"[{}] {}: Subiendo imagen {} a google drive".format(datetime.datetime.now(), __file__, file)
         credentials     = get_credentials()
         http            = credentials.authorize(httplib2.Http())
         service         = discovery.build('drive', 'v3', http=http)
@@ -54,6 +53,7 @@ def uploadImage(file):
     
 def uploadVideo(file):
     try:
+        print u"[{}] {}: Subiendo video {} a google drive".format(datetime.datetime.now(), __file__, file)
         credentials     = get_credentials()
         http            = credentials.authorize(httplib2.Http())
         service         = discovery.build('drive', 'v3', http=http)
@@ -111,7 +111,9 @@ def main(file):
         
         if data:
             break
+        
         else:
+            print >> sys.stderr, u"[{}] {}: ERROR! Hubo un problema al subir el archivo {} a google drive. Reintento: {}".format(datetime.datetime.now(), __file__, file, i)
             time.sleep(random.randint(20,60))
     
     query = "update {} set uid='{}', link='{}', width={}, height={} where id like '{}'".format(table,
@@ -122,12 +124,12 @@ def main(file):
                                                                                                id )
         
     run_query(query)
-    return True
+    return data['link']
       
          
          
 if __name__ == "__main__":
-    main(sys.argv[1])
+    sys.exit(main(sys.argv[1]))
 
 
      
