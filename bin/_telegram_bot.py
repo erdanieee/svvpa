@@ -120,9 +120,9 @@ está junto a las baterías'''
 actualmente activadas \u2709\ufe0f'''
     MSG_CMD_EMAIL_NOTIF_DISABLED = u'''Las notificaciones por email están \
 actualmente desactivadas \U0001f64a'''
-    MSG_CMD_UPLOAD_DONE = u'El vídeo {} se ha subido correctamente a google \
+    MSG_CMD_UPLOAD_DONE = u'El vídeo *{}* se ha subido correctamente a google \
 drive. A partir de ahora, puedes reproducirlo todas las veces que quieras y sin\
- consumir datos en [este enlace]({}). Recuerda que puedes ver los archivos \
+ consumir datos en [este enlace]({}). Recuerda que puedes ver todos los archivos \
 subidos a google drive en [este enlace](https://drive.google.com/folderview?id=0Bwse_WnehFNKT2I3N005YmlYMms&usp=sharing)'
     MSG_ERROR_UPLOAD_MAX_TRIES = u'ERROR! No se ha podido subir el archivo {} a \
 google drive. Inténtalo de nuevo más tarde'
@@ -454,17 +454,27 @@ google drive. Inténtalo de nuevo más tarde'
         
         else:
             buttons=[]
+            i=0
             for f in files:
                 y,m,d,H,M = f.split("_")[:5]
                 t = u'{}/{}/{} {}:{} ({})'.format(y,m,d,H,M, self.get_fileSize(os.path.join(os.environ['MOTION_DIR'], f)))
                 
                 buttons.append([ InlineKeyboardButton( text=t, callback_data=self.callback2string(self.CBQ_UPLOAD_FILE, [f[:-4]])) ])
+                
+                i+=1
+                if i >=20:
+                    break
                           
             buttons.append([ InlineKeyboardButton( text=self.BUT_CANCEL, callback_data=self.callback2string(self.CBQ_FUNCTION_CANCEL) ) ])
                       
             markup  = InlineKeyboardMarkup(inline_keyboard=buttons)    
-            chat    = self.CHAT_GROUP if INLINE_KEYBOARDS_GROUP_ACTIVE else msg['from']['id']            
-            m       = self.sendMessage( chat, self.MSG_CMD_UPLOAD.format(self.get_datosConsumidos(), os.environ['DATOS_MENSUALES']), reply_markup=markup)
+            chat    = self.CHAT_GROUP if INLINE_KEYBOARDS_GROUP_ACTIVE else msg['from']['id']
+            datos   = self.get_datosConsumidos()
+            print markup
+            print chat
+            print datos
+            print  self.MSG_CMD_UPLOAD.format(datos, os.environ['DATOS_MENSUALES'])           
+            m       = self.sendMessage(chat, self.MSG_CMD_UPLOAD.format(datos, os.environ['DATOS_MENSUALES']), reply_markup=markup)
             self.addMsgTimeout(*self.getMsgChatId(m))             
            
         
@@ -472,15 +482,16 @@ google drive. Inténtalo de nuevo más tarde'
         print u"[{}] {}: Enviando información sobre los sensores".format(datetime.datetime.now(), __file__)
         self.sendChatAction(self.CHAT_GROUP, 'typing')
         query = "select * from sensors order by date desc limit 1"        
-        date, cpu_temp, bmp180_temp, bmp180_press, dht22_temp, dht22_hr = self.run_query(query)[0]        
-        
-        self.sendMessage(self.CHAT_GROUP, self.MSG_CMD_SENSORS.format(date.strftime("%Y/%m/%d"), 
+        date, cpu_temp, bmp180_temp, bmp180_press, dht22_temp, dht22_hr = self.run_query(query)[0]
+        text = self.MSG_CMD_SENSORS.format(date.strftime("%Y/%m/%d"), 
                                                                       date.strftime("%H:%M"), 
                                                                       cpu_temp, 
                                                                       dht22_hr, 
                                                                       dht22_temp, 
                                                                       bmp180_press, 
-                                                                      bmp180_temp), parse_mode="Markdown")
+                                                                      bmp180_temp)        
+        
+        self.sendMessage(self.CHAT_GROUP, text.replace('None', '? '), parse_mode="Markdown")
         
         
     #FIXME: meter en un thread para no bloquear el bot
@@ -533,7 +544,7 @@ google drive. Inténtalo de nuevo más tarde'
         ])                
                         
         chat    = self.CHAT_GROUP if INLINE_KEYBOARDS_GROUP_ACTIVE else msg['from']['id']    
-        m       = self.sendMessage(self.CHAT_GROUP, self.MSG_CMD_EMAIL_NOTIF.format(u"activado" if self.isEmailNotif() else u"desactivado"), reply_markup=markup)
+        m       = self.sendMessage(chat, self.MSG_CMD_EMAIL_NOTIF.format(u"activado" if self.isEmailNotif() else u"desactivado"), reply_markup=markup)
         self.addMsgTimeout(*self.getMsgChatId(m))
 
      
@@ -801,7 +812,7 @@ google drive. Inténtalo de nuevo más tarde'
             fileout = '/tmp/snapshot.jpg'
             
             try:
-                proc.check_call([os.environ['FSWEBCAM_BIN'], "--config", os.environ['FSWEBCAM_CONFIG'], "--device", device, fileout], shell=True)
+                ret=proc.check_call(os.environ['FSWEBCAM_BIN'] + " --config " + os.environ['FSWEBCAM_CONFIG'] + " --device " + device + " " + fileout, shell=True)
                 
             except Exception as e:
                 print >> sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al capturar la imagen:".format(datetime.datetime.now(), __file__)
@@ -844,7 +855,7 @@ google drive. Inténtalo de nuevo más tarde'
             cmd = u"sed -ir 's/export EMAIL_NOTIF=\"([a-zA-Z]+)\"/export EMAIL_NOTIF=\"{}\"/g' {}".format(state, self.FILE_CONSTANTS)
             proc.call(cmd, shell=True)
             
-            if self.isEmailNotif():                
+            if state==self.EMAIL_NOTIF_ON:                
                 self.editMessageText(self.getMsgChatId(msg), self.MSG_CMD_EMAIL_NOTIF_ENABLED)
                 
             else:                
@@ -983,14 +994,14 @@ google drive. Inténtalo de nuevo más tarde'
     #TODO: CHECK!!!!!!!!!
     def upload_video(self, file, msg):
         print u"[{}] {}: Subiendo archivo a google drive ({})".format(datetime.datetime.now(), __file__, file)
-        self.editMessageText(self.getMsgChatId(msg), u'Subiendo archivo {}...'.format(eventId))
+        self.editMessageText(self.getMsgChatId(msg), u'Subiendo archivo {}...'.format(os.path.basename(file)))
         
         try:            
-            self.sendChatAction(msg['chat']['id'], 'upload_video')
+            self.sendChatAction(self.CHAT_GROUP, 'upload_video')
             link = fileuploader(file)
             
             if link:            
-                self.editMessageText(self.getMsgChatId(msg), self.MSG_CMD_UPLOAD_DONE.format(os.path.basename(file), link), parse_mode=Markdown)
+                self.editMessageText(self.getMsgChatId(msg), self.MSG_CMD_UPLOAD_DONE.format(os.path.basename(file), link), parse_mode='Markdown')
                 
             else:
                 print >> sys.stderr, u"[{}] {}: ERROR! No se ha podido subir el archivo {} a google drive. Se han agotado los intentos".format(datetime.datetime.now(), __file__, file)
@@ -1081,15 +1092,16 @@ google drive. Inténtalo de nuevo más tarde'
 
 
     def get_datosConsumidos(self):
-        try:        
-            kb = proc.check_output(["sudo", os.environ['BIN_DIR'], "_getInternetUsage.sh"], shell=True).strip()
-            return '{0:.2f}MB'.format(kb/1024.0)
+        try:
+            cmd = "sudo " + os.environ['BIN_DIR'] + "_getInternetUsage.sh"     
+            kb = proc.check_output(cmd, shell=True).strip()
+            return u'{0:.2f}MB'.format(float(kb)/1024.0)
         
         except Exception as e:
             print >> sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado calcular los megas consumidos:".format(datetime.datetime.now(), __file__)
             traceback.print_exc()
             
-        return "?"
+        return u"?"
 
 
     
