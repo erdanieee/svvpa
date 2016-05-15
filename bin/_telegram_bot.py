@@ -495,7 +495,7 @@ google drive. Inténtalo de nuevo más tarde'
         try:
             print u"[{}] {}: Actualizando repositorio".format(datetime.datetime.now(), __file__)
             output = proc.check_output('cd {}; git pull'.format(os.environ['SVVPA_DIR']), shell=True)            
-            self.sendMessage(self.CHAT_GROUP, self.MSG_CMD_UPDATE.format(output))
+            self.sendMessage(self.CHAT_GROUP, self.MSG_CMD_UPDATE.format(output), parse_mode='Markdown')
             
         except Exception as e:
             print >>sys.stderr, u"[{}] {}: ERROR! Se ha producido un error inesperado al actualizar el repositorio git:".format(datetime.datetime.now(), __file__)
