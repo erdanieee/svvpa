@@ -62,13 +62,13 @@ def uploadVideo(file):
         media           = MediaFileUpload(file,  mimetype='video/mp4', resumable=True)
         request         = service.files().create(body = file_metadata,
                                                  media_body = media, 
-                                                 fields = 'id,videoMediaMetadata(height,width),webViewLink')
+                                                 fields = 'id,webViewLink')
                                                  
         data = None
         while data is None:
             status, data = request.next_chunk()                                               
         #print ('File ID: %s' % data.get('id'))
-        data['metadata'] = data.pop('videoMediaMetadata')
+        data['metadata'] = {u'width': u'NULL', u'height':u'NULL'}
         data['link'] = data.pop('webViewLink')
         return data
     
