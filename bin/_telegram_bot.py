@@ -508,6 +508,7 @@ google drive. Inténtalo de nuevo más tarde'
         print u"[{}] {}: Reiniciando el sistema...".format(datetime.datetime.now(), __file__)        
         self.sendMessage(self.CHAT_GROUP, self.MSG_CMD_REBOOT)
         try:
+            #FIXME: Añadir un threading.Timer para apagar, ya que si no no se lee el mensaje y se procesa una y otra vez tras en reinicio. Hacer lo mismo con shutdown
             proc.check_call('sudo /sbin/shutdown -r now', shell=True)
             
         except Exception as e:
@@ -835,6 +836,7 @@ google drive. Inténtalo de nuevo más tarde'
         self.editMessageText(self.getMsgChatId(msg), self.MSG_CMD_SHUTDOWN)
         try:
             print u"[{}] {}: Apagando el sistema".format(datetime.datetime.now(), __file__)
+            #FIXME: Añadir un threading.Timer para apagar, ya que si no no se lee el mensaje y se procesa una y otra vez tras en reinicio. Hacer lo mismo con reinicio
             proc.check_call('sudo /sbin/shutdown -r now', shell=True)
             
         except Exception as e:
