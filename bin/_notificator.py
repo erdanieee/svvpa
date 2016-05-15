@@ -26,7 +26,7 @@ EMAIL_SHUTDOWN_BODY=u'El sistema SVVPA se está apagando'
 TLG_SHUTDOWN=u'El sistema SVVPA se está apagando \U0001f634'
 
 EMAIL_MOTION_SUBJECT=u'SVVPA - Movimiento detectado'
-EMAIL_MOTION_BODY=u"""\
+EMAIL_MOTION_BODY=u'''\
 <html>
     <head></head>
     <body>
@@ -49,7 +49,7 @@ http://{ip}:{port}">http://{ip}:{port}</a>. El consumo de datos hasta ahora ha \
 sido de {datos}Mb de los {datosMensuales}Mb mensuales que incluye la tarifa.         
     </body>
 </html>
-            """ if bool(int(os.environ['REMOTE_ACCESS'])) else u"""\
+            ''' if bool(int(os.environ['REMOTE_ACCESS'])) else u'''\
 <html>
     <head></head>
     <body>
@@ -66,7 +66,7 @@ el consumo de datos hasta el momento ha sido de {datos}Mb de los \
 https://drive.google.com/folderview?id=0Bwse_WnehFNKT2I3N005YmlYMms&usp=sharing">este enlace</a>.</p>
     </body>
 </html>
-"""
+'''
 TLG_MOTION=u'\U0001f440 Nuevo movimiento detectado (*{}*).\n\nLa [imagen más \
 representativa]({}) ha sido subida automáticamente a google drive.\nPara subir \
 también el vídeo utiliza el comando /subir'
@@ -119,7 +119,7 @@ def get_duration(id):
         return ret[0].strip()
     
     except Exception as e:
-        print >> sys.stderr, u"[{}] {}: ERROR! No se ha podido determinar la duración del vídeo:".format(datetime.datetime.now(), __file__)
+        print >> sys.stderr, u'[{}] {}: ERROR! No se ha podido determinar la duración del vídeo:'.format(datetime.datetime.now(), __file__)
         traceback.print_exc()
         return "?"
 
@@ -143,7 +143,7 @@ def get_size(id):
            return u'{0:.2f} TB'.format(B/SIZE_TB)
        
     except Exception as e:
-        print >> sys.stderr, u"[{}] {}: ERROR! No se ha podido determinar el tamaño del vídeo:".format(datetime.datetime.now(), __file__)
+        print >> sys.stderr, u'[{}] {}: ERROR! No se ha podido determinar el tamaño del vídeo:'.format(datetime.datetime.now(), __file__)
         traceback.print_exc()
         return "?"
 
@@ -160,10 +160,10 @@ def isEmailNotif():
             return True
     
     except Exception as e:
-        print >> sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al comprobar el estado de las notificaciones:".format(datetime.datetime.now(), __file__)
+        print >> sys.stderr, u'[{}] {}: ERROR! Hubo un error inesperado al comprobar el estado de las notificaciones:'.format(datetime.datetime.now(), __file__)
         traceback.print_exc()
     
-    print u"[{}] {}: La notificación por email está desactivada".format(datetime.datetime.now(), __file__)
+    print u'[{}] {}: La notificación por email está desactivada'.format(datetime.datetime.now(), __file__)
     return False
     
 
@@ -171,14 +171,14 @@ def isEmailNotif():
 
 def sendNotif(tlg_msg, email_msg=None):    
     for n in range(1,20):
-        print u"[{}] {}: Enviando notificación por telegram".format(datetime.datetime.now(), __file__)        
+        print u'[{}] {}: Enviando notificación por telegram'.format(datetime.datetime.now(), __file__)        
         try:
             bot = telepot.Bot(os.environ['TELEGRAM_TOKEN'])
             bot.sendMessage(int(os.environ['TELEGRAM_CHAT_GROUP']), tlg_msg, parse_mode="Markdown")
             break
             
         except Exception as e:
-            print >> sys.stderr, u"[{}] {}: WARNING! No se ha podido enviar mensaje de telegram. Reintento: {}".format(datetime.datetime.now(), __file__, n)
+            print >> sys.stderr, u'[{}] {}: WARNING! No se ha podido enviar mensaje de telegram. Reintento: {}'.format(datetime.datetime.now(), __file__, n)
             traceback.print_exc()                
             time.sleep(random.randint(20,60))
     
@@ -186,7 +186,7 @@ def sendNotif(tlg_msg, email_msg=None):
     if isEmailNotif() and email_msg:        
         s = gsender.GMail(os.environ['SMPT_USER'], os.environ['SMPT_PASS'])
         for n in range(1,10):
-            print u"[{}] {}: Enviando notificación por email".format(datetime.datetime.now(), __file__)
+            print u'[{}] {}: Enviando notificación por email'.format(datetime.datetime.now(), __file__)
                             
             try:
                 s.connect()                
@@ -195,7 +195,7 @@ def sendNotif(tlg_msg, email_msg=None):
                 return
             
             except Exception as e:
-                print >> sys.stderr, u"[{}] {}: WARNING! No se ha podido enviar el email (intento: {}). Se reintentará en unos segundos".format(datetime.datetime.now(), __file__, n)
+                print >> sys.stderr, u'[{}] {}: WARNING! No se ha podido enviar el email (intento: {}). Se reintentará en unos segundos'.format(datetime.datetime.now(), __file__, n)
                 traceback.print_exc()
                 time.sleep(random.randint(20,60))
             
@@ -205,7 +205,7 @@ def sendNotif(tlg_msg, email_msg=None):
 
 
 def on_startup(arg=None):
-    print u"[{}] {}: Notificación de inicio de sistema".format(datetime.datetime.now(), __file__)
+    print u'[{}] {}: Notificación de inicio de sistema'.format(datetime.datetime.now(), __file__)
     tlg_msg     = TLG_STARTUP
     
     email_msg   = gsender.Message(    
@@ -217,7 +217,7 @@ def on_startup(arg=None):
 
 
 def on_shutdown(arg=None):
-    print u"[{}] {}: Notificación de apagado del sistema".format(datetime.datetime.now(), __file__)
+    print u'[{}] {}: Notificación de apagado del sistema'.format(datetime.datetime.now(), __file__)
     tlg_msg     = TLG_SHUTDOWN
     
     email_msg   = gsender.Message(    
@@ -230,7 +230,7 @@ def on_shutdown(arg=None):
 
 
 def on_cameraFailure(arg=None):
-    print u"[{}] {}: Notificación de fallo en cámara".format(datetime.datetime.now(), __file__)
+    print u'[{}] {}: Notificación de fallo en cámara'.format(datetime.datetime.now(), __file__)
     tlg_msg     = TLG_CAMERA_FAILURE
     
     email_msg   = gsender.Message(    
@@ -244,10 +244,10 @@ def on_cameraFailure(arg=None):
 
 
 def on_motion(file):
-    print u"[{}] {}: Notificación de movimiento detectado".format(datetime.datetime.now(), __file__)
+    print u'[{}] {}: Notificación de movimiento detectado'.format(datetime.datetime.now(), __file__)
     for i in range(20):
         if not file or not os.path.isfile(file):
-            print >> sys.stderr, u"[{}] {}: ERROR! El archivo {} no existe o no es un archivo regular".format(datetime.datetime.now(), __file__, file)
+            print >> sys.stderr, u'[{}] {}: ERROR! El archivo {} no existe o no es un archivo regular'.format(datetime.datetime.now(), __file__, file)
             return
             
         link = uploadFile(file)
@@ -278,10 +278,10 @@ def on_motion(file):
             
         
         else:
-            print >> sys.stderr, u"[{}] {}: ERROR! No se ha podido Notificar el nuevo movimiento (intento: {}). Se reintentará en unos minutos.".format(datetime.datetime.now(), __file__, i)
+            print >> sys.stderr, u'[{}] {}: ERROR! No se ha podido Notificar el nuevo movimiento (intento: {}). Se reintentará en unos minutos.'.format(datetime.datetime.now(), __file__, i)
             time.sleep(random.randint(60,240))
     
-    print >> sys.stderr, u"[{}] {}: ERROR! No se ha podido Notificar el nuevo movimiento ya que se ha alcanzado el número máximo de reintentos!!!.".format(datetime.datetime.now(), __file__)
+    print >> sys.stderr, u'[{}] {}: ERROR! No se ha podido Notificar el nuevo movimiento ya que se ha alcanzado el número máximo de reintentos!!!.'.format(datetime.datetime.now(), __file__)
     
 
 
@@ -307,7 +307,7 @@ def main(cmd, arg=None):
         COMMANDS[cmd](arg)
         
     else:
-        print >> sys.stderr, u"[{}] {}: ERROR! No se reconoce el comando recibido! Los comandos aceptados son {}".format(datetime.datetime.now(), __file__, COMMANDS.keys())
+        print >> sys.stderr, u'[{}] {}: ERROR! No se reconoce el comando recibido! Los comandos aceptados son {}'.format(datetime.datetime.now(), __file__, COMMANDS.keys())
     
     
         
@@ -319,5 +319,5 @@ if __name__ == "__main__":
         sys.exit(main(*sys.argv[1:]))
         
     else:
-        print >> sys.stderr, u"USAGE: {} <cmd> <arg>\n\nLos comandos aceptados son:\n{}".format(__file__, COMMANDS.keys())
+        print >> sys.stderr, u'USAGE: {} <cmd> <arg>\n\nLos comandos aceptados son:\n{}'.format(__file__, COMMANDS.keys())
     
