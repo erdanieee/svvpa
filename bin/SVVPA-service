@@ -183,6 +183,7 @@ case $1 in
 		mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo $sqlStm)
 		RETVAL=$(($RETVAL|$?))
 
+		#FIXME: Sacar la actualización online a otra función a parte y que permita, según configuración, subirlo a google drive o a plotly. Adicionalmente, esta función puede leer los datos de MySQL y hacer algún tipo de media (??)
 		python -u _updateGoogleSpreadsheetSensors.py $(getGoogleSpVal $cpuTemp) $(getGoogleSpVal $bmp180Temp) $(getGoogleSpVal $bmp180Pres) $(getGoogleSpVal $dht22Temp) $(getGoogleSpVal $dht22Hr)
 		RETVAL=$(($RETVAL|$?))
 	;;
@@ -213,7 +214,7 @@ case $1 in
 				python -u _google_drive_uploader.py $fileIn				
 				RETVAL=$(($RETVAL|$?))
 
-				#FIXME: Mandar notificación (por telegram y/o email según configuración)
+				#Manda notificación (por telegram y/o email según configuración)
 				python -u _notificator.py "ON_MOTION" $fileIn
 				RETVAL=$(($RETVAL|$?))							
 			fi
