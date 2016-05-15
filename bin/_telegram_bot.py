@@ -986,7 +986,6 @@ google drive. Inténtalo de nuevo más tarde'
 
 
 
-    #TODO: CHECK!!!!!!!!!
     def upload_video(self, file, msg):
         print u"[{}] {}: Subiendo archivo a google drive ({})".format(datetime.datetime.now(), __file__, file)
         self.editMessageText(self.getMsgChatId(msg), u'Subiendo archivo {}...'.format(os.path.basename(file)))
