@@ -53,6 +53,8 @@ case $1 in
 		echo "[$(date)] $0: Servicio '$1': El sistema se está arrancando"
 		python -u _notificator.py "ON_STARTUP"
 		RETVAL=$(($RETVAL|$?))
+
+		#TODO: start _telegram_bot
 	;;
 	
 
