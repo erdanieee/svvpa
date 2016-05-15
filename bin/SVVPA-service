@@ -79,6 +79,7 @@ case $1 in
 	
 		if [[ ! "${pid}" ]]
 		then
+			echo "[$(date)] $0: Servicio '$1': Arrancando servicio telegram"
 			(python -u _telegram_bot.py) &
 		fi
 
