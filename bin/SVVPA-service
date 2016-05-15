@@ -38,6 +38,8 @@ exec &> >(tee -a ${LOG_FILE})
 cd ${BIN_DIR}
 RETVAL=0
 case $1 in
+
+
 	# Apagar servicio. Se ejecuta automáticamente por Linux cuando se apaga el sistema (init 0 1 6)
 	stop|notify_shutdown)
 		echo "[$(date)] $0: Servicio '$1': El sistema se está apagando"
@@ -51,10 +53,11 @@ case $1 in
 	# Encender servicio. Se ejecuta automáticamente por Linux cuando se inicia el sistema (init 2 3 4 5)
 	start|notify_startup)
 		echo "[$(date)] $0: Servicio '$1': El sistema se está arrancando"
+		#start _telegram_bot
+		(python -u _telegram_bot.py) &
+
 		python -u _notificator.py "ON_STARTUP"
 		RETVAL=$(($RETVAL|$?))
-
-		#TODO: start _telegram_bot
 	;;
 	
 
@@ -66,6 +69,19 @@ case $1 in
 		echo "[$(date)] $0: Servicio '$1': La conexión con la cámara se ha perdido"
 		python -u _notificator.py "ON_CAMERA_FAILURE"
 		RETVAL=$(($RETVAL|$?))
+	;;
+
+
+
+
+	check_telegram_service)
+		pid=$(ps aux|grep 'python'|grep '_telegram_bot.py'|awk '{print $2}')
+	
+		if [[ ! "${pid}" ]]
+		then
+			(python -u _telegram_bot.py) &
+		fi
+
 	;;
 
 
@@ -93,6 +109,7 @@ case $1 in
 		RETVAL=$(($RETVAL|$?))	
  	;;
 	
+
 
 
 
