@@ -500,7 +500,7 @@ google drive. Inténtalo de nuevo más tarde'
         except Exception as e:
             print >>sys.stderr, u"[{}] {}: ERROR! Se ha producido un error inesperado al actualizar el repositorio git:".format(datetime.datetime.now(), __file__)
             traceback.print_exc()
-            self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(rep(e)))
+            self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))
         
         
         
@@ -513,7 +513,7 @@ google drive. Inténtalo de nuevo más tarde'
         except Exception as e:
             print >>sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al intentar reiniciar el sistema:".format(datetime.datetime.now(), __file__)
             traceback.print_exc()
-            self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(rep(e)))
+            self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))
 
 
 
@@ -840,15 +840,15 @@ google drive. Inténtalo de nuevo más tarde'
         except Exception as e:
             print >> sys.stderr, u"[{}] {}: ERROR! Hubo un problema inesperado al tratar de apagar el sistema:".format(datetime.datetime.now(), __file__)
             traceback.print_exc()
-            self.editMessageText(self.getMsgChatId(msg), self.MSG_ERROR_UNEXPECTED.format(rep(e)))
+            self.editMessageText(self.getMsgChatId(msg), self.MSG_ERROR_UNEXPECTED.format(repr(e)))
      
         
         
     def cbq_emailNotif(self, msg, state):            
         try:
-            print u"[{}] {}: {}ctivando las notificaciones por email".format(u"A" if state==self.EMAIL_NOTIF_ON else u"Desa", datetime.datetime.now(), __file__)
-            cmd = u"sed -ir 's/export EMAIL_NOTIF=\"([a-zA-Z]+)\"/export EMAIL_NOTIF=\"{}\"/g' {}".format(state, self.FILE_CONSTANTS)
-            proc.call(cmd, shell=True)
+            print u"[{}] {}: {}ctivando las notificaciones por email".format(datetime.datetime.now(), __file__, u"A" if state==self.EMAIL_NOTIF_ON else u"Desa")
+            cmd = u"sed -i -r 's/export EMAIL_NOTIF=\"([a-zA-Z]*)\"/export EMAIL_NOTIF=\"{}\"/g' {}".format(state, self.FILE_CONSTANTS)
+            proc.check_call(cmd, shell=True)
             
             if state==self.EMAIL_NOTIF_ON:                
                 self.editMessageText(self.getMsgChatId(msg), self.MSG_CMD_EMAIL_NOTIF_ENABLED)
@@ -860,7 +860,7 @@ google drive. Inténtalo de nuevo más tarde'
         except Exception as e:
             print >> sys.stderr, u"[{}] {}: ERROR! Hubo un problema inesperado al modificar la notificación por email:".format(datetime.datetime.now(), __file__)
             traceback.print_exc()
-            self.editMessageText(self.getMsgChatId(msg), self.MSG_ERROR_UNEXPECTED.format(rep(e)))
+            self.editMessageText(self.getMsgChatId(msg), self.MSG_ERROR_UNEXPECTED.format(repr(e)))
 
 
 
