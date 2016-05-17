@@ -253,7 +253,8 @@ case $1 in
 				mkdir -p ${MOTION_DIR} 2>/dev/null
 
         		#Guarda en MySQL ID
-				sqlStm=$(echo "insert into videos (id,duration,size) values ('$(basename ${fileIn:: -4})')", $duration, $size)
+				id=$(basename ${fileIn:: -4})
+				sqlStm=$(echo "insert into videos (id) values ('${id}')" )
 				mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo $sqlStm)
 				RETVAL=$(($RETVAL|$?))
 				
@@ -269,10 +270,11 @@ case $1 in
 					RETVAL=1
 
 				else
-					size=$(du -b $fileOut)
+					size=$(du $fileOut|awk '{print $1}')
 					duration=$( ${FFMPEG_BIN} -i $fileOut 2>&1|egrep -o "Duration: [0-9:]+"|egrep -o "[0-9]{2}:[0-9]{2}$" )
 					#Guarda en MySQL tamaño y duración del vídeo
-					sqlStm=$( echo "insert into videos (size, duration) values ('$size', '$duration')" )
+					sqlStm=$( echo "update videos set size='${size}', duration='${duration}' where id like '${id}'" )
+					echo $sqlStm
 					mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo $sqlStm)
 					RETVAL=$(($RETVAL|$?))
 
