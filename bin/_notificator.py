@@ -9,8 +9,9 @@ import gmail_sender as gsender
 import subprocess as proc
 import re
 import time
-from _google_drive_uploader import main as uploadFile
+from _google_drive_uploader import main as fileuploader
 import urllib
+import MySQLdb
 
 SIZE_KB = 1024.0
 SIZE_MB = 1048576.0 
@@ -92,6 +93,29 @@ descartar un problema transitorio. Si no te encuentras en E.C., puedes probar a 
 reiniciar SVVPA para ver si se soluciona el problema.\u203c'
 
 
+           
+
+
+def run_query(query=''): 
+    datos = ['localhost', os.environ['MYSQL_USER'], os.environ['MYSQL_PASS'], os.environ['MYSQL_DB']] 
+    
+    conn = MySQLdb.connect(*datos) # Conectar a la base de datos 
+    cursor = conn.cursor()         # Crear un cursor 
+    cursor.execute(query)          # Ejecutar una consulta 
+    
+    if query.upper().startswith('SELECT'): 
+        data = cursor.fetchall()   # Traer los resultados de un select 
+    else: 
+        conn.commit()              # Hacer efectiva la escritura de datos 
+        data = None 
+    
+    cursor.close()                 # Cerrar el cursor 
+    conn.close()                   # Cerrar la conexion 
+    
+    return data            
+        
+
+
 
 def get_ip():
     url = "http://ipecho.net/plain"
@@ -115,7 +139,7 @@ def get_datos():
 def get_duration(id):
     file = os.environ['MOTION_DIR'] + id + '.' + os.environ['MOTION_VIDEO_EXT']     
     try:
-        ret = os.popen(os.environ['FFMPEG_BIN'] + ' -i ' + file + '2>&1|egrep -o "Duration: [0-9:]+"|egrep -o "[0-9]{2}:[0-9]{2}$"').readlines()
+        ret = os.popen(os.environ['FFMPEG_BIN'] + ' -i ' + file + ' 2>&1|egrep -o "Duration: [0-9:]+"|egrep -o "[0-9]{2}:[0-9]{2}$"').readlines()
         return ret[0].strip()
     
     except Exception as e:
@@ -250,12 +274,18 @@ def on_motion(file):
             print >> sys.stderr, u'[{}] {}: ERROR! El archivo {} no existe o no es un archivo regular'.format(datetime.datetime.now(), __file__, file)
             return
             
-        link = uploadFile(file)
+        fileuploader(file)   
         
-        if link:
+        id       = os.path.basename(file)[:-4]    
+        data_img = run_query("select link from images where id like '{}'".format(id))
+        data_vid = run_query("select duration, size from videos where id like '{}'".format(id))
+            
+        if data_img: 
             date        = datetime.datetime(*map(int,os.path.basename(file).split("_")[:6]))
-            id          = os.path.basename(file).split(".")[0].strip()            
-            tlg_msg     = TLG_MOTION.format(date.strftime("%Y/%m/%d %H:%M:%S"), link)
+            link        = data_img[0][0]     
+            duration    = data_vid[0][0] if data_vid[0][0] else get_duration(id) 
+            size        = data_vid[0][1] if data_vid[0][1] else get_size(id)
+            tlg_msg     = TLG_MOTION.format(date.strftime("%Y/%m/%d %H:%M:%S"), link)             
             email_msg   = None
             
             if isEmailNotif():      #FIXME: Redundante porque se comprueba luego en sendNotif, pero por ahora se queda asi :)            
@@ -269,8 +299,8 @@ def on_motion(file):
                                                                             datos=get_datos(), 
                                                                             datosMensuales=os.environ['DATOS_MENSUALES'],
                                                                             email=os.environ['GMAIL_ACCOUNT_ALIAS'],
-                                                                            duration=get_duration(id),
-                                                                            size=get_size(id)),
+                                                                            duration=duration,  #FIXME: coger de MySQL
+                                                                            size=size),         #FIXME: coger de MySQL
                                             attachments    = [file])
             
             sendNotif(tlg_msg, email_msg)
