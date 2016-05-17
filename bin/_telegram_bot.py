@@ -273,7 +273,7 @@ google drive. Inténtalo de nuevo más tarde'
                 if cmd in self.COMMANDS:
                     # solo permite comandos por mensaje privado o de admin
                     if user_id == self.ADMIN_USER or chat_id == self.CHAT_GROUP:
-                        self.COMMANDS[cmd](msg)
+                        self.COMMANDS[cmd](msg) #TODO: en un futuro se puede lanzar un thread por comando, pero por ahora se queda así
                             
                     else:                
                         print >> sys.stderr, u"[{}] {}: WARNING! El comando no ha sido enviado al chat de grupo. Ignorando msg...".format(datetime.datetime.now(), __file__)
@@ -300,6 +300,7 @@ google drive. Inténtalo de nuevo más tarde'
         else:
             print >>sys.stderr, u"[{}] {}: El mensaje no es de texto o proviene de un usuario bloqueado. Ignorando msg...".format(datetime.datetime.now(), __file__)
             
+
     
     
     #######################
@@ -309,9 +310,10 @@ google drive. Inténtalo de nuevo más tarde'
         print u"[{}] {}: Callback recibido: {}".format(datetime.datetime.now(), __file__, msg['data'])        
         self.cancelMsgTimeout(*self.getMsgChatId(msg))        
         funct, arg = self.string2callback(msg['data'])
-        funct(msg, *arg)
+        funct(msg, *arg)    #TODO: en un futuro se puede lanzar un thread por callback, pero por ahora se queda así
 
     
+
 
     #############################
     #  I N L I N E   Q U E R Y  #
@@ -445,9 +447,8 @@ google drive. Inténtalo de nuevo más tarde'
                     
     def cmd_upload_video(self, msg):
         pattern = re.compile('([0-9]+_){12,}[0-9]+.' + os.environ['MOTION_VIDEO_EXT'])
-        files   = sorted([f for f in os.listdir(os.environ['MOTION_DIR']) if pattern.search(f) and os.path.isfile(os.path.join(os.environ['MOTION_DIR'], f))])
-        os.path
-        
+        files   = sorted([f for f in os.listdir(os.environ['MOTION_DIR']) if pattern.search(f) and os.path.isfile(os.path.join(os.environ['MOTION_DIR'], f))], reverse=True)    #FIXME: coger de MySQL
+                
         if len(files)==0:
             print u"[{}] {}: Todavia no hay eventos capturados".format(datetime.datetime.now(), __file__)            
             self.sendMessage(self.CHAT_GROUP, self.MSG_MOTION_NO_EVENTS)
@@ -457,7 +458,7 @@ google drive. Inténtalo de nuevo más tarde'
             i=0
             for f in files:
                 y,m,d,H,M = f.split("_")[:5]
-                t = u'{}/{}/{} {}:{} ({})'.format(y,m,d,H,M, self.get_fileSize(os.path.join(os.environ['MOTION_DIR'], f)))
+                t = u'{}/{}/{} {}:{} ({})'.format(y,m,d,H,M, self.get_fileSize(os.path.join(os.environ['MOTION_DIR'], f)))      #FIXME: coger tamaño de Mysql si está, si no usar f(x)
                 
                 buttons.append([ InlineKeyboardButton( text=t, callback_data=self.callback2string(self.CBQ_UPLOAD_FILE, [f[:-4]])) ])
                 
@@ -508,24 +509,12 @@ google drive. Inténtalo de nuevo más tarde'
     def cmd_reboot(self,msg):
         print u"[{}] {}: Reiniciando el sistema...".format(datetime.datetime.now(), __file__)        
         self.sendMessage(self.CHAT_GROUP, self.MSG_CMD_REBOOT)
-        t = threading.Timer(10, self.reboot)
+        t = threading.Timer(5, self.reboot)
         t.setDaemon(True)
         t.start()
         
 
-        
-        
-    def reboot(self):        
-        try:
-            #FIXME: Añadir un threading.Timer para apagar, ya que si no no se lee el mensaje y se procesa una y otra vez tras en reinicio. Hacer lo mismo con shutdown
-            proc.check_call('sudo /sbin/shutdown -r now', shell=True)
-            
-        except Exception as e:
-            print >>sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al intentar reiniciar el sistema:".format(datetime.datetime.now(), __file__)
-            traceback.print_exc()
-            self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))
-
-
+  
 
     def cmd_shutdown(self,msg):            
         markup = InlineKeyboardMarkup(inline_keyboard=[
@@ -841,18 +830,17 @@ google drive. Inténtalo de nuevo más tarde'
 
 
 
-    def cbq_shutdown(self, msg):        
-        self.editMessageText(self.getMsgChatId(msg), self.MSG_CMD_SHUTDOWN)
-        try:
-            print u"[{}] {}: Apagando el sistema".format(datetime.datetime.now(), __file__)
-            #FIXME: Añadir un threading.Timer para apagar, ya que si no no se lee el mensaje y se procesa una y otra vez tras en reinicio. Hacer lo mismo con reinicio
-            proc.check_call('sudo /sbin/shutdown -r now', shell=True)
-            
-        except Exception as e:
-            print >> sys.stderr, u"[{}] {}: ERROR! Hubo un problema inesperado al tratar de apagar el sistema:".format(datetime.datetime.now(), __file__)
-            traceback.print_exc()
-            self.editMessageText(self.getMsgChatId(msg), self.MSG_ERROR_UNEXPECTED.format(repr(e)))
-     
+
+    def cbq_shutdown(self, msg):
+        print u"[{}] {}: Apagando el sistema".format(datetime.datetime.now(), __file__)        
+        self.editMessageText(self.getMsgChatId(msg), self.MSG_CMD_SHUTDOWN)        
+        t = threading.Timer(5, self.shutdown)
+        t.setDaemon(True)
+        t.start()
+         
+        
+        
+  
         
         
     def cbq_emailNotif(self, msg, state):            
@@ -872,6 +860,9 @@ google drive. Inténtalo de nuevo más tarde'
             print >> sys.stderr, u"[{}] {}: ERROR! Hubo un problema inesperado al modificar la notificacion por email:".format(datetime.datetime.now(), __file__)
             traceback.print_exc()
             self.editMessageText(self.getMsgChatId(msg), self.MSG_ERROR_UNEXPECTED.format(repr(e)))
+
+
+
 
 
 
@@ -1003,10 +994,13 @@ google drive. Inténtalo de nuevo más tarde'
         
         try:            
             self.sendChatAction(self.CHAT_GROUP, 'upload_video')
-            link = fileuploader(file)
+            fileuploader(file)   #FIXME: Muy mala idea, porque puede capturar fallos también. Coger mejor de MySQL
             
-            if link:            
-                self.editMessageText(self.getMsgChatId(msg), self.MSG_CMD_UPLOAD_DONE.format(os.path.basename(file), link), parse_mode='Markdown')
+            query = "select link from videos where id like '{}'".format(os.path.basename(file)[:-4])
+            data  = self.run_query(query)
+            
+            if data:            
+                self.editMessageText(self.getMsgChatId(msg), self.MSG_CMD_UPLOAD_DONE.format(os.path.basename(file), data[0][0]), parse_mode='Markdown')
                 
             else:
                 print >> sys.stderr, u"[{}] {}: ERROR! No se ha podido subir el archivo {} a google drive. Se han agotado los intentos".format(datetime.datetime.now(), __file__, file)
@@ -1109,6 +1103,30 @@ google drive. Inténtalo de nuevo más tarde'
         return u"?"
 
 
+      
+        
+    def reboot(self):        
+        try:
+            #FIXME: Añadir un threading.Timer para apagar, ya que si no no se lee el mensaje y se procesa una y otra vez tras en reinicio. Hacer lo mismo con shutdown
+            proc.check_call('sudo /sbin/shutdown -r now', shell=True)
+            
+        except Exception as e:
+            print >>sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al intentar reiniciar el sistema:".format(datetime.datetime.now(), __file__)
+            traceback.print_exc()
+            self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))
+
+
+
+
+    def shutdown(self):
+        try:
+            proc.check_call('sudo /sbin/shutdown -r now', shell=True)
+            
+        except Exception as e:
+            print >> sys.stderr, u"[{}] {}: ERROR! Hubo un problema inesperado al tratar de apagar el sistema:".format(datetime.datetime.now(), __file__)
+            traceback.print_exc()
+            self.editMessageText(self.getMsgChatId(msg), self.MSG_ERROR_UNEXPECTED.format(repr(e)))
+   
     
     
     
