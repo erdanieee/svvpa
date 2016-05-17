@@ -126,11 +126,11 @@ def main(file):
                                                                                                id )
         
     run_query(query)
-    return data['link']
+    #print data['link']
       
          
          
-if __name__ == "__main__":
+if __name__ == "__main__":    
     sys.exit(main(sys.argv[1]))
 
 
