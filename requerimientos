@@ -2,7 +2,7 @@
 ### INSTALACIÓN DE DEPENDENCIAS	###
 ###################################
 * sudo apt-get install git motion apache2 mysql-server php5 php5-mysql bc build-essential python-dev python-smbus vnstat fswebcam sshpass python-mysqldb
-* sudo pip install --upgrade oauth2client PyOpenSSL gspread zipfile md5 nunconv
+* sudo pip install --upgrade oauth2client PyOpenSSL gspread zipfile md5 nunconv google-api-python-client
 * Adafruit_Python_DHT
 	- git clone https://github.com/adafruit/Adafruit_Python_DHT.git
 	- sudo python setup.py install
@@ -23,10 +23,7 @@
 	- sudo python setup.py install
 * instalar telepot
 	- git clone https://github.com/nickoala/telepot && cd telepot && sudo python setup.py install
-* instalar nodejs y dependencias
-	- curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
-	- sudo apt-get install -y nodejs
-	- sudo npm install -g googleapis google-auth-library
+
 			
 
 
@@ -34,6 +31,7 @@
 ### TABLAS MYSQL ###
 ####################
 * crear base de datos a partir del archivo config/svvpa.sql
+	- mysql -u root -p < config/svvpa.sql
 * crear usuario con permisos select, insert, update y poner user/pass en updateSensors.sh
 * crear usuario con permiso select y poner user/pass en sensors.php
 
