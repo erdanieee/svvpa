@@ -4,7 +4,7 @@
 ''' 
 	Este programa comprueba el espacio en disco para un determinado directorio
 	y, si supera un porcentaje dado, borra archivos en ese directorio por
-	orden cronológico 
+	orden cronologico 
 '''
 
 
@@ -42,11 +42,11 @@ def free_space_up_to(free_percent_required, rootfolder, extension):
 			os.remove(file)    			
 		
 		else:
-			print "[{}] {}: No se puede liberar más espacio porque no quedan imágenes o vídeos que se puedan borrar".format(datetime.datetime.now(), __file__)
+			print "[{}] {}: No se puede liberar mas espacio porque no quedan imagenes o videos que se puedan borrar".format(datetime.datetime.now(), __file__)
 			return
 
 	
-	print "[{}] {}: Espacio libre es mayor que el mínimo requerido ({:.0f}%). No se borrarán más archivos.".format(datetime.datetime.now(), __file__, free_percent_required)
+	print "[{}] {}: Espacio libre es mayor que el minimo requerido ({:.0f}%). No se borraran mas archivos.".format(datetime.datetime.now(), __file__, free_percent_required)
 	return
 
 	

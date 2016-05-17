@@ -23,66 +23,66 @@ cmd_help_subject=u'SVVPA - Ayuda'
 cmd_help_html=u'''
 	<html>
 		<body>
-			<h3>Control de SVVPA mediante correos electrónicos</h3>
-			<p>SVVPA tiene la capacidad de ejecutar acciones recibidas mediante correo electrónico. Para ello, solo hay que mandar un email a <a href="mailto:{correo}">{correo}</a> cuyo asunto contenga la acción a ejecutar y esperar a la recepción del correo de confirmación que indica que la ejecución se ha realizado correctamente. La sintaxis de las acciones sigue el siguiente formato:<br>
+			<h3>Control de SVVPA mediante correos electronicos</h3>
+			<p>SVVPA tiene la capacidad de ejecutar acciones recibidas mediante correo electronico. Para ello, solo hay que mandar un email a <a href="mailto:{correo}">{correo}</a> cuyo asunto contenga la accion a ejecutar y esperar a la recepcion del correo de confirmacion que indica que la ejecucion se ha realizado correctamente. La sintaxis de las acciones sigue el siguiente formato:<br>
 			<i>CMD_SVVPA COMANDO ARG1 ARG2 ARG3 ... ARGn</i><br>
-		donde <i>COMANDO</i> indica el comando que se desea ejecutar y <i>ARGi</i> los argumentos de ese comando (algunos comandos no necesitan argumentos). A continuación se muestran los comandos y argumentos disponibles por el momento:
+		donde <i>COMANDO</i> indica el comando que se desea ejecutar y <i>ARGi</i> los argumentos de ese comando (algunos comandos no necesitan argumentos). A continuacion se muestran los comandos y argumentos disponibles por el momento:
 			<ul>
-				<li><b>AYUDA</b> - Envía este email, recordándote los comandos y argumentos disponibles y ejemplos de cómo usarlos. Haciendo click en los enlaces de los <a href="mailto:{correo}?subject=CMD_SVVPA AYUDA">ejemplos como éste</a>, se compone automáticamente un email que puede ser enviado tal cual o modificado a criterio.</li>	
-				<li><b>GUARDAR_EN_GOOGLE_DRIVE codigoDelEvento</b> - Guarda en google drive la imagen y el vídeo que corresponde al evento con código <i>codigoDelEvento</i>. El código del evento se puede obtener del asunto del email que se envía automáticamente cuando se detecta un movimiento. <a href="mailto:{correo}?subject=CMD_SVVPA GUARDAR_EN_GOOGLE_DRIVE 2016_01_02_15_30_13_12332_123_543_23_5543_12">Ver ejemplo</a></li>
-				<li><b>ESTADO_DEL_SISTEMA</b> - Envía un email con información sobre SVVP, como el espacio disponible, la temperatura de la CPU, el registro de eventos del sistema, ... <a href="mailto:{correo}?subject=CMD_SVVPA ESTADO_DEL_SISTEMA">Ver ejemplo</a></li>
-			<li><b>DETECTAR_MOVIMIENTO acción tiempo</b> - Comando para iniciar, parar o pausar el servicio de detección de movimiento. Útil cuando estás en E.C. y no deseas ser grabado :). Si la acción es <i>PARAR</i> (<a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO PARAR">Ver ejemplo</a>), el servicio se detiene hasta que se reciba la acción <i>INICIAR</i> (<a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO INICIAR">Ver ejemplo</a>). Si la acción es <i>PAUSAR</i> (<a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO PAUSAR 5H">Ver ejemplo</a>), el servicio se detiene temporalmente. En este último caso se requiere también el argumento <i>tiempo</i>, que determina la pausa en formato <i>nU</i>, siendo <i>n</i> la cantidad, y <i>U</i> la unidad (S, M, H o D para segundos, minutos, horas o días. Ej: 10H para pausar durante 10 horas. 3D para pausar durante 3 días)</li>
-			<li><b>NOTIFICAR_EMAIL acción</b> - Este comando sirve para controlar las notificaciones que se reciben por email (detección de nuevos movimientos, arranque/parada del sistema, errores, ...), donde <i>acción</i> puede tomar los valores <i>INICIAR</i> para activar (<a href="mailto:{correo}?subject=CMD_SVVPA NOTIFICAR_EMAIL INICIAR">Ver ejemplo</a>), <i>PARAR</i> para desactivar (<a href="mailto:{correo}?subject=CMD_SVVPA NOTIFICAR_EMAIL PARAR">Ver ejemplo</a>) o <i>ESTADO</i> para comprobar el estado (<a href="mailto:{correo}?subject=CMD_SVVPA NOTIFICAR_EMAIL ESTADO">Ver ejemplo</a>).</li>	
-			<li><b>ACTUALIZAR_REPOSITORIO</b> - Actualiza el repositorio Github de SVVPA. Normalmente este comando solo lo ejecuta Er Danié. <a href="mailto:{correo}?subject=CMD_SVVPA ACTUALIZAR_REPOSITORIO">Ver ejemplo</a></li>
-			<li><b>ACTIVAR_GESTION_REMOTA</b> - Abre un puerto en un servidor remoto para realizar un ssh reverso. Esta opción es útil para administrar SVVPA cuando no tiene conexión a internet a través de una IP pública real (ej: conexión 3g). Normalmente este comando solo lo ejecuta Er Danié. <a href="mailto:{correo}?subject=CMD_SVVPA ACTIVAR_GESTION_REMOTA">Ver ejemplo</a></li>
-			<li><b>REINICIAR</b> - Reinicia el sistema. Este comando es útil cuando algo no está funcionando correctamente. El reinicio tarda aproximádamente 1 minuto. <a href="mailto:{correo}?subject=CMD_SVVPA REINICIAR">Ver ejemplo</a></li>
-			<li><b>APAGAR</b> - Apaga el sistema. Cuando se envía este comando, SVVPA responde con un correo de confirmación. Para apagar correctamente SVVPA, se debe confirmar el apagado respondiendo al correo de confirmación sin modificar el asunto. Atención: Una vez apagado el sistema, solo se puede volver a iniciar desactivando y activando físicamente el mini-interruptor que está junto a las baterías. Asegúrate de <b>no ejecutar NUNCA</b> este comando cuando estés fuera de E.C. <a href="mailto:{correo}?subject=CMD_SVVPA APAGAR">Ver ejemplo</a></li>
+				<li><b>AYUDA</b> - Envia este email, recordandote los comandos y argumentos disponibles y ejemplos de como usarlos. Haciendo click en los enlaces de los <a href="mailto:{correo}?subject=CMD_SVVPA AYUDA">ejemplos como este</a>, se compone automaticamente un email que puede ser enviado tal cual o modificado a criterio.</li>	
+				<li><b>GUARDAR_EN_GOOGLE_DRIVE codigoDelEvento</b> - Guarda en google drive la imagen y el video que corresponde al evento con codigo <i>codigoDelEvento</i>. El codigo del evento se puede obtener del asunto del email que se envia automaticamente cuando se detecta un movimiento. <a href="mailto:{correo}?subject=CMD_SVVPA GUARDAR_EN_GOOGLE_DRIVE 2016_01_02_15_30_13_12332_123_543_23_5543_12">Ver ejemplo</a></li>
+				<li><b>ESTADO_DEL_SISTEMA</b> - Envia un email con informacion sobre SVVP, como el espacio disponible, la temperatura de la CPU, el registro de eventos del sistema, ... <a href="mailto:{correo}?subject=CMD_SVVPA ESTADO_DEL_SISTEMA">Ver ejemplo</a></li>
+			<li><b>DETECTAR_MOVIMIENTO accion tiempo</b> - Comando para iniciar, parar o pausar el servicio de deteccion de movimiento. Util cuando estas en E.C. y no deseas ser grabado :). Si la accion es <i>PARAR</i> (<a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO PARAR">Ver ejemplo</a>), el servicio se detiene hasta que se reciba la accion <i>INICIAR</i> (<a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO INICIAR">Ver ejemplo</a>). Si la accion es <i>PAUSAR</i> (<a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO PAUSAR 5H">Ver ejemplo</a>), el servicio se detiene temporalmente. En este ultimo caso se requiere tambien el argumento <i>tiempo</i>, que determina la pausa en formato <i>nU</i>, siendo <i>n</i> la cantidad, y <i>U</i> la unidad (S, M, H o D para segundos, minutos, horas o dias. Ej: 10H para pausar durante 10 horas. 3D para pausar durante 3 dias)</li>
+			<li><b>NOTIFICAR_EMAIL accion</b> - Este comando sirve para controlar las notificaciones que se reciben por email (deteccion de nuevos movimientos, arranque/parada del sistema, errores, ...), donde <i>accion</i> puede tomar los valores <i>INICIAR</i> para activar (<a href="mailto:{correo}?subject=CMD_SVVPA NOTIFICAR_EMAIL INICIAR">Ver ejemplo</a>), <i>PARAR</i> para desactivar (<a href="mailto:{correo}?subject=CMD_SVVPA NOTIFICAR_EMAIL PARAR">Ver ejemplo</a>) o <i>ESTADO</i> para comprobar el estado (<a href="mailto:{correo}?subject=CMD_SVVPA NOTIFICAR_EMAIL ESTADO">Ver ejemplo</a>).</li>	
+			<li><b>ACTUALIZAR_REPOSITORIO</b> - Actualiza el repositorio Github de SVVPA. Normalmente este comando solo lo ejecuta Er Danie. <a href="mailto:{correo}?subject=CMD_SVVPA ACTUALIZAR_REPOSITORIO">Ver ejemplo</a></li>
+			<li><b>ACTIVAR_GESTION_REMOTA</b> - Abre un puerto en un servidor remoto para realizar un ssh reverso. Esta opcion es util para administrar SVVPA cuando no tiene conexion a internet a traves de una IP publica real (ej: conexion 3g). Normalmente este comando solo lo ejecuta Er Danie. <a href="mailto:{correo}?subject=CMD_SVVPA ACTIVAR_GESTION_REMOTA">Ver ejemplo</a></li>
+			<li><b>REINICIAR</b> - Reinicia el sistema. Este comando es util cuando algo no esta funcionando correctamente. El reinicio tarda aproximadamente 1 minuto. <a href="mailto:{correo}?subject=CMD_SVVPA REINICIAR">Ver ejemplo</a></li>
+			<li><b>APAGAR</b> - Apaga el sistema. Cuando se envia este comando, SVVPA responde con un correo de confirmacion. Para apagar correctamente SVVPA, se debe confirmar el apagado respondiendo al correo de confirmacion sin modificar el asunto. Atencion: Una vez apagado el sistema, solo se puede volver a iniciar desactivando y activando fisicamente el mini-interruptor que esta junto a las baterias. Asegurate de <b>no ejecutar NUNCA</b> este comando cuando estes fuera de E.C. <a href="mailto:{correo}?subject=CMD_SVVPA APAGAR">Ver ejemplo</a></li>
 			</ul>							
 		</body>
 	</html>
 	'''
 
 
-cmd_status_subject=u'SVVPA - Información del sistema'
-cmd_status_html=u'<html><body><p>Adjunto se envían los registros más relevantes del sistema</p></body></html>'
+cmd_status_subject=u'SVVPA - Informacion del sistema'
+cmd_status_html=u'<html><body><p>Adjunto se envian los registros mas relevantes del sistema</p></body></html>'
 
 cmd_reboot_subject=u'SVVPA - Reinicio del sistema'
-cmd_reboot_html=u'<html><body><p>El sistema se está reiniciando. Este proceso tarda aproximadamente 1 minuto.</p></body></html>'
+cmd_reboot_html=u'<html><body><p>El sistema se esta reiniciando. Este proceso tarda aproximadamente 1 minuto.</p></body></html>'
 
 cmd_saveFile_subject_OK=u'SVVPA - Copia Google Drive correcta ({eventId})'
 cmd_saveFile_subject_ERROR=u'SVVPA - Error en la subida a Google Drive ({eventId})'
-cmd_saveFile_html_OK=u'<html><body><p>La imagen y el vídeo se han copiado correctamente a google drive. Puedes ver las imágenes y vídeos guardados en <a href="https://drive.google.com/folderview?id=0Bwse_WnehFNKT2I3N005YmlYMms&usp=sharing">este enlace</a>.</p></body></html>'
+cmd_saveFile_html_OK=u'<html><body><p>La imagen y el video se han copiado correctamente a google drive. Puedes ver las imagenes y videos guardados en <a href="https://drive.google.com/folderview?id=0Bwse_WnehFNKT2I3N005YmlYMms&usp=sharing">este enlace</a>.</p></body></html>'
 cmd_saveFile_html_ERROR=u'<html><body><p>Se han producido los siguientes errores al subir los archivos a google drive:</p><p>{error}</p></body></html>'
 
 cmd_shutdown_subject_OK=u'SVVPA - Apagando sistema'
 cmd_shutdown_subject_CONFIRM=u'SVVPA - Confirmar apagado: CMD_SVVPA APAGAR {code}'
-cmd_shutdown_subject_ERROR=u'SVVPA - Código de apagado erróneo'
-cmd_shutdown_html_OK=u'<html><body><p>Código de confirmación de apagado aceptado. El sistema se apagará en unos segundos. Recuerda que para iniciar de nuevo el sistema es necesario desactivar y volver a activar físicamente el mini-interruptor que está junto a las baterías.</p></body></html>'
-cmd_shutdown_html_CONFIRM=u'<html><body><h4>¿Confirmar apagado?</h4><p>Se va a proceder a apagar el sistema. Recuerda que una vez apagado, <ins>solo</ins> se puede volver a iniciar desactivando y activando físicamente el mini-interruptor que está junto a las baterías.</p><p>Si realmente quieres apagar el sistema <b>responde a este email <mark>sin modificar el asunto</mark></b>.</p></body></html>'
-cmd_shutdown_html_ERROR=u'<html><body><p>El código de confirmación utilizado para apagar el sistema es inválido. Recuerda que los códigos caducan en una hora y no se pueden reutilizar.</p></body></html>'
+cmd_shutdown_subject_ERROR=u'SVVPA - Codigo de apagado erroneo'
+cmd_shutdown_html_OK=u'<html><body><p>Codigo de confirmacion de apagado aceptado. El sistema se apagara en unos segundos. Recuerda que para iniciar de nuevo el sistema es necesario desactivar y volver a activar fisicamente el mini-interruptor que esta junto a las baterias.</p></body></html>'
+cmd_shutdown_html_CONFIRM=u'<html><body><h4>¿Confirmar apagado?</h4><p>Se va a proceder a apagar el sistema. Recuerda que una vez apagado, <ins>solo</ins> se puede volver a iniciar desactivando y activando fisicamente el mini-interruptor que esta junto a las baterias.</p><p>Si realmente quieres apagar el sistema <b>responde a este email <mark>sin modificar el asunto</mark></b>.</p></body></html>'
+cmd_shutdown_html_ERROR=u'<html><body><p>El codigo de confirmacion utilizado para apagar el sistema es invalido. Recuerda que los codigos caducan en una hora y no se pueden reutilizar.</p></body></html>'
 
 
 cmd_openReverseSsh_subject_OPEN=u'SVVPA - Servicio SSH abierto'
 cmd_openReverseSsh_subject_CLOSE=u'SVVPA - Servicio SSH cerrado'
-cmd_openReverseSsh_html_OPEN=u'<html><body><p>Se ha abierto el servicio SSH en el puerto {port} del servidor {server}.El servicio estará activo <b>{time} segundos</b>.</p></body></html>'
-cmd_openReverseSsh_html_CLOSE=u'<html><body>El servicio ssh reverso se ha cerrado porque ha transcurrido el tiempo de expiración.</body></html>'
+cmd_openReverseSsh_html_OPEN=u'<html><body><p>Se ha abierto el servicio SSH en el puerto {port} del servidor {server}.El servicio estara activo <b>{time} segundos</b>.</p></body></html>'
+cmd_openReverseSsh_html_CLOSE=u'<html><body>El servicio ssh reverso se ha cerrado porque ha transcurrido el tiempo de expiracion.</body></html>'
 
-cmd_motionDetection_subject_INICIAR=u'SVVPA - Detección de movimiento activada'
-cmd_motionDetection_subject_PARAR=u'SVVPA - Detección de movimiento desactivada'
-cmd_motionDetection_subject_PAUSAR=u'SVVPA - Detección de movimiento pausada'
-cmd_motionDetection_subject_REANUDAR=u'SVVPA - Detección de movimiento reanudada'
-cmd_motionDetection_html_INICIAR=u'<html><body><p>Se acaba de iniciar la detección de movimiento. A partir de ahora, todos los movimientos serán grabados y enviados por email.</p><p>Si deseas parar el servicio, envía el comando correspondiente <a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO PARAR">pulsando aquí</a>. También puedes pausarlo temporalmente <a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO PAUSAR 1D">pulsando aquí</a> y modificando el asunto a criterio (S, M, H o D para segundos, minutos, horas o días)</p></body></html>'
-cmd_motionDetection_html_PARAR=u'<html><body>Se acaba de detener la detección de movimiento. A partir de ahora, los movimientos <b>no</b> serán grabados ni enviados por email. Para iniciarla de nuevo envía el comando correspondiente haciendo <a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO INICIAR">click aquí</a>.</body></html>'
-cmd_motionDetection_html_PAUSAR=u'<html><body><p>La detección de movimiento acaba de ser pausada, pero volverá a iniciarse automáticamente en <b>{time} segundos</b>. Recuerda que, hasta entonces, los movimientos <b>no serán grabados ni enviados por email</b>.</p><p>Si deseas iniciar la detección antes de que transcurra el tiempo envía el comando correspondiente haciendo <a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO INICIAR">click aquí</a>.</p></body></html>'
-cmd_motionDetection_html_REANUDAR=u'<html><body><p>La detección de movimiento se ha reanudado correctamente. Recuerda que puedes <a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO PARAR">pararla</a> o <a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO PAUSAR 1D">pausarla</a> en cualquier momento.</p></body></html>'
+cmd_motionDetection_subject_INICIAR=u'SVVPA - Deteccion de movimiento activada'
+cmd_motionDetection_subject_PARAR=u'SVVPA - Deteccion de movimiento desactivada'
+cmd_motionDetection_subject_PAUSAR=u'SVVPA - Deteccion de movimiento pausada'
+cmd_motionDetection_subject_REANUDAR=u'SVVPA - Deteccion de movimiento reanudada'
+cmd_motionDetection_html_INICIAR=u'<html><body><p>Se acaba de iniciar la deteccion de movimiento. A partir de ahora, todos los movimientos seran grabados y enviados por email.</p><p>Si deseas parar el servicio, envia el comando correspondiente <a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO PARAR">pulsando aqui</a>. Tambien puedes pausarlo temporalmente <a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO PAUSAR 1D">pulsando aqui</a> y modificando el asunto a criterio (S, M, H o D para segundos, minutos, horas o dias)</p></body></html>'
+cmd_motionDetection_html_PARAR=u'<html><body>Se acaba de detener la deteccion de movimiento. A partir de ahora, los movimientos <b>no</b> seran grabados ni enviados por email. Para iniciarla de nuevo envia el comando correspondiente haciendo <a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO INICIAR">click aqui</a>.</body></html>'
+cmd_motionDetection_html_PAUSAR=u'<html><body><p>La deteccion de movimiento acaba de ser pausada, pero volvera a iniciarse automaticamente en <b>{time} segundos</b>. Recuerda que, hasta entonces, los movimientos <b>no seran grabados ni enviados por email</b>.</p><p>Si deseas iniciar la deteccion antes de que transcurra el tiempo envia el comando correspondiente haciendo <a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO INICIAR">click aqui</a>.</p></body></html>'
+cmd_motionDetection_html_REANUDAR=u'<html><body><p>La deteccion de movimiento se ha reanudado correctamente. Recuerda que puedes <a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO PARAR">pararla</a> o <a href="mailto:{correo}?subject=CMD_SVVPA DETECTAR_MOVIMIENTO PAUSAR 1D">pausarla</a> en cualquier momento.</p></body></html>'
 
 cmd_updateRepository_subject=u'SVVPA - Repositorio actualizado correctamente'
 cmd_updateRepository_html=u'<html><body>El repositorio se ha actualizado correctamente</body></html>'
 
 cmd_emailNotif_subject_INICIAR=u'SVVPA - Notificaciones activadas'
 cmd_emailNotif_subject_PARAR=u'SVVPA - Notificaciones desactivadas'
-cmd_emailNotif_html_INICIAR=u'<html><body>Las notificaciones por email están activadas</body></html>'
-cmd_emailNotif_html_PARAR=u'<html><body>Las notificaciones por email están desactivadas</body></html>'
+cmd_emailNotif_html_INICIAR=u'<html><body>Las notificaciones por email estan activadas</body></html>'
+cmd_emailNotif_html_PARAR=u'<html><body>Las notificaciones por email estan desactivadas</body></html>'
 
 
 error_general_subject=u'SVVPA - Error al procesar el comando {command}'
@@ -90,7 +90,7 @@ error_general_html=u'<html><body>Se ha producido el siguiente error al procesar 
 
 
 error_sintaxis_subject=u'SVVPA - Error en comando'
-error_sintaxis_html=u'<html><body>Error al procesar el comando <i>{command}</i>. Probablemente la sintaxis no es correcta. Para ver los comandos disponibles y su sintaxis envía el comando ayuda haciendo <a href="mailto:{correo}?subject=CMD_SVVPA AYUDA">click aquí</a></body></html>'
+error_sintaxis_html=u'<html><body>Error al procesar el comando <i>{command}</i>. Probablemente la sintaxis no es correcta. Para ver los comandos disponibles y su sintaxis envia el comando ayuda haciendo <a href="mailto:{correo}?subject=CMD_SVVPA AYUDA">click aqui</a></body></html>'
 
 
 
@@ -143,11 +143,11 @@ def cmd_saveFile(eventId):
 		print >> sys.stderr, u"[{}] {}: ERROR! No se encuentra la imagen {}.".format(datetime.datetime.now(), __file__, imageFile)
 		raise Exception(u'{0}: No se encuentra la imagen del evento! Comprueba que has escrito correctamente el identificador del evento'.format(imageFile))	
 	if not os.path.isfile(videoFile):
-		print >> sys.stderr, u"[{}] {}: ERROR! No se encuentra el vídeo {}".format(datetime.datetime.now(), __file__, videoFile)
-		raise Exception(u'{0}: No se encuentra el vídeo del evento! Es posible que aún se esté procesando. Por favor, inténtalo de nuevo más tarde'.format(videoFile))
+		print >> sys.stderr, u"[{}] {}: ERROR! No se encuentra el video {}".format(datetime.datetime.now(), __file__, videoFile)
+		raise Exception(u'{0}: No se encuentra el video del evento! Es posible que aun se este procesando. Por favor, intentalo de nuevo mas tarde'.format(videoFile))
 	if len(eventId.split("_")) < 12:
 		print >> sys.stderr, u"[{}] {}: ERROR! El identificador del evento ({}) tiene menos de 12 tokens".format(datetime.datetime.now(), __file__, eventId)
-		raise Exception(u'Error en el identificador del evento "{0}". Recuerda que el identificador son 12 números separados por guiones bajos'.format(eventId))
+		raise Exception(u'Error en el identificador del evento "{0}". Recuerda que el identificador son 12 numeros separados por guiones bajos'.format(eventId))
 
 	try:
 		imageCmdResult = proc.call(imageCmd, shell=True)
@@ -160,9 +160,9 @@ def cmd_saveFile(eventId):
 	try:
 		videoCmdResult = proc.call(videoCmd, shell=True)
 	except Exception as e:
-		print >> sys.stderr, u"[{}] {}: ERROR! Se produjeron errores al subir el vídeo a google drive:".format(datetime.datetime.now(), __file__)
+		print >> sys.stderr, u"[{}] {}: ERROR! Se produjeron errores al subir el video a google drive:".format(datetime.datetime.now(), __file__)
 		traceback.print_exc()
-		errorMsg+=u'Error al enviar el vídeo a google drive.\n{}\n'.format(repr(e))
+		errorMsg+=u'Error al enviar el video a google drive.\n{}\n'.format(repr(e))
 	
 	if imageCmdResult or videoCmdResult or errorMsg:
 		print >> sys.stderr, u"[{}] {}: Se produjeron errores al subir los archivos del evento {} a google drive".format(eventId)
@@ -215,24 +215,24 @@ def cmd_reboot(args):
 
 
 def cmd_shutdown(args):
-	#primera vuelta, requerir confirmación
+	#primera vuelta, requerir confirmacion
 	if not args:
-		print u"[{}] {}: Enviando código de confirmación de apagado".format(datetime.datetime.now(), __file__)
+		print u"[{}] {}: Enviando codigo de confirmacion de apagado".format(datetime.datetime.now(), __file__)
 		msg_subject	= cmd_shutdown_subject_CONFIRM.format(code=get_shutdownConfirmCode())
 		msg_html		= cmd_shutdown_html_CONFIRM
 		notificar_email(msg_subject, msg_html)
 	
-	#confirmación recibida
+	#confirmacion recibida
 	else:	
 		if args == get_shutdownConfirmCode():
-			print u"[{}] {}: Código de confirmación de apagado aceptado. Apagando el sistema".format(datetime.datetime.now(), __file__)
+			print u"[{}] {}: Codigo de confirmacion de apagado aceptado. Apagando el sistema".format(datetime.datetime.now(), __file__)
 			msg_subject	= cmd_shutdown_subject_OK
 			msg_html		= cmd_shutdown_html_OK
 			notificar_email(msg_subject, msg_html)
 			proc.call('sudo /sbin/shutdown -r now', shell=True)
 
 		else:
-			print >> sys.stderr, u"[{}] {}: ERROR! Código de confirmación de apagado erróneo".format(datetime.datetime.now(), __file__)
+			print >> sys.stderr, u"[{}] {}: ERROR! Codigo de confirmacion de apagado erroneo".format(datetime.datetime.now(), __file__)
 			msg_subject	= cmd_shutdown_subject_ERROR
 			msg_html		= cmd_shutdown_html_ERROR
 			notificar_email(msg_subject, msg_html)
@@ -244,7 +244,7 @@ def get_shutdownConfirmCode():
 
 
 
-#ssh reservo a servidor túnel
+#ssh reservo a servidor tunel
 def cmd_openReverseSsh(args):
 	print u"[{}] {}: Abriendo servicio ssh reverso en servidor {}:{} durante {} segundos".format(datetime.datetime.now(), __file__, os.environ['SSH_REMOTE_SERVER'], os.environ['SSH_REMOTE_TUNEL_PORT'], os.environ['SSH_REMOTE_TIMEOUT'])
 	try:
@@ -410,7 +410,7 @@ CMD_SVVPA={
 		'ESTADO_DEL_SISTEMA' 		: cmd_status,
 		'ACTIVAR_GESTION_REMOTA' 	: cmd_openReverseSsh,
 		'DETECTAR_MOVIMIENTO' 		: cmd_motionDetection,
-#		'VISTA_EN_DIRECTO' 			: cmd_lifeView,	#Configurar motion para que guarde una captura periódica que se sobreescriba, y enviar dicho archivo
+#		'VISTA_EN_DIRECTO' 			: cmd_lifeView,	#Configurar motion para que guarde una captura periodica que se sobreescriba, y enviar dicho archivo
 		'ACTUALIZAR_REPOSITORIO'	: cmd_updateRepository,
 		'REINICIAR' 					: cmd_reboot,
 		'APAGAR'							: cmd_shutdown,
@@ -419,7 +419,7 @@ CMD_SVVPA={
 
 
 
-#Reconecta y obtiene un email by UID si es necesario. Importante que se llame esta función antes de modificar emails (labels, read/unread, move, ...) 
+#Reconecta y obtiene un email by UID si es necesario. Importante que se llame esta funcion antes de modificar emails (labels, read/unread, move, ...) 
 def getEmailByUid(uid, e=None):
 	if not e or not e.gmail.logged_in:
 		g = greader.login(os.environ['SMPT_USER'], os.environ['SMPT_PASS'])

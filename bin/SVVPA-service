@@ -54,7 +54,7 @@ case $1 in
 	start|notify_startup)
 		echo "[$(date)] $0: Servicio '$1': El sistema se está arrancando"
 		#start _telegram_bot
-		(python -u _telegram_bot.py) &
+		python -u _telegram_bot.py &
 
 		python -u _notificator.py "ON_STARTUP"
 		RETVAL=$(($RETVAL|$?))
@@ -80,7 +80,7 @@ case $1 in
 		if [[ ! "${pid}" ]]
 		then
 			echo "[$(date)] $0: Servicio '$1': Arrancando servicio telegram"
-			(python -u _telegram_bot.py) &
+			python -u _telegram_bot.py &
 		fi
 
 	;;

@@ -19,7 +19,7 @@ SIZE_TB = 1099511627776.0
 
 EMAIL_STARTUP_SUBJECT=u'SVVPA - Inicio del sistema'
 EMAIL_STARTUP_BODY=u'El sistema SVVPA se acaba de iniciar'
-TLG_STARTUP=u'El sistema SVVPA se está iniciando \U0001f440'
+TLG_STARTUP=u'El sistema SVVPA se esta iniciando \U0001f440'
 
 EMAIL_SHUTDOWN_SUBJECT=u'SVVPA - Apagado del sistema'
 EMAIL_SHUTDOWN_BODY=u'El sistema SVVPA se está apagando'
@@ -32,13 +32,13 @@ EMAIL_MOTION_BODY=u'''\
     <body>
         <h3>Movimiento detectado</h3>
         <p>S.V.V.P.A. 2.0 ha detectado un nuevo movimiento en E.C. <b>{datetime}</b>. \
-Adjunto a este mensaje se incluye el fotograma más representativo.</p>
-        <p>Si el vídeo es interesante y deseas guardarlo en Google Drive, haz \
-<a href="http://{dom}.duckdns.org:{port}/uploadVideo.php?id={id}">click aquí</a>. \
-Al abrir esa página en un navegador, SVVPA iniciará la subida del vídeo y \
-mostrará una web con el progreso. <b>No</b> es necesario dejar la página abierta \
+Adjunto a este mensaje se incluye el fotograma mas representativo.</p>
+        <p>Si el video es interesante y deseas guardarlo en Google Drive, haz \
+<a href="http://{dom}.duckdns.org:{port}/uploadVideo.php?id={id}">click aqui</a>. \
+Al abrir esa pagina en un navegador, SVVPA iniciara la subida del vídeo y \
+mostrara una web con el progreso. <b>No</b> es necesario dejar la pagina abierta \
 hasta que termine; puedes cerrarla, cerrar el navegador o incluso apagar tu \
-máquina sin que interfiera el proceso. Recuerda que, en función del tamaño del \
+ordenador sin que interfiera el proceso. Recuerda que, en funcion del tamaño del \
 vídeo, este proceso puede tardar varios minutos.</p>
         <p>Puedes ver las capturas guardadas anteriormente en <a href="\
 https://drive.google.com/folderview?id=0Bwse_WnehFNKT2I3N005YmlYMms&usp=sharing">\
@@ -55,10 +55,10 @@ sido de {datos}Mb de los {datosMensuales}Mb mensuales que incluye la tarifa.
     <body>
         <h3>Movimiento detectado</h3>
         <p>S.V.V.P.A. 2.0 ha detectado un nuevo movimiento en E.C. \
-<b>{datetime}</b>. Adjunto a este mensaje se incluye el fotograma más representativo.</p>
-        <p>Si piensas que el vídeo puede ser interesante (Duración:{duration}, \
+<b>{datetime}</b>. Adjunto a este mensaje se incluye el fotograma mas representativo.</p>
+        <p>Si piensas que el vídeo puede ser interesante (Duracion:{duration}, \
 tamaño:{size}) y deseas subirlo a Google Drive, haz \
-<a href="mailto:{email}?subject=CMD_SVVPA GUARDAR_EN_GOOGLE_DRIVE {id}">click aquí</a> \
+<a href="mailto:{email}?subject=CMD_SVVPA GUARDAR_EN_GOOGLE_DRIVE {id}">click aqui</a> \
 para enviar enviar un email con el comando correspondiente. Te recordamos que \
 el consumo de datos hasta el momento ha sido de {datos}Mb de los \
 {datosMensuales}Mb mensuales que incluye la tarifa.</p>
@@ -69,7 +69,7 @@ https://drive.google.com/folderview?id=0Bwse_WnehFNKT2I3N005YmlYMms&usp=sharing"
 '''
 TLG_MOTION=u'\U0001f440 Nuevo movimiento detectado (*{}*).\n\nLa [imagen más \
 representativa]({}) ha sido subida automáticamente a google drive.\nPara subir \
-también el vídeo utiliza el comando /subir'
+también el video utiliza el comando /subir'
 
 EMAIL_CAMERA_FAILURE_SUBJECT=u'SVVPA - Error en la cámara'
 EMAIL_CAMERA_FAILURE_BODY=u'''\
@@ -82,14 +82,14 @@ correctamente. Si te encuentras en E.C., trata de acceder al modo \
 <i>vista en Directo</i> para descartar un problema transitorio. Si no te \
 encuentras en E.C., puedes probar a reiniciar SVVPA para ver si se soluciona el problema.</p>
 
-<p>Si aun así no funciona, avisa a Er Danié para que trate de indagar en el problema.</p> 
+<p>Si aun asi no funciona, avisa a Er Danié para que trate de indagar en el problema.</p> 
   </body>
 </html>
 '''
-TLG_CAMERA_FAILURE=u'\u203c S.V.V.P.A. ha detectado que alguna de las cámaras ha dejado\
-de funcionar correctamente. Si te encuentras en E.C., trata de acceder al modo \
-vista en Directo para descartar un problema transitorio. Si no te encuentras en \
-E.C., puedes probar a reiniciar SVVPA para ver si se soluciona el problema.\u203c'
+TLG_CAMERA_FAILURE=u'\u203c S.V.V.P.A. ha detectado un error en alguna de las cámaras. \
+Si te encuentras en E.C., trata de acceder al modo vista en Directo para \
+descartar un problema transitorio. Si no te encuentras en E.C., puedes probar a \
+reiniciar SVVPA para ver si se soluciona el problema.\u203c'
 
 
 
@@ -119,7 +119,7 @@ def get_duration(id):
         return ret[0].strip()
     
     except Exception as e:
-        print >> sys.stderr, u'[{}] {}: ERROR! No se ha podido determinar la duración del vídeo:'.format(datetime.datetime.now(), __file__)
+        print >> sys.stderr, u'[{}] {}: ERROR! No se ha podido determinar la duracion del video:'.format(datetime.datetime.now(), __file__)
         traceback.print_exc()
         return "?"
 
@@ -143,27 +143,27 @@ def get_size(id):
            return u'{0:.2f} TB'.format(B/SIZE_TB)
        
     except Exception as e:
-        print >> sys.stderr, u'[{}] {}: ERROR! No se ha podido determinar el tamaño del vídeo:'.format(datetime.datetime.now(), __file__)
+        print >> sys.stderr, u'[{}] {}: ERROR! No se ha podido determinar el size del video:'.format(datetime.datetime.now(), __file__)
         traceback.print_exc()
         return "?"
 
 
 
-#FIXME: coger función de _telegram_bot en lugar de duplicar
+#FIXME: coger funcion de _telegram_bot en lugar de duplicar
 def isEmailNotif():
     try:
         output = proc.check_output(u'egrep EMAIL_NOTIF {}'.format(os.environ['BIN_DIR']+'CONSTANTS.sh'), shell=True)
         f = re.findall('"([a-zA-Z]+)"', output)
         
         if f and f[0] == 'ON':
-            print u'[{}] {}: La notificación por email está activada'.format(datetime.datetime.now(), __file__)
+            print u'[{}] {}: La notificacion por email esta activada'.format(datetime.datetime.now(), __file__)
             return True
     
     except Exception as e:
         print >> sys.stderr, u'[{}] {}: ERROR! Hubo un error inesperado al comprobar el estado de las notificaciones:'.format(datetime.datetime.now(), __file__)
         traceback.print_exc()
     
-    print u'[{}] {}: La notificación por email está desactivada'.format(datetime.datetime.now(), __file__)
+    print u'[{}] {}: La notificacion por email esta desactivada'.format(datetime.datetime.now(), __file__)
     return False
     
 
@@ -171,7 +171,7 @@ def isEmailNotif():
 
 def sendNotif(tlg_msg, email_msg=None):    
     for n in range(1,20):
-        print u'[{}] {}: Enviando notificación por telegram'.format(datetime.datetime.now(), __file__)        
+        print u'[{}] {}: Enviando notificacion por telegram'.format(datetime.datetime.now(), __file__)        
         try:
             bot = telepot.Bot(os.environ['TELEGRAM_TOKEN'])
             bot.sendMessage(int(os.environ['TELEGRAM_CHAT_GROUP']), tlg_msg, parse_mode="Markdown")
@@ -186,7 +186,7 @@ def sendNotif(tlg_msg, email_msg=None):
     if isEmailNotif() and email_msg:        
         s = gsender.GMail(os.environ['SMPT_USER'], os.environ['SMPT_PASS'])
         for n in range(1,10):
-            print u'[{}] {}: Enviando notificación por email'.format(datetime.datetime.now(), __file__)
+            print u'[{}] {}: Enviando notificacion por email'.format(datetime.datetime.now(), __file__)
                             
             try:
                 s.connect()                
@@ -195,7 +195,7 @@ def sendNotif(tlg_msg, email_msg=None):
                 return
             
             except Exception as e:
-                print >> sys.stderr, u'[{}] {}: WARNING! No se ha podido enviar el email (intento: {}). Se reintentará en unos segundos'.format(datetime.datetime.now(), __file__, n)
+                print >> sys.stderr, u'[{}] {}: WARNING! No se ha podido enviar el email (intento: {}). Se reintentara en unos segundos'.format(datetime.datetime.now(), __file__, n)
                 traceback.print_exc()
                 time.sleep(random.randint(20,60))
             
@@ -205,7 +205,7 @@ def sendNotif(tlg_msg, email_msg=None):
 
 
 def on_startup(arg=None):
-    print u'[{}] {}: Notificación de inicio de sistema'.format(datetime.datetime.now(), __file__)
+    print u'[{}] {}: Notificacion de inicio de sistema'.format(datetime.datetime.now(), __file__)
     tlg_msg     = TLG_STARTUP
     
     email_msg   = gsender.Message(    
@@ -217,7 +217,7 @@ def on_startup(arg=None):
 
 
 def on_shutdown(arg=None):
-    print u'[{}] {}: Notificación de apagado del sistema'.format(datetime.datetime.now(), __file__)
+    print u'[{}] {}: Notificacion de apagado del sistema'.format(datetime.datetime.now(), __file__)
     tlg_msg     = TLG_SHUTDOWN
     
     email_msg   = gsender.Message(    
@@ -230,7 +230,7 @@ def on_shutdown(arg=None):
 
 
 def on_cameraFailure(arg=None):
-    print u'[{}] {}: Notificación de fallo en cámara'.format(datetime.datetime.now(), __file__)
+    print u'[{}] {}: Notificacion de fallo en camara'.format(datetime.datetime.now(), __file__)
     tlg_msg     = TLG_CAMERA_FAILURE
     
     email_msg   = gsender.Message(    
@@ -244,7 +244,7 @@ def on_cameraFailure(arg=None):
 
 
 def on_motion(file):
-    print u'[{}] {}: Notificación de movimiento detectado'.format(datetime.datetime.now(), __file__)
+    print u'[{}] {}: Notificacion de movimiento detectado'.format(datetime.datetime.now(), __file__)
     for i in range(20):
         if not file or not os.path.isfile(file):
             print >> sys.stderr, u'[{}] {}: ERROR! El archivo {} no existe o no es un archivo regular'.format(datetime.datetime.now(), __file__, file)
@@ -258,7 +258,7 @@ def on_motion(file):
             tlg_msg     = TLG_MOTION.format(date.strftime("%Y/%m/%d %H:%M:%S"), link)
             email_msg   = None
             
-            if isEmailNotif():      #FIXME: Redundante porque se comprueba luego en sendNotif, pero por ahora se queda así :)            
+            if isEmailNotif():      #FIXME: Redundante porque se comprueba luego en sendNotif, pero por ahora se queda asi :)            
                 email_msg = gsender.Message(subject = EMAIL_MOTION_SUBJECT,
                                             to = os.environ['EMAIL_ADDR'],
                                             html = EMAIL_MOTION_BODY.format(ip=get_ip(), 
@@ -278,10 +278,10 @@ def on_motion(file):
             
         
         else:
-            print >> sys.stderr, u'[{}] {}: ERROR! No se ha podido Notificar el nuevo movimiento (intento: {}). Se reintentará en unos minutos.'.format(datetime.datetime.now(), __file__, i)
+            print >> sys.stderr, u'[{}] {}: ERROR! No se ha podido Notificar el nuevo movimiento (intento: {}). Se reintentara en unos minutos.'.format(datetime.datetime.now(), __file__, i)
             time.sleep(random.randint(60,240))
     
-    print >> sys.stderr, u'[{}] {}: ERROR! No se ha podido Notificar el nuevo movimiento ya que se ha alcanzado el número máximo de reintentos!!!.'.format(datetime.datetime.now(), __file__)
+    print >> sys.stderr, u'[{}] {}: ERROR! No se ha podido Notificar el nuevo movimiento ya que se ha alcanzado el numero maximo de reintentos!!!.'.format(datetime.datetime.now(), __file__)
     
 
 

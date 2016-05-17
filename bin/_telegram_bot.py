@@ -25,61 +25,61 @@ class Telegram_bot(telepot.Bot):
     classdocs
     '''
     MSG_NEW_USER = u'''{} {} ha enviado un comando a @{}, pero aún no tiene \
-permiso. ¿Deseas añadirlo a la lista de usuarios autorizados para ejecutar \
-comandos a través de Telegram?'''
+permiso. ¿Quieres añadir al menda a la lista de usuarios autorizados para ejecutar \
+comandos a traves de Telegram?'''
     MSG_BLOCKED_PRIVATE_CHAT = u'''Lo siento, pero por ahora el control de @{} \
-por chat privado está desactivado (es pa\' controlar el percal \U0001f609).\
+por chat privado esta desactivado (es pa\' controlar el percal \U0001f609).\
 Utiliza el chat de grupo para mandar los commandos'''
-    MSG_DONT_MENTION_ME = u'''¿Qué dices de mí?'''
+    MSG_DONT_MENTION_ME = u'''¿Que dices de mi?'''
     MSG_DONT_UNDERSTAND = u'''\U0001f21a\ufe0f \U0001f236\U0001f236 \
 \U0001f238\u203c\ufe0f\n\n¿Te has enterado? Pues yo tampoco se lo que quieres. \
-Anda, hazme el favor de escribir los comandos correctamente, solo uno por mensaje \
-y utilizar el teclado emergente para responder, que si no no se puede, aaaaaaaaes?.'''
+Anda, hazme el favor de escribir los comandos correctamente y solo uno por mensaje \
+, que si no no se puede, aaaaaaaaes?.'''
     MSG_CMD_HELP = u'''Mu wenas! Me llaman @{}, el *robot telegram* diseñado \
 específicamente para el control remoto de _SVVPA_ \U0001f60e. Al final de este \
-mensaje puedes ver las funciones disponibles.
+mensaje puedes ver los comandos disponibles.
     
-Para enviar un comando, escribe */* y pulsa sobre la opción que te interese. \
-Adicionalmente, para subir un vídeo capturado a google drive, además del comando \
-/subir, también puedes escribir mi nombre seguido de un espacio y pulsar sobre \
-la captura.
+Para enviar un comando, escribe */* (o usa el icono) y pulsa sobre la opcion que \
+te interese. Adicionalmente, para subir un video capturado a google drive, ademas \
+del comando /subir, también puedes escribir mi nombre seguido de un espacio y \
+pulsar sobre la captura.
 
-/ayuda - Muestra esta ayuda ayuda
-/movimiento - Inicia, para o pausa la detección de movimiento
-/foto - Toma una instantánea            
+/ayuda - Muestra esta ayuda
+/movimiento - Inicia/para/pausa la deteccion de movimiento
+/foto - Toma una instantanea            
 /subir - Sube una captura a google drive
 /sensores - Muestra el estado de los sensores
-/emails - Activa o desactiva la notificación por emails
-/ssh - Abre túnel inverso ssh para gestión remota de SVVPA
+/emails - Activa/desactiva la notificacion por emails
+/ssh - Abre tunel inverso ssh para gestion remota de SVVPA
 /actualizar - actualiza el repositorio github
 /reiniciar - reinicia el sistema
 /apagar - Apaga el sistema
     '''
     MSG_USER_ADDED = u'''{} ha añadido a {} {} a la lista de usuarios autorizados. \
-A partir de este momento {} puede ejecutar comandos a través de telegram!'''
+A partir de este momento {} puede ejecutar comandos a traves de telegram!'''
     MSG_ERROR_ADDING_USER = u'''ERROR! Hubo un problema al añadir el usuario a la \
 lista de usuarios autorizados (!?)'''
-    MSG_BLOCKED_USER = u'''Se ha bloqueado a {} {}. Este usuario no podrá enviar \
-comandos por telegram hasta la próxima vez que se reinicie el sistema'''
+    MSG_BLOCKED_USER = u'''Se ha bloqueado a {} {}. Este usuario no podra enviar \
+comandos por telegram hasta la proxima vez que se reinicie el sistema'''
     MSG_BANN_USER = u'''{} ha bloqueado permanentemente a {} {}. Este usuario no \
-podrá volver a enviar comandos a través de telegram!'''
+podra volver a enviar comandos a traves de telegram!'''
     MSG_ERROR_BANNING_USER = u'''ERROR! Hubo un problema al bloquear permanentemente \
 el usuario (!?)'''
-    MSG_CMD_MOTION = u'''Este comando sirve para controlar la detección de movimiento. \
-¿Qué quieres hacer?'''
+    MSG_CMD_MOTION = u'''Este comando te permite ajustar la deteccion de movimiento. \
+¿Que quieres hacer?'''
     MSG_ERROR_NO_CAMERAS = u'''ERROR! No hay cámaras configuradas'''
-    MSG_SELECT_DEVICE = u'''Selecciona la cámara que quieras usar para tomar la foto'''
-    MSG_SSH_OPENED = u'''Se ha abierto un túnel reverso ssh que será accesible \
+    MSG_SELECT_DEVICE = u'''Selecciona la cámara que quieres usar para tomar la foto'''
+    MSG_SSH_OPENED = u'''Se ha abierto un tunel reverso ssh que será accesible \
 desde {}:{} durante {} segundos'''
-    MSG_ERROR_SSH = u'ERROR! No se ha podido abrir el túnel ssh (ret={})'
+    MSG_ERROR_SSH = u'ERROR! No se ha podido abrir el tunel ssh (ret={})'
     MSG_ERROR_UNEXPECTED = u'''ERROR! Se ha producido un error inesperado (?!):
 ```{}```'''
     MSG_MOTION_NO_EVENTS = u'''Todavía no hay eventos capturados'''
-    MSG_CMD_UPLOAD = u'''Este comando sirve para subir los vídeos capturados a \
-Google Drive (las imágenes más representativas se suben automáticamente). \
-Selecciona el vídeo del evento que quieres subir a Google Drive (el gasto \
+    MSG_CMD_UPLOAD = u'''Este comando sirve para subir los videos capturados a \
+Google Drive (las imagenes mas representativas se suben automaticamente). \
+Selecciona el video del evento que quieres subir a Google Drive (el gasto \
 actual de datos es de {} de los {}MB que incluye la tarifa).'''
-    MSG_CMD_SENSORS = u'''A continuación se muestran los datos tomados  el día \
+    MSG_CMD_SENSORS = u'''A continuacion se muestran los datos tomados  el dia \
 *{}* a las *{}*:
         
 ```
@@ -90,46 +90,46 @@ H. rel: {}%
 P. atm: {}mmHg
 ```
 '''
-    MSG_CMD_UPDATE = u'''Repositorio actualizado con éxito\n```{}```'''
-    MSG_CMD_REBOOT = u'''Se está reiniciando el sistema. Este proceso debería \
-tardar unos 45s'''
-    MSG_CMD_SHUTDOWN = u'''Se va a proceder a apagar SVVPA. Este comando debería \
+    MSG_CMD_UPDATE = u'''Repositorio actualizado con exito\n```{}```'''
+    MSG_CMD_REBOOT = u'''Se esta reiniciando el sistema. Este proceso deberia \
+tardar aproximadamente 1 minuto'''
+    MSG_CMD_SHUTDOWN = u'''Se va a proceder a apagar SVVPA. Este comando deberia \
 ejecutarse *SIEMPRE* desde E.C., ya que para volver a iniciar el sistema es \
-necesario desactivar y volver a activar físicamente el miniinterruptor que está \
-junto a las baterías. ¿Realmente quieres apagar el sistema? '''
+necesario desactivar y volver a activar fisicamente el miniinterruptor que esta \
+junto a las baterias. ¿Realmente quieres apagar el sistema?'''
     MSG_CMD_EMAIL_NOTIF =u'''Este comando sirve para activar o desactivar las \
 notificaciones (nuevo movimiento, arranque/parada sistema, errores, ...) \
-mediante correo electrónico. Actualmente este servicio está {}. 
-¿Qué deseas hacer?'''
-    MSG_ERROR_FAKE = u'''ERROR! DIVISIÓN ENTRE CERO!.\nSVVPA está a punto de \
-echar a arder por intentar pausar cero segundos!! \U0001f602\U0001f602\U0001f602'''
-    MSG_CMD_MOTION_PAUSE = u'''La detección de movimiento se iniciará \
-automáticamente dentro de {}.'''
-    MSG_CMD_MOTION_TIME_SET = u'''Selecciona el número de {} que quieres pausar \
+mediante correo electronico. Actualmente este servicio esta {}. 
+¿Que deseas hacer?'''
+    MSG_ERROR_FAKE = u'''ERROR! DIVISION ENTRE CERO!.\nSVVPA esta a punto de \
+arder por intentar pausar cero segundos!! \U0001f602\U0001f602\U0001f602'''
+    MSG_CMD_MOTION_PAUSE = u'''La deteccion de movimiento se iniciará \
+automaticamente dentro de {}.'''
+    MSG_CMD_MOTION_TIME_SET = u'''Selecciona el numero de {} que quieres pausar \
 el servicio {}'''
     MSG_MOTION_START = u'''La detección de movimiento se ha activado \
 correctamente \U0001f440.'''
     MSG_CMD_MOTION_STOP = u'''La detección de movimiento se ha detenido \U0001f648 '''
-    MSG_CMD_MOTION_ENABLED = u'''La detección de movimiento está activa \U0001f440'''
-    MSG_CMD_MOTION_DISABLED = u'''La detección de movimiento está inactiva \U0001f648'''
+    MSG_CMD_MOTION_ENABLED = u'''La detección de movimiento esta activa \U0001f440'''
+    MSG_CMD_MOTION_DISABLED = u'''La detección de movimiento esta inactiva \U0001f648'''
     MSG_CMD_SNAPSHOT = u'''Capturando foto...'''
     MSG_CMD_SHUTDOWN = u'''El sistema se está apagando.Recuerda que para volver \
-a iniciar es necesario desactivar y activar físicamente el miniinterruptor que \
-está junto a las baterías'''
-    MSG_CMD_EMAIL_NOTIF_ENABLED = u'''Las notificaciones por email están \
+a iniciarlo es necesario desactivar y activar fisicamente el miniinterruptor que \
+esta junto a las baterias'''
+    MSG_CMD_EMAIL_NOTIF_ENABLED = u'''Las notificaciones por email estan \
 actualmente activadas \u2709\ufe0f'''
-    MSG_CMD_EMAIL_NOTIF_DISABLED = u'''Las notificaciones por email están \
+    MSG_CMD_EMAIL_NOTIF_DISABLED = u'''Las notificaciones por email estan \
 actualmente desactivadas \U0001f64a'''
-    MSG_CMD_UPLOAD_DONE = u'El vídeo *{}* se ha subido correctamente a google \
-drive. A partir de ahora, puedes reproducirlo todas las veces que quieras y sin\
- consumir datos en [este enlace]({}). Recuerda que puedes ver todos los archivos \
+    MSG_CMD_UPLOAD_DONE = u'El video *{}* se ha subido correctamente a google \
+drive. A partir de ahora, puedes reproducirlo todas las veces que quieras y sin \
+consumir datos en [este enlace]({}). Recuerda que puedes ver todos los archivos \
 subidos a google drive en [este enlace](https://drive.google.com/folderview?id=0Bwse_WnehFNKT2I3N005YmlYMms&usp=sharing)'
     MSG_ERROR_UPLOAD_MAX_TRIES = u'ERROR! No se ha podido subir el archivo {} a \
 google drive. Inténtalo de nuevo más tarde'
 
     
     BUT_CANCEL                  = u'Cancelar'
-    BUT_ALLOW_USER_YES          = u'\u2705 Sí'
+    BUT_ALLOW_USER_YES          = u'\u2705 Si'
     BUT_ALLOW_USER_NO_THIS_TIME = u'\u274c No por ahora'
     BUT_ALLOW_USER_NO_NEVER     = u'\u26d4\ufe0f No, nunca jamás de los jamases'
     BUT_MOTION_START            = u'\u25b6\ufe0f Iniciar'
@@ -214,17 +214,17 @@ google drive. Inténtalo de nuevo más tarde'
   
         # Commands
         self.COMMANDS={
-            '/start'          : self.cmd_help,          # Descripción. Indicar también que por seguridad solo responde a comandos enviados desde el chat de grupo
+            '/start'          : self.cmd_help,          # Descripcion. Indicar tambien que por seguridad solo responde a comandos enviados desde el chat de grupo
             '/ayuda'          : self.cmd_help,
             '/movimiento'     : self.cmd_motion,        # iniciar, parar, pausar...
-            '/foto'           : self.cmd_photo,         # Toma una instantánea            
-            '/subir'          : self.cmd_upload_video,  # sube un vídeo a google drive
+            '/foto'           : self.cmd_photo,         # Toma una instantanea            
+            '/subir'          : self.cmd_upload_video,  # sube un video a google drive
             '/sensores'       : self.cmd_sensors,       # muestra el estado de los sensores
-            '/emails'         : self.cmd_notif_emails,  # activa/desactiva la modificación por emails
-            '/ssh'            : self.cmd_open_ssh,      # abre túnel ssh en Bacmine
+            '/emails'         : self.cmd_notif_emails,  # activa/desactiva la modificacion por emails
+            '/ssh'            : self.cmd_open_ssh,      # abre tunel ssh en Bacmine
             '/actualizar'     : self.cmd_update,        # actualiza el repositorio github
             '/reiniciar'      : self.cmd_reboot,        # reinicia el sistema
-            '/apagar'         : self.cmd_shutdown       # Apaga el sistema. Por seguridad te pide la ubicación
+            '/apagar'         : self.cmd_shutdown       # Apaga el sistema. Por seguridad te pide la ubicacion
         }
     
   
@@ -283,9 +283,9 @@ google drive. Inténtalo de nuevo más tarde'
                 elif 'reply_to_message' in msg:
                     print u"[{}] {}: Respuesta recibida... pero por ahora se ignora".format(datetime.datetime.now(), __file__)
                 
-                # comprueba si es una mención            
+                # comprueba si es una mencion            
                 elif 'entities' in msg and msg['entities'][0]['type']=='mention':
-                    print u"[{}] {}: Mención recibida... pero por ahora se ignora".format(datetime.datetime.now(), __file__)                
+                    print u"[{}] {}: Mencion recibida... pero por ahora se ignora".format(datetime.datetime.now(), __file__)                
                     self.sendMessage(chat_id, self.MSG_DONT_MENTION_ME)    #FIXME: poner frases aleatorias
                 
                 #No es un comando o respuesta reconocida               
@@ -294,7 +294,7 @@ google drive. Inténtalo de nuevo más tarde'
                     self.sendMessage(chat_id, self.MSG_DONT_UNDERSTAND, reply_to_message_id=msg['message_id'])
                     
             else:
-                print u"[{}] {}: Se ha captura un mensaje de un nuevo usuario. Este usuario no podrá ejecutar comandos hasta que esté en la lista de autorizados".format(datetime.datetime.now(), __file__)
+                print u"[{}] {}: Se ha captura un mensaje de un nuevo usuario. Este usuario no podra ejecutar comandos hasta que este en la lista de autorizados".format(datetime.datetime.now(), __file__)
                 self.ask_AddNewUser(msg)            
 
         else:
@@ -321,7 +321,7 @@ google drive. Inténtalo de nuevo más tarde'
         #print 'Inline Query (queryId, fromId, query):' ,query_id, from_id, query_string
 
         if from_id in self.ALLOWED_USERS and from_id not in self.BANNED_USERS:
-            print u"[{}] {}: Procesando petición inline".format(datetime.datetime.now(), __file__)                
+            print u"[{}] {}: Procesando peticion inline".format(datetime.datetime.now(), __file__)                
             self.sendChatAction(self.CHAT_GROUP, 'typing')
             
             query = 'select id,link,width,height from images where link is not NULL order by id desc limit 20'
@@ -339,7 +339,7 @@ google drive. Inténtalo de nuevo más tarde'
             self.answerInlineQuery(query_id, f)        
             
         else:
-            print >>sys.stderr, u"[{}] {}: WARNING! Petición inline proviene de un usuario NO autorizado. Ignorando msg...".format(datetime.datetime.now(), __file__)
+            print >>sys.stderr, u"[{}] {}: WARNING! Peticion inline proviene de un usuario NO autorizado. Ignorando msg...".format(datetime.datetime.now(), __file__)
             
 
     
@@ -385,7 +385,7 @@ google drive. Inténtalo de nuevo más tarde'
         devices = os.environ['CAMERA_DEVICES'].split(",")
         
         if len(devices)==0:
-            print >>sys.stderr, u"[{}] {}: ERROR! No existen dispositivos de cámaras configurados".format(datetime.datetime.now(), __file__)            
+            print >>sys.stderr, u"[{}] {}: ERROR! No existen dispositivos de camaras configurados".format(datetime.datetime.now(), __file__)            
             self.sendMessage(msg['chat']['id'], self.MSG_ERROR_NO_CAMERAS)
         
         elif len(devices)==1:
@@ -413,7 +413,7 @@ google drive. Inténtalo de nuevo más tarde'
                 print u"[{}] {}: Cancelando timer ssh".format(datetime.datetime.now(), __file__)
                 m.cancel()
             
-            #cerramos puerto ssh si ya está abierto para evitar problemas
+            #cerramos puerto ssh si ya esta abierto para evitar problemas
             self.close_ssh()
             
             cmd="sshpass -e ssh -p {port} -fCNR {tunelPort}:localhost:22 {user}@{server}".format(
@@ -424,7 +424,7 @@ google drive. Inténtalo de nuevo más tarde'
             ret = proc.call(cmd,shell=True)
             
             if ret==0:
-                print u"[{}] {}: Túnel ssh abierto".format(datetime.datetime.now(), __file__)
+                print u"[{}] {}: Tunel ssh abierto".format(datetime.datetime.now(), __file__)
                 self.sendMessage(self.CHAT_GROUP, self.MSG_SSH_OPENED.format(os.environ['SSH_REMOTE_SERVER'], 
                                                                             os.environ['SSH_REMOTE_TUNEL_PORT'], 
                                                                             os.environ['SSH_REMOTE_TIMEOUT']))
@@ -437,7 +437,7 @@ google drive. Inténtalo de nuevo más tarde'
                 self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_SSH.format(ret))
             
         except Exception as e:
-            print >>sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al abrir el túnel ssh:".format(datetime.datetime.now(), __file__)
+            print >>sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al abrir el tunel ssh:".format(datetime.datetime.now(), __file__)
             traceback.print_exc()            
             self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))
         
@@ -449,7 +449,7 @@ google drive. Inténtalo de nuevo más tarde'
         os.path
         
         if len(files)==0:
-            print u"[{}] {}: Todavía no hay eventos capturados".format(datetime.datetime.now(), __file__)            
+            print u"[{}] {}: Todavia no hay eventos capturados".format(datetime.datetime.now(), __file__)            
             self.sendMessage(self.CHAT_GROUP, self.MSG_MOTION_NO_EVENTS)
         
         else:
@@ -474,7 +474,7 @@ google drive. Inténtalo de nuevo más tarde'
            
         
     def cmd_sensors(self,msg):
-        print u"[{}] {}: Enviando información sobre los sensores".format(datetime.datetime.now(), __file__)
+        print u"[{}] {}: Enviando informacion sobre los sensores".format(datetime.datetime.now(), __file__)
         self.sendChatAction(self.CHAT_GROUP, 'typing')
         query = "select * from sensors order by date desc limit 1"        
         date, cpu_temp, bmp180_temp, bmp180_press, dht22_temp, dht22_hr = self.run_query(query)[0]
@@ -503,10 +503,19 @@ google drive. Inténtalo de nuevo más tarde'
             self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))
         
         
+ 
         
     def cmd_reboot(self,msg):
         print u"[{}] {}: Reiniciando el sistema...".format(datetime.datetime.now(), __file__)        
         self.sendMessage(self.CHAT_GROUP, self.MSG_CMD_REBOOT)
+        t = threading.Timer(10, self.reboot)
+        t.setDaemon(True)
+        t.start()
+        
+
+        
+        
+    def reboot(self):        
         try:
             #FIXME: Añadir un threading.Timer para apagar, ya que si no no se lee el mensaje y se procesa una y otra vez tras en reinicio. Hacer lo mismo con shutdown
             proc.check_call('sudo /sbin/shutdown -r now', shell=True)
@@ -560,13 +569,13 @@ google drive. Inténtalo de nuevo más tarde'
         user_name       = tk[0]
         user_lastname   = tk[1]
         
-        print u"[{}] {}: Añadiendo usuario {} {} ({}) a la lista de usuarios con autorización para enviar comandos por telegram".format(datetime.datetime.now(), __file__, user_name, user_lastname, user_id)
+        print u"[{}] {}: Usuario {} {} ({}) se ha incluido en la lista de usuarios con autorizacion para enviar comandos por telegram".format(datetime.datetime.now(), __file__, user_name, user_lastname, user_id)
         
-        #añadimos usuario en la ejecución actual
+        #añadimos usuario en la ejecucion actual
         self.ALLOWED_USERS.append( user_id )
         
         try:
-            #Añadimos usuario en el fichero de configuración
+            #Añadimos usuario en el fichero de configuracion
             cmd     = 'grep TELEGRAM_ALLOWED_USERS {}'.format(self.FILE_CONSTANTS)
             p       = proc.check_output(cmd, shell=True).strip()
             users   = set(re.findall('[0-9]+', p))
@@ -582,7 +591,7 @@ google drive. Inténtalo de nuevo más tarde'
                 self.sendMessage(self.CHAT_GROUP, text)
                  
         except Exception as e:
-            print >>sys.stderr, u"[{}] {}: ERROR! Se produjo un error inesperado al añadir un nuevo usuario a la lista de usuarios autorizados:".format(datetime.datetime.now(), __file__)
+            print >>sys.stderr, u"[{}] {}: ERROR! Se produjo un error inesperado al incluir un nuevo usuario en la lista de usuarios autorizados:".format(datetime.datetime.now(), __file__)
             traceback.print_exc()            
             self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_ADDING_USER) 
         
@@ -650,7 +659,7 @@ google drive. Inténtalo de nuevo más tarde'
         if unit == self.MOTION_DAYS:
             for i in (0,1,2,3,4,5,6,7,14,21):
                 units.append(unicode(i))
-            text = u'días'
+            text = u'dias'
         
         elif unit == self.MOTION_HOURS:
             for i in (0,1,2,3,4,5,6,7,8,9,10,12,14,16,20):
@@ -749,7 +758,7 @@ google drive. Inténtalo de nuevo más tarde'
         user_name       = tk[0]
         user_lastname   = tk[1]
             
-        print u"[{}] {}: Bloqueando usuario {} {} ({}) durante esta ejecución.".format(datetime.datetime.now(), __file__, user_name, user_lastname, user_id)
+        print u"[{}] {}: Bloqueando usuario {} {} ({}) durante esta ejecucion.".format(datetime.datetime.now(), __file__, user_name, user_lastname, user_id)
                 
         self.BANNED_USERS.append(user_id)
                 
@@ -770,11 +779,11 @@ google drive. Inténtalo de nuevo más tarde'
                 
         print u"[{}] {}: Bloqueando al usuario {} {} ({}) permanentemente".format(datetime.datetime.now(), __file__, user_name, user_lastname, user_id)
                 
-        #añadimos usuario en la ejecución actual
+        #añadimos usuario en la ejecucion actual
         self.BANNED_USERS.append( user_id )
         
         try:
-            #Añadimos usuario en el fichero de configuración
+            #Añadimos usuario en el fichero de configuracion
             cmd     = 'grep TELEGRAM_BANNED_USERS {}'.format(self.FILE_CONSTANTS)
             users   = set(re.findall('[0-9]+', proc.check_output(cmd, shell=True).strip()))
             users.add(str(user_id))
@@ -860,7 +869,7 @@ google drive. Inténtalo de nuevo más tarde'
                 
             
         except Exception as e:
-            print >> sys.stderr, u"[{}] {}: ERROR! Hubo un problema inesperado al modificar la notificación por email:".format(datetime.datetime.now(), __file__)
+            print >> sys.stderr, u"[{}] {}: ERROR! Hubo un problema inesperado al modificar la notificacion por email:".format(datetime.datetime.now(), __file__)
             traceback.print_exc()
             self.editMessageText(self.getMsgChatId(msg), self.MSG_ERROR_UNEXPECTED.format(repr(e)))
 
@@ -919,7 +928,7 @@ google drive. Inténtalo de nuevo más tarde'
                 print u"[{}] {}: Comando {} recibido".format(datetime.datetime.now(), __file__, r[0])
                 return r[0]
             
-        print >> sys.stderr, u"[{}] {}: ERROR! Comando erróneo".format(datetime.datetime.now(), __file__)
+        print >> sys.stderr, u"[{}] {}: ERROR! Comando erroneo".format(datetime.datetime.now(), __file__)
 
     
     
@@ -931,7 +940,7 @@ google drive. Inténtalo de nuevo más tarde'
     
     
     def addMsgTimeout(self, chat_id, msg_id):
-        print u"[{}] {}: Añadiendo msg_timeout {} {}".format(datetime.datetime.now(), __file__, chat_id, msg_id)
+        print u"[{}] {}: Nuevo msg_timeout {} {}".format(datetime.datetime.now(), __file__, chat_id, msg_id)
         self._timers[chat_id, msg_id] = threading.Timer(self.MSG_TIMEOUT, self.deleteMsg, [chat_id, msg_id])        
         self._timers[chat_id, msg_id].start()        
 
@@ -961,14 +970,14 @@ google drive. Inténtalo de nuevo más tarde'
     def isMotionEnabled(self):
         try:
             if proc.call('sudo service motion status', shell=True) == 0:
-                print u"[{}] {}: Servicio MOTION está activo".format(datetime.datetime.now(), __file__)
+                print u"[{}] {}: Servicio MOTION esta activo".format(datetime.datetime.now(), __file__)
                 return True
         
         except:
             print >> sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al comprobar el estado de motion:".format(datetime.datetime.now(), __file__)
             traceback.print_exc()
         
-        print u"[{}] {}: Servicio motion está inactivo".format(datetime.datetime.now(), __file__)
+        print u"[{}] {}: Servicio motion esta inactivo".format(datetime.datetime.now(), __file__)
 
     
     
@@ -1004,7 +1013,7 @@ google drive. Inténtalo de nuevo más tarde'
                 self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UPLOAD_MAX_TRIES.format(os.path.basename(file)))
                             
         except Exception as e:
-            print >> sys.stderr, u"[{}] {}: ERROR! Se produjo un error inesperado al subir el vídeo a google drive:".format(datetime.datetime.now(), __file__)
+            print >> sys.stderr, u"[{}] {}: ERROR! Se produjo un error inesperado al subir el video a google drive:".format(datetime.datetime.now(), __file__)
             traceback.print_exc()
             self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))
             
@@ -1047,7 +1056,7 @@ google drive. Inténtalo de nuevo más tarde'
             data = None 
         
         cursor.close()                 # Cerrar el cursor 
-        conn.close()                   # Cerrar la conexión 
+        conn.close()                   # Cerrar la conexion 
         
         return data            
             
@@ -1059,13 +1068,13 @@ google drive. Inténtalo de nuevo más tarde'
             f = re.findall('"([a-zA-Z]+)"', output)
             
             if len(f)>0 and f[0] == self.EMAIL_NOTIF_ON:
-                print u"[{}] {}: La notificación por email está activada".format(datetime.datetime.now(), __file__)
+                print u"[{}] {}: La notificacion por email esta activada".format(datetime.datetime.now(), __file__)
                 return True
         
         except:
             traceback.print_exc()
         
-        print u"[{}] {}: La notificación por email está desactivada".format(datetime.datetime.now(), __file__)
+        print u"[{}] {}: La notificacion por email esta desactivada".format(datetime.datetime.now(), __file__)
         
  
  
@@ -1108,7 +1117,7 @@ google drive. Inténtalo de nuevo más tarde'
         
 class TimeDelay:
     """ Test """
-    labels = {86400.0 : (u"días",u"día"), 3600.0 : (u"horas",u"hora"), 60.0 : (u"minutos",u"minuto"), 1.0 : (u"segundos",u"segundo")}
+    labels = {86400.0 : (u"dias",u"dia"), 3600.0 : (u"horas",u"hora"), 60.0 : (u"minutos",u"minuto"), 1.0 : (u"segundos",u"segundo")}
     
     def __init__(self):
         self._days    = None

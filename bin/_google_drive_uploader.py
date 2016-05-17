@@ -93,7 +93,7 @@ def run_query(query=''):
         data = None 
     
     cursor.close()                 # Cerrar el cursor 
-    conn.close()                   # Cerrar la conexión 
+    conn.close()                   # Cerrar la conexion 
     
     return data            
         

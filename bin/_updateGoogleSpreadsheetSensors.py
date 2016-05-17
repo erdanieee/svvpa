@@ -26,11 +26,11 @@ def main(argv):
 
 		gc = gspread.authorize(credentials)
 		wks = gc.open("test").sheet1
-		print "[{}] {}: Añadiendo fila en hoja de cálculo de google drive con los datos de sensores: CPU_TEMP:{}, BMP180_TEMP:{}, BMP180_PRESS:{}, DHT22_TEMP:{}, DHT22_HR:{}".format(dat.datetime.now(), __file__,cpuTemp,bmp180Temp,bmp180Pres,dht22Temp,dht22Hr)
+		print u"[{}] {}: Nueva fila en hoja de calculo de google drive con los datos de sensores: CPU_TEMP:{}, BMP180_TEMP:{}, BMP180_PRESS:{}, DHT22_TEMP:{}, DHT22_HR:{}".format(dat.datetime.now(), __file__,cpuTemp,bmp180Temp,bmp180Pres,dht22Temp,dht22Hr)
 		wks.append_row([datetime, cpuTemp, bmp180Temp, bmp180Pres, dht22Temp, dht22Hr])
 
 	else:
-		print >> sys.stderr, "[{}] {}: ERROR! Número incorrecto de argumentos".format(dat.datetime.now(), __file__)
+		print >> sys.stderr, u"[{}] {}: ERROR! Numero incorrecto de argumentos".format(dat.datetime.now(), __file__)
 
 
 if __name__ == "__main__":
