@@ -61,7 +61,7 @@
 	- User_Alias CRONUSER = pi
 	- User_Alias MOTION   = motion
 	- SVVPAWEB ALL = NOPASSWD: /sbin/shutdown, /sbin/date, /usr/bin/vnstat
-	- MOTION   ALL = NOPASSWD: /usr/bin/vnstat
+	- MOTION   ALL = NOPASSWD: /usr/bin/vnstat, /usr/sbin/service
 	- CRONUSER ALL = NOPASSWD: ALL
 * Crear directorio motion (ver CONSTANTS para la ubicación) que pertenezca a www-data y motion con permisos 774
 * Copiar config/svvpa.logrotate.example a /etc/logrotate.d/svvpa y modificarlo convenientemente	
