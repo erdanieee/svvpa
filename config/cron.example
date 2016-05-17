@@ -1,7 +1,9 @@
 # m h  dom mon dow   command
 43 6,13 * * * sleep 15; /usr/sbin/service SVVPA-service update_ip
-*/30 * * * * sleep 20; /usr/sbin/service SVVPA-service update_vnstats
-*/10 * * * * sleep 25; /usr/sbin/service SVVPA-service update_sensors
-*/3  * * * * sleep 35; /usr/sbin/service SVVPA-service check_cmd_email
+*/31 * * * * sleep 20; /usr/sbin/service SVVPA-service update_vnstats
+*/12 * * * * sleep 25; /usr/sbin/service SVVPA-service update_sensors
+*/4  * * * * sleep 35; /usr/sbin/service SVVPA-service check_cmd_email
+*/5 * * * * sleep 30; /usr/sbin/service SVVPA-service check_telegram_service
 59 22 * * * sleep 45; sudo /usr/sbin/service motion stop
 0 6 * * * sleep 50; sudo /usr/sbin/service motion start
+

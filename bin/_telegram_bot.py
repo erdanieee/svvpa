@@ -120,9 +120,9 @@ está junto a las baterías'''
 actualmente activadas \u2709\ufe0f'''
     MSG_CMD_EMAIL_NOTIF_DISABLED = u'''Las notificaciones por email están \
 actualmente desactivadas \U0001f64a'''
-    MSG_CMD_UPLOAD_DONE = u'El vídeo {} se ha subido correctamente a google \
+    MSG_CMD_UPLOAD_DONE = u'El vídeo *{}* se ha subido correctamente a google \
 drive. A partir de ahora, puedes reproducirlo todas las veces que quieras y sin\
- consumir datos en [este enlace]({}). Recuerda que puedes ver los archivos \
+ consumir datos en [este enlace]({}). Recuerda que puedes ver todos los archivos \
 subidos a google drive en [este enlace](https://drive.google.com/folderview?id=0Bwse_WnehFNKT2I3N005YmlYMms&usp=sharing)'
     MSG_ERROR_UPLOAD_MAX_TRIES = u'ERROR! No se ha podido subir el archivo {} a \
 google drive. Inténtalo de nuevo más tarde'
@@ -277,7 +277,7 @@ google drive. Inténtalo de nuevo más tarde'
                             
                     else:                
                         print >> sys.stderr, u"[{}] {}: WARNING! El comando no ha sido enviado al chat de grupo. Ignorando msg...".format(datetime.datetime.now(), __file__)
-                        self.sendMessage(chat_id, self.MSG_BLOCKED_PRIVATE_CHAT.format(self.BOT_NAME()))
+                        self.sendMessage(chat_id, self.MSG_BLOCKED_PRIVATE_CHAT.format(self.BOT_NAME))
                         
                 # comprueba si es una respuesta
                 elif 'reply_to_message' in msg:
@@ -286,7 +286,7 @@ google drive. Inténtalo de nuevo más tarde'
                 # comprueba si es una mención            
                 elif 'entities' in msg and msg['entities'][0]['type']=='mention':
                     print u"[{}] {}: Mención recibida... pero por ahora se ignora".format(datetime.datetime.now(), __file__)                
-                    self.sendMessage(chat_id, self.MSG_DONT_MENTION_ME())    #FIXME: poner frases aleatorias
+                    self.sendMessage(chat_id, self.MSG_DONT_MENTION_ME)    #FIXME: poner frases aleatorias
                 
                 #No es un comando o respuesta reconocida               
                 else:                
@@ -377,7 +377,7 @@ google drive. Inténtalo de nuevo más tarde'
         ])                
                         
         chat    = self.CHAT_GROUP if INLINE_KEYBOARDS_GROUP_ACTIVE else msg['from']['id']    
-        m       = bot.sendMessage(chat, self.MSG_CMD_MOTION, reply_markup=markup)
+        m       = self.sendMessage(chat, self.MSG_CMD_MOTION, reply_markup=markup)
         self.addMsgTimeout(*self.getMsgChatId(m))
  
         
@@ -386,7 +386,7 @@ google drive. Inténtalo de nuevo más tarde'
         
         if len(devices)==0:
             print >>sys.stderr, u"[{}] {}: ERROR! No existen dispositivos de cámaras configurados".format(datetime.datetime.now(), __file__)            
-            bot.sendMessage(msg['chat']['id'], self.MSG_ERROR_NO_CAMERAS)
+            self.sendMessage(msg['chat']['id'], self.MSG_ERROR_NO_CAMERAS)
         
         elif len(devices)==1:
             self.cbq_snapshot(None, devices[0])
@@ -401,7 +401,7 @@ google drive. Inténtalo de nuevo más tarde'
         
             markup  = InlineKeyboardMarkup(inline_keyboard=buttons)
             chat    = self.CHAT_GROUP if INLINE_KEYBOARDS_GROUP_ACTIVE else msg['from']['id']            
-            m       = bot.sendMessage(chat, self.MSG_SELECT_DEVICE, reply_markup=markup)
+            m       = self.sendMessage(chat, self.MSG_SELECT_DEVICE, reply_markup=markup)
             self.addMsgTimeout(*self.getMsgChatId(m))            
 
 
@@ -425,7 +425,7 @@ google drive. Inténtalo de nuevo más tarde'
             
             if ret==0:
                 print u"[{}] {}: Túnel ssh abierto".format(datetime.datetime.now(), __file__)
-                bot.sendMessage(self.CHAT_GROUP, self.MSG_SSH_OPENED.format(os.environ['SSH_REMOTE_SERVER'], 
+                self.sendMessage(self.CHAT_GROUP, self.MSG_SSH_OPENED.format(os.environ['SSH_REMOTE_SERVER'], 
                                                                             os.environ['SSH_REMOTE_TUNEL_PORT'], 
                                                                             os.environ['SSH_REMOTE_TIMEOUT']))
                                                 
@@ -434,12 +434,12 @@ google drive. Inténtalo de nuevo más tarde'
                 
             else:
                 print >>sys.stderr, u"[{}] {}: ERROR! Hubo un problema al abrir el puerto ssh (ret={})".format(datetime.datetime.now(), __file__, ret)                
-                bot.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_SSH.format(ret))
+                self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_SSH.format(ret))
             
         except Exception as e:
             print >>sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al abrir el túnel ssh:".format(datetime.datetime.now(), __file__)
             traceback.print_exc()            
-            bot.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))
+            self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))
         
         
                     
@@ -450,21 +450,26 @@ google drive. Inténtalo de nuevo más tarde'
         
         if len(files)==0:
             print u"[{}] {}: Todavía no hay eventos capturados".format(datetime.datetime.now(), __file__)            
-            bot.sendMessage(self.CHAT_GROUP, self.MSG_MOTION_NO_EVENTS)
+            self.sendMessage(self.CHAT_GROUP, self.MSG_MOTION_NO_EVENTS)
         
         else:
             buttons=[]
+            i=0
             for f in files:
                 y,m,d,H,M = f.split("_")[:5]
                 t = u'{}/{}/{} {}:{} ({})'.format(y,m,d,H,M, self.get_fileSize(os.path.join(os.environ['MOTION_DIR'], f)))
                 
                 buttons.append([ InlineKeyboardButton( text=t, callback_data=self.callback2string(self.CBQ_UPLOAD_FILE, [f[:-4]])) ])
+                
+                i+=1
+                if i >=20:
+                    break
                           
             buttons.append([ InlineKeyboardButton( text=self.BUT_CANCEL, callback_data=self.callback2string(self.CBQ_FUNCTION_CANCEL) ) ])
                       
             markup  = InlineKeyboardMarkup(inline_keyboard=buttons)    
             chat    = self.CHAT_GROUP if INLINE_KEYBOARDS_GROUP_ACTIVE else msg['from']['id']            
-            m       = bot.sendMessage( chat, self.MSG_CMD_UPLOAD.format(self.get_datosConsumidos(), os.environ['DATOS_MENSUALES']), reply_markup=markup)
+            m       = self.sendMessage(chat, self.MSG_CMD_UPLOAD.format(self.get_datosConsumidos(), os.environ['DATOS_MENSUALES']), reply_markup=markup)
             self.addMsgTimeout(*self.getMsgChatId(m))             
            
         
@@ -472,15 +477,16 @@ google drive. Inténtalo de nuevo más tarde'
         print u"[{}] {}: Enviando información sobre los sensores".format(datetime.datetime.now(), __file__)
         self.sendChatAction(self.CHAT_GROUP, 'typing')
         query = "select * from sensors order by date desc limit 1"        
-        date, cpu_temp, bmp180_temp, bmp180_press, dht22_temp, dht22_hr = self.run_query(query)[0]        
-        
-        self.sendMessage(self.CHAT_GROUP, self.MSG_CMD_SENSORS.format(date.strftime("%Y/%m/%d"), 
+        date, cpu_temp, bmp180_temp, bmp180_press, dht22_temp, dht22_hr = self.run_query(query)[0]
+        text = self.MSG_CMD_SENSORS.format(date.strftime("%Y/%m/%d"), 
                                                                       date.strftime("%H:%M"), 
                                                                       cpu_temp, 
                                                                       dht22_hr, 
                                                                       dht22_temp, 
                                                                       bmp180_press, 
-                                                                      bmp180_temp), parse_mode="Markdown")
+                                                                      bmp180_temp)        
+        
+        self.sendMessage(self.CHAT_GROUP, text.replace('None', '? '), parse_mode="Markdown")
         
         
     #FIXME: meter en un thread para no bloquear el bot
@@ -489,12 +495,12 @@ google drive. Inténtalo de nuevo más tarde'
         try:
             print u"[{}] {}: Actualizando repositorio".format(datetime.datetime.now(), __file__)
             output = proc.check_output('cd {}; git pull'.format(os.environ['SVVPA_DIR']), shell=True)            
-            self.sendMessage(self.CHAT_GROUP, self.MSG_CMD_UPDATE.format(output))
+            self.sendMessage(self.CHAT_GROUP, self.MSG_CMD_UPDATE.format(output), parse_mode='Markdown')
             
         except Exception as e:
             print >>sys.stderr, u"[{}] {}: ERROR! Se ha producido un error inesperado al actualizar el repositorio git:".format(datetime.datetime.now(), __file__)
             traceback.print_exc()
-            self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(rep(e)))
+            self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))
         
         
         
@@ -502,12 +508,13 @@ google drive. Inténtalo de nuevo más tarde'
         print u"[{}] {}: Reiniciando el sistema...".format(datetime.datetime.now(), __file__)        
         self.sendMessage(self.CHAT_GROUP, self.MSG_CMD_REBOOT)
         try:
+            #FIXME: Añadir un threading.Timer para apagar, ya que si no no se lee el mensaje y se procesa una y otra vez tras en reinicio. Hacer lo mismo con shutdown
             proc.check_call('sudo /sbin/shutdown -r now', shell=True)
             
         except Exception as e:
             print >>sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al intentar reiniciar el sistema:".format(datetime.datetime.now(), __file__)
             traceback.print_exc()
-            self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(rep(e)))
+            self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))
 
 
 
@@ -521,7 +528,7 @@ google drive. Inténtalo de nuevo más tarde'
         ])                
                         
         chat    = self.CHAT_GROUP if INLINE_KEYBOARDS_GROUP_ACTIVE else msg['from']['id']
-        m       = bot.sendMessage(chat, self.MSG_CMD_SHUTDOWN, reply_markup=markup)
+        m       = self.sendMessage(chat, self.MSG_CMD_SHUTDOWN, reply_markup=markup)
         self.addMsgTimeout(*self.getMsgChatId(m))
 
         
@@ -533,7 +540,7 @@ google drive. Inténtalo de nuevo más tarde'
         ])                
                         
         chat    = self.CHAT_GROUP if INLINE_KEYBOARDS_GROUP_ACTIVE else msg['from']['id']    
-        m       = self.sendMessage(self.CHAT_GROUP, self.MSG_CMD_EMAIL_NOTIF.format(u"activado" if self.isEmailNotif() else u"desactivado"), reply_markup=markup)
+        m       = self.sendMessage(chat, self.MSG_CMD_EMAIL_NOTIF.format(u"activado" if self.isEmailNotif() else u"desactivado"), reply_markup=markup)
         self.addMsgTimeout(*self.getMsgChatId(m))
 
      
@@ -569,15 +576,15 @@ google drive. Inténtalo de nuevo más tarde'
             proc.call(cmd, shell=True) 
                         
             text = self.MSG_USER_ADDED.format(from_name, user_name, user_lastname, user_name)        
-            bot.editMessageText( self.getMsgChatId(msg), text)
+            self.editMessageText( self.getMsgChatId(msg), text)
             
             if not INLINE_KEYBOARDS_GROUP_ACTIVE:
-                bot.sendMessage(self.CHAT_GROUP, text)
+                self.sendMessage(self.CHAT_GROUP, text)
                  
         except Exception as e:
             print >>sys.stderr, u"[{}] {}: ERROR! Se produjo un error inesperado al añadir un nuevo usuario a la lista de usuarios autorizados:".format(datetime.datetime.now(), __file__)
             traceback.print_exc()            
-            bot.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_ADDING_USER) 
+            self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_ADDING_USER) 
         
       
       
@@ -616,16 +623,16 @@ google drive. Inténtalo de nuevo más tarde'
         else:
             if self._motionDelay.getTime()==0:
                 #huevo de pascua                
-                bot.editMessageText(self.getMsgChatId(msg), self.MSG_ERROR_FAKE)
+                self.editMessageText(self.getMsgChatId(msg), self.MSG_ERROR_FAKE)
                 return
                
             self.cbq_motionStop()
             
             text = self.MSG_CMD_MOTION_PAUSE.format(self._motionDelay.toString())
-            bot.editMessageText(self.getMsgChatId(msg), text)
+            self.editMessageText(self.getMsgChatId(msg), text)
             
             if not INLINE_KEYBOARDS_GROUP_ACTIVE:
-               bot.sendMessage(self.CHAT_GROUP, text)
+               self.sendMessage(self.CHAT_GROUP, text)
             
             m = self._timers.pop(self.MOTION_TIMER, None)
             if m:
@@ -680,7 +687,7 @@ google drive. Inténtalo de nuevo más tarde'
         
         chat    = self.CHAT_GROUP if INLINE_KEYBOARDS_GROUP_ACTIVE else msg['from']['id']
         t       = u"\n(Actualmente: " + self._motionDelay.toString() + u")" if self._motionDelay.getTime()>0 else ""
-        m       = bot.editMessageText( self.getMsgChatId(msg), self.MSG_CMD_MOTION_TIME_SET.format(text.upper(), t), reply_markup=markup)
+        m       = self.editMessageText( self.getMsgChatId(msg), self.MSG_CMD_MOTION_TIME_SET.format(text.upper(), t), reply_markup=markup)
         self.addMsgTimeout(*self.getMsgChatId(m))
 
       
@@ -691,15 +698,15 @@ google drive. Inténtalo de nuevo más tarde'
             proc.call('sudo service motion restart', shell=True)
             
             if msg:
-                bot.editMessageText(self.getMsgChatId(msg), self.MSG_MOTION_START)
+                self.editMessageText(self.getMsgChatId(msg), self.MSG_MOTION_START)
             
             if not INLINE_KEYBOARDS_GROUP_ACTIVE:        
-                bot.sendMessage(self.CHAT_GROUP, self.MSG_MOTION_START)            
+                self.sendMessage(self.CHAT_GROUP, self.MSG_MOTION_START)            
         
         except Exception as e:
             print >> sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al trata de reiniciar motion:".format(datetime.datetime.now(), __file__)
             traceback.print_exc()
-            bot.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))
+            self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))
         
                 
         
@@ -709,30 +716,30 @@ google drive. Inténtalo de nuevo más tarde'
             proc.call('sudo service motion stop', shell=True)
             
             if msg:
-                bot.editMessageText(self.getMsgChatId(msg), self.MSG_CMD_MOTION_STOP)
+                self.editMessageText(self.getMsgChatId(msg), self.MSG_CMD_MOTION_STOP)
             
             if not INLINE_KEYBOARDS_GROUP_ACTIVE:
-               bot.sendMessage(self.CHAT_GROUP, self.MSG_CMD_MOTION_STOP)
+               self.sendMessage(self.CHAT_GROUP, self.MSG_CMD_MOTION_STOP)
             
         except Exception as e:
             print >>sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al detener el servicio motion:".format(datetime.datetime.now(), __file__)
             traceback.print_exc()
-            bot.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))
+            self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))
             
          
         
     def cbq_motionStatus(self, msg):
         try:
             if self.isMotionEnabled():                
-                bot.editMessageText(self.getMsgChatId(msg),  self.MSG_CMD_MOTION_ENABLED)
+                self.editMessageText(self.getMsgChatId(msg),  self.MSG_CMD_MOTION_ENABLED)
             
             else:                
-                bot.editMessageText(self.getMsgChatId(msg),  self.MSG_CMD_MOTION_DISABLED)
+                self.editMessageText(self.getMsgChatId(msg),  self.MSG_CMD_MOTION_DISABLED)
             
         except:         
             print >> sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al comprobar el estado del servicio motion:".format(datetime.datetime.now(), __file__)
             traceback.print_exc()
-            bot.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))
+            self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))
         
         
         
@@ -747,10 +754,10 @@ google drive. Inténtalo de nuevo más tarde'
         self.BANNED_USERS.append(user_id)
                 
         text    = self.MSG_BLOCKED_USER.format(user_name, user_lastname)        
-        bot.editMessageText( self.getMsgChatId(msg), text)
+        self.editMessageText( self.getMsgChatId(msg), text)
         
         if not INLINE_KEYBOARDS_GROUP_ACTIVE:
-            bot.sendMessage(self.CHAT_GROUP, text)
+            self.sendMessage(self.CHAT_GROUP, text)
 
         
         
@@ -776,36 +783,37 @@ google drive. Inténtalo de nuevo más tarde'
             proc.call(cmd, shell=True) 
                         
             text    = self.MSG_BANN_USER.format(from_name, user_name, user_lastname, user_name)        
-            bot.editMessageText( self.getMsgChatId(msg), text)
+            self.editMessageText( self.getMsgChatId(msg), text)
                         
             if not INLINE_KEYBOARDS_GROUP_ACTIVE:
-                bot.sendMessage(self.CHAT_GROUP, text)
+                self.sendMessage(self.CHAT_GROUP, text)
                  
         except Exception as e:
             print >>sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al bloquear permanentemente un usuario".format(datetime.datetime.now(), __file__)
             traceback.print_exc()           
-            bot.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e))) 
+            self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e))) 
       
    
       
     def cbq_snapshot(self, msg, device):                
         if msg:            
-            bot.editMessageText(self.getMsgChatId(msg), self.MSG_CMD_SNAPSHOT)
-        
-        fileout = os.environ['MOTION_DIR'] + '.snapshot-' + str(int(device[-1])+1) + os.environ['MOTION_IMAGE_EXT']        
-        if (time.time() - os.path.getctime(file)) < 600:    #snapshot tiene menos de 10 minutos
+            self.editMessageText(self.getMsgChatId(msg), self.MSG_CMD_SNAPSHOT)
+                        
+        if self.isMotionEnabled():
+            fileout = os.environ['MOTION_DIR'] + '.snapshot-' + str(int(device[-1])+1) + '.' + os.environ['MOTION_IMAGE_EXT']
             print u"[{}] {}: Capturando foto de motion_snapshots".format(datetime.datetime.now(), __file__)
             
         else:
             print u"[{}] {}: Capturando foto directamente del dispositivo {}".format(datetime.datetime.now(), __file__, device)
+            fileout = '/tmp/snapshot.jpg'
             
             try:
-                proc.check_call([os.environ['FSWEBCAM_BIN'], "--config", os.environ['FSWEBCAM_CONFIG'], "--device", device, fileout], shell=True)
+                proc.check_call(os.environ['FSWEBCAM_BIN'] + " --config " + os.environ['FSWEBCAM_CONFIG'] + " --device " + device + " " + fileout, shell=True)
                 
             except Exception as e:
                 print >> sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al capturar la imagen:".format(datetime.datetime.now(), __file__)
                 traceback.print_exc()
-                bot.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))                
+                self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))                
                  
         t = threading.Thread(target=self.send_snapshot, args=(fileout,))
         t.start()
@@ -825,35 +833,36 @@ google drive. Inténtalo de nuevo más tarde'
 
 
     def cbq_shutdown(self, msg):        
-        bot.editMessageText(self.getMsgChatId(msg), self.MSG_CMD_SHUTDOWN)
+        self.editMessageText(self.getMsgChatId(msg), self.MSG_CMD_SHUTDOWN)
         try:
             print u"[{}] {}: Apagando el sistema".format(datetime.datetime.now(), __file__)
+            #FIXME: Añadir un threading.Timer para apagar, ya que si no no se lee el mensaje y se procesa una y otra vez tras en reinicio. Hacer lo mismo con reinicio
             proc.check_call('sudo /sbin/shutdown -r now', shell=True)
             
         except Exception as e:
             print >> sys.stderr, u"[{}] {}: ERROR! Hubo un problema inesperado al tratar de apagar el sistema:".format(datetime.datetime.now(), __file__)
             traceback.print_exc()
-            bot.editMessageText(self.getMsgChatId(msg), self.MSG_ERROR_UNEXPECTED.format(rep(e)))
+            self.editMessageText(self.getMsgChatId(msg), self.MSG_ERROR_UNEXPECTED.format(repr(e)))
      
         
         
     def cbq_emailNotif(self, msg, state):            
         try:
-            print u"[{}] {}: {}ctivando las notificaciones por email".format(u"A" if state==self.EMAIL_NOTIF_ON else u"Desa", datetime.datetime.now(), __file__)
-            cmd = u"sed -ir 's/export EMAIL_NOTIF=\"([a-zA-Z]+)\"/export EMAIL_NOTIF=\"{}\"/g' {}".format(state, self.FILE_CONSTANTS)
-            proc.call(cmd, shell=True)
+            print u"[{}] {}: {}ctivando las notificaciones por email".format(datetime.datetime.now(), __file__, u"A" if state==self.EMAIL_NOTIF_ON else u"Desa")
+            cmd = u"sed -i -r 's/export EMAIL_NOTIF=\"([a-zA-Z]*)\"/export EMAIL_NOTIF=\"{}\"/g' {}".format(state, self.FILE_CONSTANTS)
+            proc.check_call(cmd, shell=True)
             
-            if self.isEmailNotif():                
-                bot.editMessageText(self.getMsgChatId(msg), self.MSG_CMD_EMAIL_NOTIF_ENABLED)
+            if state==self.EMAIL_NOTIF_ON:                
+                self.editMessageText(self.getMsgChatId(msg), self.MSG_CMD_EMAIL_NOTIF_ENABLED)
                 
             else:                
-                bot.editMessageText(self.getMsgChatId(msg), self.MSG_CMD_EMAIL_NOTIF_DISABLED)
+                self.editMessageText(self.getMsgChatId(msg), self.MSG_CMD_EMAIL_NOTIF_DISABLED)
                 
             
         except Exception as e:
             print >> sys.stderr, u"[{}] {}: ERROR! Hubo un problema inesperado al modificar la notificación por email:".format(datetime.datetime.now(), __file__)
             traceback.print_exc()
-            bot.editMessageText(self.getMsgChatId(msg), self.MSG_ERROR_UNEXPECTED.format(rep(e)))
+            self.editMessageText(self.getMsgChatId(msg), self.MSG_ERROR_UNEXPECTED.format(repr(e)))
 
 
 
@@ -874,7 +883,7 @@ google drive. Inténtalo de nuevo más tarde'
         ])                
         
         chat    = self.ADMIN_USER   #self.CHAT_GROUP if INLINE_KEYBOARDS_GROUP_ACTIVE else self.ADMIN_USER    
-        m       =  bot.sendMessage(chat, self.MSG_NEW_USER.format(name, lastname, self.BOT_NAME, id), reply_markup=markup)
+        m       =  self.sendMessage(chat, self.MSG_NEW_USER.format(name, lastname, self.BOT_NAME, id), reply_markup=markup)
         self.addMsgTimeout(*self.getMsgChatId(m))
 
             
@@ -917,7 +926,7 @@ google drive. Inténtalo de nuevo más tarde'
     def deleteMsg(self, chat_id, msg_id):
         print u"[{}] {}: Borrando mensaje {} {}".format(datetime.datetime.now(), __file__, chat_id, msg_id)
         self.cancelMsgTimeout(chat_id, msg_id)
-        bot.editMessageText( (chat_id, msg_id), u'\U0001f914')
+        self.editMessageText( (chat_id, msg_id), u'\U0001f914')
 
     
     
@@ -979,26 +988,25 @@ google drive. Inténtalo de nuevo más tarde'
 
 
 
-    #TODO: CHECK!!!!!!!!!
     def upload_video(self, file, msg):
         print u"[{}] {}: Subiendo archivo a google drive ({})".format(datetime.datetime.now(), __file__, file)
-        self.editMessageText(self.getMsgChatId(msg), u'Subiendo archivo {}...'.format(eventId))
+        self.editMessageText(self.getMsgChatId(msg), u'Subiendo archivo {}...'.format(os.path.basename(file)))
         
         try:            
-            self.sendChatAction(msg['chat']['id'], 'upload_video')
+            self.sendChatAction(self.CHAT_GROUP, 'upload_video')
             link = fileuploader(file)
             
             if link:            
-                self.editMessageText(self.getMsgChatId(msg), self.MSG_CMD_UPLOAD_DONE.format(os.path.basename(file), link), parse_mode=Markdown)
+                self.editMessageText(self.getMsgChatId(msg), self.MSG_CMD_UPLOAD_DONE.format(os.path.basename(file), link), parse_mode='Markdown')
                 
             else:
                 print >> sys.stderr, u"[{}] {}: ERROR! No se ha podido subir el archivo {} a google drive. Se han agotado los intentos".format(datetime.datetime.now(), __file__, file)
-                bot.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UPLOAD_MAX_TRIES.format(os.path.basename(file)))
+                self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UPLOAD_MAX_TRIES.format(os.path.basename(file)))
                             
         except Exception as e:
             print >> sys.stderr, u"[{}] {}: ERROR! Se produjo un error inesperado al subir el vídeo a google drive:".format(datetime.datetime.now(), __file__)
             traceback.print_exc()
-            bot.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))
+            self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))
             
     
     
@@ -1008,7 +1016,7 @@ google drive. Inténtalo de nuevo más tarde'
                 print u"[{}] {}: Enviando snapshot".format(datetime.datetime.now(), __file__)
                 self.sendChatAction(self.CHAT_GROUP, 'upload_photo')
                 fd = open(file, 'rb')
-                bot.sendPhoto(self.CHAT_GROUP, fd, datetime.datetime.now())
+                self.sendPhoto(self.CHAT_GROUP, fd, datetime.datetime.now())
                 fd.close()
                 
             except Exception as e:
@@ -1016,11 +1024,11 @@ google drive. Inténtalo de nuevo más tarde'
                 traceback.print_exc()
                 if fd:
                     fd.close()
-                bot.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))
+                self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))
             
         else:
             print >> sys.stderr, u"ERROR! No existe el archivo {}".format(file)
-            bot.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))
+            self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(u'No existe el archivo ' + file))
             
             
 
@@ -1080,8 +1088,16 @@ google drive. Inténtalo de nuevo más tarde'
 
 
     def get_datosConsumidos(self):
-        kb = proc.check_output([os.environ['BIN_DIR'], "_getInternetUsage.sh"], shell=True).strip()        
-        return '{0:.2f}MB'.format(kb/1024.0)
+        try:
+            cmd = "sudo " + os.environ['BIN_DIR'] + "_getInternetUsage.sh"     
+            kb = proc.check_output(cmd, shell=True).strip()
+            return u'{0:.2f}MB'.format(float(kb)/1024.0)
+        
+        except Exception as e:
+            print >> sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado calcular los megas consumidos:".format(datetime.datetime.now(), __file__)
+            traceback.print_exc()
+            
+        return u"?"
 
 
     
@@ -1175,7 +1191,7 @@ def main():
          
          
 if __name__ == "__main__":
-    sys.exit(main(sys.argv))
+    sys.exit(main())
 
      
         

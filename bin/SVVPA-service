@@ -38,6 +38,8 @@ exec &> >(tee -a ${LOG_FILE})
 cd ${BIN_DIR}
 RETVAL=0
 case $1 in
+
+
 	# Apagar servicio. Se ejecuta automáticamente por Linux cuando se apaga el sistema (init 0 1 6)
 	stop|notify_shutdown)
 		echo "[$(date)] $0: Servicio '$1': El sistema se está apagando"
@@ -51,6 +53,9 @@ case $1 in
 	# Encender servicio. Se ejecuta automáticamente por Linux cuando se inicia el sistema (init 2 3 4 5)
 	start|notify_startup)
 		echo "[$(date)] $0: Servicio '$1': El sistema se está arrancando"
+		#start _telegram_bot
+		(python -u _telegram_bot.py) &
+
 		python -u _notificator.py "ON_STARTUP"
 		RETVAL=$(($RETVAL|$?))
 	;;
@@ -64,6 +69,20 @@ case $1 in
 		echo "[$(date)] $0: Servicio '$1': La conexión con la cámara se ha perdido"
 		python -u _notificator.py "ON_CAMERA_FAILURE"
 		RETVAL=$(($RETVAL|$?))
+	;;
+
+
+
+
+	check_telegram_service)
+		pid=$(ps aux|grep 'python'|grep '_telegram_bot.py'|awk '{print $2}')
+	
+		if [[ ! "${pid}" ]]
+		then
+			echo "[$(date)] $0: Servicio '$1': Arrancando servicio telegram"
+			(python -u _telegram_bot.py) &
+		fi
+
 	;;
 
 
@@ -91,6 +110,7 @@ case $1 in
 		RETVAL=$(($RETVAL|$?))	
  	;;
 	
+
 
 
 
@@ -163,6 +183,7 @@ case $1 in
 		mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo $sqlStm)
 		RETVAL=$(($RETVAL|$?))
 
+		#FIXME: Sacar la actualización online a otra función a parte y que permita, según configuración, subirlo a google drive o a plotly. Adicionalmente, esta función puede leer los datos de MySQL y hacer algún tipo de media (??)
 		python -u _updateGoogleSpreadsheetSensors.py $(getGoogleSpVal $cpuTemp) $(getGoogleSpVal $bmp180Temp) $(getGoogleSpVal $bmp180Pres) $(getGoogleSpVal $dht22Temp) $(getGoogleSpVal $dht22Hr)
 		RETVAL=$(($RETVAL|$?))
 	;;
@@ -184,6 +205,7 @@ case $1 in
 
 			#test snapshot vs ordinary motion picture
 			if [[ "$(echo $fileIn|egrep '([0-9_]+){12,}')" ]]
+			then
 				sqlStm=$(echo "insert into images (id) values ('$(basename ${fileIn:: -4})')")
 				mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo $sqlStm)
 				RETVAL=$(($RETVAL|$?))
@@ -192,7 +214,7 @@ case $1 in
 				python -u _google_drive_uploader.py $fileIn				
 				RETVAL=$(($RETVAL|$?))
 
-				#FIXME: Mandar notificación (por telegram y/o email según configuración)
+				#Manda notificación (por telegram y/o email según configuración)
 				python -u _notificator.py "ON_MOTION" $fileIn
 				RETVAL=$(($RETVAL|$?))							
 			fi
