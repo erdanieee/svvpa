@@ -446,9 +446,6 @@ miniinterruptor que está junto a las baterías'
         
                     
     def cmd_upload_video(self, msg):
-        #pattern = re.compile('([0-9]+_){12,}[0-9]+.' + os.environ['MOTION_VIDEO_EXT'])
-        #files   = sorted([f for f in os.listdir(os.environ['MOTION_DIR']) if pattern.search(f) and os.path.isfile(os.path.join(os.environ['MOTION_DIR'], f))], reverse=True)    #FIXME: coger de MySQL
-        
         videos = self.run_query('select id,size from videos order by id desc limit 20')
                         
         if len(videos)==0:
@@ -1133,19 +1130,19 @@ miniinterruptor que está junto a las baterías'
  
     def get_humanSize(self, bytes):
        if bytes < self.SIZE_KiB:
-          return '{0} {1}'.format(bytes,'Bytes' if bytes > 1 else 'Byte')
+          return u'{0} {1}'.format(bytes,'Bytes' if bytes > 1 else 'Byte')
       
        elif self.SIZE_KiB <= bytes < self.SIZE_MiB:
-          return '{0:.2f} KiB'.format(bytes/self.SIZE_KiB)
+          return u'{0:.2f} KiB'.format(bytes/self.SIZE_KiB)
       
        elif self.SIZE_MiB <= bytes < self.SIZE_GiB:
-          return '{0:.2f} MiB'.format(bytes/self.SIZE_MiB)
+          return u'{0:.2f} MiB'.format(bytes/self.SIZE_MiB)
       
        elif self.SIZE_GiB <= bytes < self.SIZE_TiB:
-          return '{0:.2f} GiB'.format(bytes/self.SIZE_GiB)
+          return u'{0:.2f} GiB'.format(bytes/self.SIZE_GiB)
       
        elif self.SIZE_TiB <= bytes:
-          return '{0:.2f} TiB'.format(bytes/self.SIZE_TiB)
+          return u'{0:.2f} TiB'.format(bytes/self.SIZE_TiB)
             
     
     

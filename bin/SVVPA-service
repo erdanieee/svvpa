@@ -191,6 +191,33 @@ case $1 in
 
 
 
+	update_online_sensors)
+		echo "[$(date)] $0: Servicio '$1': Actualizando sensores en servidor remoto"
+
+		if [[ $# -gt 1 ]]
+		then
+			#datetime=$( mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo "select date from sensors order by date desc limit 1") --skip-column-names )
+			cpuTemp=$( mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo "select avg(CPU_temp) from sensors order by date desc limit 10") --skip-column-names )
+			bmp180Temp=$( mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo "select avg(BMP180_temp) from sensors order by date desc limit 10") --skip-column-names )
+			bmp180Pres=$( mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo "select avg(BMP180_press) from sensors order by date desc limit 10") --skip-column-names )
+			dht22Temp=$( mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo "select avg(DHT22_temp) from sensors order by date desc limit 10") --skip-column-names )
+			dht22Hr=$( mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo "select avg(DHT22_HR) from sensors order by date desc limit 10") --skip-column-names )
+
+		        if [[ "${SENSOR_GOOGLE_SHEET}" == "ON" ]]
+	                then
+				python -u _updateGoogleSpreadsheetSensors.py $cpuTemp $bmp180Temp $bmp180Pres $dht22Temp $dht22Hr
+				RETVAL=$(($RETVAL|$?))
+			fi
+
+			if [[ "${SENSOR_PLOTLY}" ]]
+			then
+				
+				RETVAL=$(($RETVAL|$?))
+			fi
+		else
+                        echo "[$(date)] $0: Servicio '$1': ERROR! Invalid number of arguments: $#"
+                        RETVAL=1
+                fi
 
 
 

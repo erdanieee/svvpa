@@ -73,4 +73,7 @@ export FSWEBCAM_CONFIG=${CONFIG_DIR}"fswebcam.conf"
 
 export TELEGRAM_MSG_TIMEOUT="600"
 
-export EMAIL_NOTIF=""
+export EMAIL_NOTIF="OFF"
+export SENSOR_GOOGLE_SHEET="OFF"
+export SENSOR_PLOTLY="ON"
+

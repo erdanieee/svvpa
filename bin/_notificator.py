@@ -13,10 +13,10 @@ from _google_drive_uploader import main as fileuploader
 import urllib
 import MySQLdb
 
-SIZE_KB = 1024.0
-SIZE_MB = 1048576.0 
-SIZE_GB = 1073741824.0 
-SIZE_TB = 1099511627776.0 
+SIZE_KiB = 1024.0
+SIZE_MiB = 1048576.0 
+SIZE_GiB = 1073741824.0 
+SIZE_TiB = 1099511627776.0 
 
 EMAIL_STARTUP_SUBJECT=u'SVVPA - Inicio del sistema'
 EMAIL_STARTUP_BODY=u'El sistema SVVPA se acaba de iniciar'
@@ -145,7 +145,7 @@ def get_duration(id):
     except Exception as e:
         print >> sys.stderr, u'[{}] {}: ERROR! No se ha podido determinar la duracion del video:'.format(datetime.datetime.now(), __file__)
         traceback.print_exc()
-        return "?"
+        return u"?"
 
 
 
@@ -155,21 +155,44 @@ def get_size(id):
         'Return the file size as a human friendly KB, MB, GB, or TB string'
         B = float(os.path.getsize(file))
         
-        if B < SIZE_KB:
+        if B < SIZE_KiB:
            return u'{0} {1}'.format(B,'Bytes' if B > 1 else 'Byte')
-        elif SIZE_KB <= B < SIZE_MB:
-           return u'{0:.2f} KB'.format(B/SIZE_KB)
-        elif SIZE_MB <= B < SIZE_GB:
-           return u'{0:.2f} MB'.format(B/SIZE_MB)
-        elif SIZE_GB <= B < SIZE_TB:
-           return u'{0:.2f} GB'.format(B/SIZE_GB)
-        elif SIZE_TB <= B:
-           return u'{0:.2f} TB'.format(B/SIZE_TB)
+        elif SIZE_KiB <= B < SIZE_MiB:
+           return u'{0:.2f} KB'.format(B/SIZE_KiB)
+        elif SIZE_MiB <= B < SIZE_GiB:
+           return u'{0:.2f} MB'.format(B/SIZE_MiB)
+        elif SIZE_GiB <= B < SIZE_TiB:
+           return u'{0:.2f} GB'.format(B/SIZE_GiB)
+        elif SIZE_TiB <= B:
+           return u'{0:.2f} TB'.format(B/SIZE_TiB)
        
     except Exception as e:
         print >> sys.stderr, u'[{}] {}: ERROR! No se ha podido determinar el size del video:'.format(datetime.datetime.now(), __file__)
         traceback.print_exc()
-        return "?"
+        return u"?"
+
+
+   
+
+
+def get_humanSize(self, bytes):
+    if bytes < self.SIZE_KiB:
+        return u'{0} {1}'.format(bytes,'Bytes' if bytes > 1 else 'Byte')
+    
+    elif self.SIZE_KiB <= bytes < self.SIZE_MiB:
+        return u'{0:.2f} KiB'.format(bytes/self.SIZE_KiB)
+    
+    elif self.SIZE_MiB <= bytes < self.SIZE_GiB:
+        return u'{0:.2f} MiB'.format(bytes/self.SIZE_MiB)
+    
+    elif self.SIZE_GiB <= bytes < self.SIZE_TiB:
+        return u'{0:.2f} GiB'.format(bytes/self.SIZE_GiB)
+    
+    elif self.SIZE_TiB <= bytes:
+        return u'{0:.2f} TiB'.format(bytes/self.SIZE_TiB)
+ 
+    
+ 
 
 
 
@@ -284,7 +307,7 @@ def on_motion(file):
             date        = datetime.datetime(*map(int,os.path.basename(file).split("_")[:6]))
             link        = data_img[0][0]     
             duration    = data_vid[0][0] if data_vid[0][0] else get_duration(id) 
-            size        = data_vid[0][1] if data_vid[0][1] else get_size(id)
+            size        = get_humanSize(data_vid[0][1]) if data_vid[0][1] else get_size(id)
             tlg_msg     = TLG_MOTION.format(date.strftime("%Y/%m/%d %H:%M:%S"), link)             
             email_msg   = None
             
@@ -299,8 +322,8 @@ def on_motion(file):
                                                                             datos=get_datos(), 
                                                                             datosMensuales=os.environ['DATOS_MENSUALES'],
                                                                             email=os.environ['GMAIL_ACCOUNT_ALIAS'],
-                                                                            duration=duration,  #FIXME: coger de MySQL
-                                                                            size=size),         #FIXME: coger de MySQL
+                                                                            duration=duration,  
+                                                                            size=size),         
                                             attachments    = [file])
             
             sendNotif(tlg_msg, email_msg)
