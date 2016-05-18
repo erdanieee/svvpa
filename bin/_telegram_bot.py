@@ -78,7 +78,7 @@ desde {}:{} durante {} segundos'''
     MSG_CMD_UPLOAD = u'''Este comando sirve para subir los videos capturados a \
 Google Drive (las imagenes mas representativas se suben automaticamente). \
 Selecciona el video del evento que quieres subir a Google Drive (el gasto \
-actual de datos es de {} de los {}MB que incluye la tarifa).'''
+actual de datos es de {} de los {}MiB que incluye la tarifa).'''
     MSG_CMD_SENSORS = u'''A continuacion se muestran los datos tomados  el dia \
 *{}* a las *{}*:
         
@@ -113,9 +113,6 @@ correctamente \U0001f440.'''
     MSG_CMD_MOTION_ENABLED = u'''La detección de movimiento esta activa \U0001f440'''
     MSG_CMD_MOTION_DISABLED = u'''La detección de movimiento esta inactiva \U0001f648'''
     MSG_CMD_SNAPSHOT = u'''Capturando foto...'''
-    MSG_CMD_SHUTDOWN = u'''El sistema se está apagando.Recuerda que para volver \
-a iniciarlo es necesario desactivar y activar fisicamente el miniinterruptor que \
-esta junto a las baterias'''
     MSG_CMD_EMAIL_NOTIF_ENABLED = u'''Las notificaciones por email estan \
 actualmente activadas \u2709\ufe0f'''
     MSG_CMD_EMAIL_NOTIF_DISABLED = u'''Las notificaciones por email estan \
@@ -126,6 +123,9 @@ consumir datos en [este enlace]({}). Recuerda que puedes ver todos los archivos 
 subidos a google drive en [este enlace](https://drive.google.com/folderview?id=0Bwse_WnehFNKT2I3N005YmlYMms&usp=sharing)'
     MSG_ERROR_UPLOAD_MAX_TRIES = u'ERROR! No se ha podido subir el archivo {} a \
 google drive. Inténtalo de nuevo más tarde'
+    MSG_SHUTTING_DOWN = u'El sistema se apagará en unos segundos. Recuerda que \
+para volver a iniciarlo es necesario desactivar y activar físicamente el \
+miniinterruptor que está junto a las baterías'
 
     
     BUT_CANCEL                  = u'Cancelar'
@@ -172,10 +172,10 @@ google drive. Inténtalo de nuevo más tarde'
     RETRIES_MAX     = 10
     RETRIES_WAIT    = 50
     
-    SIZE_KB = 1024.0
-    SIZE_MB = 1048576.0 
-    SIZE_GB = 1073741824.0 
-    SIZE_TB = 1099511627776.0 
+    SIZE_KiB = 1024.0
+    SIZE_MiB = 1048576.0 
+    SIZE_GiB = 1073741824.0 
+    SIZE_TiB = 1099511627776.0 
     
     
     def __init__(self, *args, **kwargs):    
@@ -388,7 +388,7 @@ google drive. Inténtalo de nuevo más tarde'
         
         if len(devices)==0:
             print >>sys.stderr, u"[{}] {}: ERROR! No existen dispositivos de camaras configurados".format(datetime.datetime.now(), __file__)            
-            self.sendMessage(msg['chat']['id'], self.MSG_ERROR_NO_CAMERAS)
+            self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_NO_CAMERAS)
         
         elif len(devices)==1:
             self.cbq_snapshot(None, devices[0])
@@ -446,21 +446,25 @@ google drive. Inténtalo de nuevo más tarde'
         
                     
     def cmd_upload_video(self, msg):
-        pattern = re.compile('([0-9]+_){12,}[0-9]+.' + os.environ['MOTION_VIDEO_EXT'])
-        files   = sorted([f for f in os.listdir(os.environ['MOTION_DIR']) if pattern.search(f) and os.path.isfile(os.path.join(os.environ['MOTION_DIR'], f))], reverse=True)    #FIXME: coger de MySQL
-                
-        if len(files)==0:
+        #pattern = re.compile('([0-9]+_){12,}[0-9]+.' + os.environ['MOTION_VIDEO_EXT'])
+        #files   = sorted([f for f in os.listdir(os.environ['MOTION_DIR']) if pattern.search(f) and os.path.isfile(os.path.join(os.environ['MOTION_DIR'], f))], reverse=True)    #FIXME: coger de MySQL
+        
+        videos = self.run_query('select id,size from videos order by id desc limit 20')
+                        
+        if len(videos)==0:
             print u"[{}] {}: Todavia no hay eventos capturados".format(datetime.datetime.now(), __file__)            
             self.sendMessage(self.CHAT_GROUP, self.MSG_MOTION_NO_EVENTS)
         
         else:
             buttons=[]
             i=0
-            for f in files:
-                y,m,d,H,M = f.split("_")[:5]
-                t = u'{}/{}/{} {}:{} ({})'.format(y,m,d,H,M, self.get_fileSize(os.path.join(os.environ['MOTION_DIR'], f)))      #FIXME: coger tamaño de Mysql si está, si no usar f(x)
+            for v in videos:
+                id        = v[0]
+                y,m,d,H,M = id.split("_")[:5]
+                size      = self.get_humanSize(v[1]) if v[1] else u'?'
+                t         = u'{}/{}/{} {}:{} ({})'.format(y, m, d, H, M, size)
                 
-                buttons.append([ InlineKeyboardButton( text=t, callback_data=self.callback2string(self.CBQ_UPLOAD_FILE, [f[:-4]])) ])
+                buttons.append([ InlineKeyboardButton( text=t, callback_data=self.callback2string(self.CBQ_UPLOAD_FILE, [id])) ])
                 
                 i+=1
                 if i >=20:
@@ -526,7 +530,7 @@ google drive. Inténtalo de nuevo más tarde'
         ])                
                         
         chat    = self.CHAT_GROUP if INLINE_KEYBOARDS_GROUP_ACTIVE else msg['from']['id']
-        m       = self.sendMessage(chat, self.MSG_CMD_SHUTDOWN, reply_markup=markup)
+        m       = self.sendMessage(chat, self.MSG_CMD_SHUTDOWN, reply_markup=markup, parse_mode='Markdown')
         self.addMsgTimeout(*self.getMsgChatId(m))
 
         
@@ -830,7 +834,10 @@ google drive. Inténtalo de nuevo más tarde'
 
     def cbq_shutdown(self, msg):
         print u"[{}] {}: Apagando el sistema".format(datetime.datetime.now(), __file__)        
-        self.editMessageText(self.getMsgChatId(msg), self.MSG_CMD_SHUTDOWN)        
+        self.editMessageText(self.getMsgChatId(msg), self.MSG_SHUTTING_DOWN)
+        if not INLINE_KEYBOARDS_GROUP_ACTIVE:
+            self.sendMessage(self.CHAT_GROUP, self.MSG_SHUTTING_DOWN)
+                    
         t = threading.Timer(5, self.shutdown)
         t.setDaemon(True)
         t.start()
@@ -847,16 +854,21 @@ google drive. Inténtalo de nuevo más tarde'
             proc.check_call(cmd, shell=True)
             
             if state==self.EMAIL_NOTIF_ON:                
-                self.editMessageText(self.getMsgChatId(msg), self.MSG_CMD_EMAIL_NOTIF_ENABLED)
+                text = self.MSG_CMD_EMAIL_NOTIF_ENABLED
                 
             else:                
-                self.editMessageText(self.getMsgChatId(msg), self.MSG_CMD_EMAIL_NOTIF_DISABLED)
+                text = self.MSG_CMD_EMAIL_NOTIF_DISABLED
+            
+            self.editMessageText(self.getMsgChatId(msg), text)
+            
+            if not INLINE_KEYBOARDS_GROUP_ACTIVE:
+                self.sendMessage(self.CHAT_GROUP, text)            
                 
             
         except Exception as e:
             print >> sys.stderr, u"[{}] {}: ERROR! Hubo un problema inesperado al modificar la notificacion por email:".format(datetime.datetime.now(), __file__)
             traceback.print_exc()
-            self.editMessageText(self.getMsgChatId(msg), self.MSG_ERROR_UNEXPECTED.format(repr(e)))
+            self.editMessageText(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))
 
 
 
@@ -880,7 +892,7 @@ google drive. Inténtalo de nuevo más tarde'
         ])                
         
         chat    = self.ADMIN_USER   #self.CHAT_GROUP if INLINE_KEYBOARDS_GROUP_ACTIVE else self.ADMIN_USER    
-        m       =  self.sendMessage(chat, self.MSG_NEW_USER.format(name, lastname, self.BOT_NAME, id), reply_markup=markup)
+        m       = self.sendMessage(chat, self.MSG_NEW_USER.format(name, lastname, self.BOT_NAME, id), reply_markup=markup)
         self.addMsgTimeout(*self.getMsgChatId(m))
 
             
@@ -1001,8 +1013,12 @@ google drive. Inténtalo de nuevo más tarde'
             query = "select link from videos where id like '{}'".format(os.path.basename(file)[:-4])
             data  = self.run_query(query)
             
-            if data:            
-                self.editMessageText(self.getMsgChatId(msg), self.MSG_CMD_UPLOAD_DONE.format(os.path.basename(file), data[0][0]), parse_mode='Markdown')
+            if data:
+                text = self.MSG_CMD_UPLOAD_DONE.format(os.path.basename(file), data[0][0])            
+                self.editMessageText(self.getMsgChatId(msg), text, parse_mode='Markdown')
+                
+                if not INLINE_KEYBOARDS_GROUP_ACTIVE:
+                    self.sendMessage(self.CHAT_GROUP, text, parse_mode='Markdown')
                 
             else:
                 print >> sys.stderr, u"[{}] {}: ERROR! No se ha podido subir el archivo {} a google drive. Se han agotado los intentos".format(datetime.datetime.now(), __file__, file)
@@ -1074,29 +1090,12 @@ google drive. Inténtalo de nuevo más tarde'
         
  
  
- 
-    def get_fileSize(self, file):
-       'Return the file size as a human friendly KB, MB, GB, or TB string'
-       B = float(os.path.getsize(file))
-    
-       if B < self.SIZE_KB:
-          return '{0} {1}'.format(B,'Bytes' if B > 1 else 'Byte')
-       elif self.SIZE_KB <= B < self.SIZE_MB:
-          return '{0:.2f} KB'.format(B/self.SIZE_KB)
-       elif self.SIZE_MB <= B < self.SIZE_GB:
-          return '{0:.2f} MB'.format(B/self.SIZE_MB)
-       elif self.SIZE_GB <= B < self.SIZE_TB:
-          return '{0:.2f} GB'.format(B/self.SIZE_GB)
-       elif self.SIZE_TB <= B:
-          return '{0:.2f} TB'.format(B/self.SIZE_TB)
-            
-
 
     def get_datosConsumidos(self):
         try:
             cmd = "sudo " + os.environ['BIN_DIR'] + "_getInternetUsage.sh"     
             kb = proc.check_output(cmd, shell=True).strip()
-            return u'{0:.2f}MB'.format(float(kb)/1024.0)
+            return u'{}MiB'.format(kb)
         
         except Exception as e:
             print >> sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado calcular los megas consumidos:".format(datetime.datetime.now(), __file__)
@@ -1129,6 +1128,25 @@ google drive. Inténtalo de nuevo más tarde'
             traceback.print_exc()
             self.editMessageText(self.getMsgChatId(msg), self.MSG_ERROR_UNEXPECTED.format(repr(e)))
    
+    
+
+ 
+    def get_humanSize(self, bytes):
+       if bytes < self.SIZE_KiB:
+          return '{0} {1}'.format(bytes,'Bytes' if bytes > 1 else 'Byte')
+      
+       elif self.SIZE_KiB <= bytes < self.SIZE_MiB:
+          return '{0:.2f} KiB'.format(bytes/self.SIZE_KiB)
+      
+       elif self.SIZE_MiB <= bytes < self.SIZE_GiB:
+          return '{0:.2f} MiB'.format(bytes/self.SIZE_MiB)
+      
+       elif self.SIZE_GiB <= bytes < self.SIZE_TiB:
+          return '{0:.2f} GiB'.format(bytes/self.SIZE_GiB)
+      
+       elif self.SIZE_TiB <= bytes:
+          return '{0:.2f} TiB'.format(bytes/self.SIZE_TiB)
+            
     
     
     
