@@ -68,8 +68,8 @@ https://drive.google.com/folderview?id=0Bwse_WnehFNKT2I3N005YmlYMms&usp=sharing"
     </body>
 </html>
 '''
-TLG_MOTION=u'\U0001f440 Nuevo movimiento detectado (*{}*).\n\nLa [imagen más \
-representativa]({}) ha sido subida automáticamente a google drive.\nPara subir \
+TLG_MOTION=u'\U0001f440 Nuevo movimiento detectado (*{}*) \U0001f440\n\nLa [imagen más \
+representativa]({}) ha sido subida automáticamente a google drive.\n\nPara subir \
 también el video utiliza el comando /subir'
 
 EMAIL_CAMERA_FAILURE_SUBJECT=u'SVVPA - Error en la cámara'
