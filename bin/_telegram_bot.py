@@ -350,9 +350,9 @@ google drive. Inténtalo de nuevo más tarde'
     #  I N L I N E    R E S U L T  #
     ################################    
     def on_chosen_inline_result(self, msg):
-        result_id, from_id, query_string = telepot.glance(msg, flavor='chosen_inline_result')
+        #result_id, from_id, query_string = telepot.glance(msg, flavor='chosen_inline_result')
         #print 'Chosen Inline Result:\n%s', json.dumps(msg, sort_keys=True, indent=4, separators=(',', ': '))        
-        self.cbq_uploadVideo(msg)
+        self.cbq_uploadVideo(None, msg['result_id'])
 
 
 
@@ -818,10 +818,7 @@ google drive. Inténtalo de nuevo más tarde'
            
            
       
-    def cbq_uploadVideo(self, msg, eventId=None):
-        if not eventId:
-            eventId = msg['result_id']
-        
+    def cbq_uploadVideo(self, msg, eventId):
         file = os.environ['MOTION_DIR'] + eventId + '.' + os.environ['MOTION_VIDEO_EXT']
         
         t = threading.Thread(target=self.upload_video, args=(file,msg,))
@@ -988,13 +985,18 @@ google drive. Inténtalo de nuevo más tarde'
 
 
 
-    def upload_video(self, file, msg):
+    def upload_video(self, file, msg=None):
         print u"[{}] {}: Subiendo archivo a google drive ({})".format(datetime.datetime.now(), __file__, file)
-        self.editMessageText(self.getMsgChatId(msg), u'Subiendo archivo {}...'.format(os.path.basename(file)))
+        
+        if msg:        
+            self.editMessageText(self.getMsgChatId(msg), u'Subiendo archivo {}...'.format(os.path.basename(file)))
+            
+        else:
+            msg = self.sendMessage(self.CHAT_GROUP, u'Subiendo archivo {}...'.format(os.path.basename(file)))
         
         try:            
             self.sendChatAction(self.CHAT_GROUP, 'upload_video')
-            fileuploader(file)   #FIXME: Muy mala idea, porque puede capturar fallos también. Coger mejor de MySQL
+            fileuploader(file)   
             
             query = "select link from videos where id like '{}'".format(os.path.basename(file)[:-4])
             data  = self.run_query(query)
