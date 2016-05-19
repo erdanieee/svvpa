@@ -247,6 +247,9 @@ case $1 in
 			chmod 666 $fileIn
 			RETVAL=$(($RETVAL|$?))
 
+			chown pi:www $fileIn
+			RETVAL=$(($RETVAL|$?))
+
 			mv $fileIn ${MOTION_DIR}$(basename $fileIn)
 			RETVAL=$(($RETVAL|$?))
 
@@ -304,6 +307,9 @@ case $1 in
 					RETVAL=$(($RETVAL|$?))
 
 					chmod 666 $fileOut
+					RETVAL=$(($RETVAL|$?))
+
+					chown pi:motion $fileIn
 					RETVAL=$(($RETVAL|$?))
 					
 					rm -f $fileIn 
