@@ -161,7 +161,7 @@ case $1 in
 
 
 
-	# Actualiza MYSQL y la hoja de cálculo de google drive con los datos de los sensores. Este comando está pensado para ser llamado desde cron
+	# Actualiza MYSQL con los datos de los sensores. Este comando está pensado para ser llamado desde cron
 	update_sensors)
 		echo "[$(date)] $0: Servicio '$1': Actualizando sensores"
 		cpuTemp="$(sudo ./_readInternalTemp.sh)"
@@ -182,42 +182,40 @@ case $1 in
 
 		mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo $sqlStm)
 		RETVAL=$(($RETVAL|$?))
-
-		#FIXME: Sacar la actualización online a otra función a parte y que permita, según configuración, subirlo a google drive o a plotly. Adicionalmente, esta función puede leer los datos de MySQL y hacer algún tipo de media (??)
-		python -u _updateGoogleSpreadsheetSensors.py $(getGoogleSpVal $cpuTemp) $(getGoogleSpVal $bmp180Temp) $(getGoogleSpVal $bmp180Pres) $(getGoogleSpVal $dht22Temp) $(getGoogleSpVal $dht22Hr)
-		RETVAL=$(($RETVAL|$?))
 	;;
 
 
 
-
+	# Actualiza los servidores (google spreadsheet, plotly, ...) con los datos de los sensores. Este comando está pensado para ser llamado desde cron
 	update_online_sensors)
 		echo "[$(date)] $0: Servicio '$1': Actualizando sensores en servidor remoto"
 
 		if [[ $# -gt 1 ]]
 		then
-			#datetime=$( mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo "select date from sensors order by date desc limit 1") --skip-column-names )
-			cpuTemp=$( mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo "select avg(CPU_temp) from sensors order by date desc limit 10") --skip-column-names )
-			bmp180Temp=$( mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo "select avg(BMP180_temp) from sensors order by date desc limit 10") --skip-column-names )
-			bmp180Pres=$( mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo "select avg(BMP180_press) from sensors order by date desc limit 10") --skip-column-names )
-			dht22Temp=$( mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo "select avg(DHT22_temp) from sensors order by date desc limit 10") --skip-column-names )
-			dht22Hr=$( mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo "select avg(DHT22_HR) from sensors order by date desc limit 10") --skip-column-names )
+			avg=$2	#número de muestras sobre el que se calculan los datos de los sensores
 
-		        if [[ "${SENSOR_GOOGLE_SHEET}" == "ON" ]]
-	                then
+			#datetime=$( mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo "select date from sensors order by date desc limit 1") --skip-column-names )
+			cpuTemp=$( mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo "select avg(CPU_temp) from sensors order by date desc limit $avg") --skip-column-names )
+			bmp180Temp=$( mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo "select avg(BMP180_temp) from sensors order by date desc limit $avg") --skip-column-names )
+			bmp180Pres=$( mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo "select avg(BMP180_press) from sensors order by date desc limit $avg") --skip-column-names )
+			dht22Temp=$( mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo "select avg(DHT22_temp) from sensors order by date desc limit $avg") --skip-column-names )
+			dht22Hr=$( mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo "select avg(DHT22_HR) from sensors order by date desc limit $avg") --skip-column-names )
+
+			if [[ "${SENSOR_GOOGLE_SHEET}" == "ON" ]]
+			then
 				python -u _updateGoogleSpreadsheetSensors.py $cpuTemp $bmp180Temp $bmp180Pres $dht22Temp $dht22Hr
 				RETVAL=$(($RETVAL|$?))
 			fi
 
-			if [[ "${SENSOR_PLOTLY}" ]]
+			if [[ "${SENSOR_PLOTLY}" == "ON" ]]
 			then
-				
 				RETVAL=$(($RETVAL|$?))
 			fi
 		else
-                        echo "[$(date)] $0: Servicio '$1': ERROR! Invalid number of arguments: $#"
-                        RETVAL=1
-                fi
+			echo "[$(date)] $0: Servicio '$1': ERROR! Invalid number of arguments: $#"
+			RETVAL=1
+		fi
+	;;
 
 
 
