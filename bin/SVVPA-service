@@ -247,7 +247,7 @@ case $1 in
 			chmod 666 $fileIn
 			RETVAL=$(($RETVAL|$?))
 
-			chown pi:www $fileIn
+			chown pi:www-data $fileIn
 			RETVAL=$(($RETVAL|$?))
 
 			mv $fileIn ${MOTION_DIR}$(basename $fileIn)
@@ -302,14 +302,13 @@ case $1 in
 					duration=$( ${FFMPEG_BIN} -i $fileOut 2>&1|egrep -o "Duration: [0-9:]+"|egrep -o "[0-9]{2}:[0-9]{2}$" )
 					#Guarda en MySQL tamaño y duración del vídeo
 					sqlStm=$( echo "update videos set size=${size}, duration='${duration}' where id like '${id}'" )
-					echo $sqlStm
 					mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo $sqlStm)
 					RETVAL=$(($RETVAL|$?))
 
 					chmod 666 $fileOut
 					RETVAL=$(($RETVAL|$?))
 
-					chown pi:motion $fileIn
+					chown pi:www-data $fileOut
 					RETVAL=$(($RETVAL|$?))
 					
 					rm -f $fileIn 
