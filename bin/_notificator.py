@@ -175,21 +175,21 @@ def get_size(id):
    
 
 
-def get_humanSize(self, bytes):
-    if bytes < self.SIZE_KiB:
+def get_humanSize(bytes):
+    if bytes < SIZE_KiB:
         return u'{0} {1}'.format(bytes,'Bytes' if bytes > 1 else 'Byte')
     
-    elif self.SIZE_KiB <= bytes < self.SIZE_MiB:
-        return u'{0:.2f} KiB'.format(bytes/self.SIZE_KiB)
+    elif SIZE_KiB <= bytes < SIZE_MiB:
+        return u'{0:.2f} KiB'.format(bytes/SIZE_KiB)
     
-    elif self.SIZE_MiB <= bytes < self.SIZE_GiB:
-        return u'{0:.2f} MiB'.format(bytes/self.SIZE_MiB)
+    elif SIZE_MiB <= bytes < SIZE_GiB:
+        return u'{0:.2f} MiB'.format(bytes/SIZE_MiB)
     
-    elif self.SIZE_GiB <= bytes < self.SIZE_TiB:
-        return u'{0:.2f} GiB'.format(bytes/self.SIZE_GiB)
+    elif SIZE_GiB <= bytes < SIZE_TiB:
+        return u'{0:.2f} GiB'.format(bytes/SIZE_GiB)
     
-    elif self.SIZE_TiB <= bytes:
-        return u'{0:.2f} TiB'.format(bytes/self.SIZE_TiB)
+    elif SIZE_TiB <= bytes:
+        return u'{0:.2f} TiB'.format(bytes/SIZE_TiB)
  
     
  
