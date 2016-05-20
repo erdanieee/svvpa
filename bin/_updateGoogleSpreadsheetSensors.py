@@ -6,8 +6,31 @@ import sys
 import json
 import time
 import gspread
-from oauth2client.client import SignedJwtAssertionCredentials
+import oauth2client
+import oauth2client.client
+import oauth2client.file
 import datetime as dat
+
+
+
+
+# If modifying these scopes, delete your previously saved credentials
+SCOPES = 'https://spreadsheets.google.com/feeds'
+CLIENT_SECRET_FILE = os.environ['CONFIG_DIR'] + 'google_drive_client_secret.json'
+APPLICATION_NAME = 'SVVPA'
+        
+        
+def get_credentials():    
+    credential_path = os.path.join(os.environ['CONFIG_DIR'], 'google-drive-credentials.json')
+    store           = oauth2client.file.Storage(credential_path)
+    credentials     = store.get()
+    if not credentials or credentials.invalid:
+        flow            = oauth2client.client.flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
+        flow.user_agent = APPLICATION_NAME        
+        credentials     = oauth2client.tools.run_flow(flow, store, oauth2client.tools.argparser.parse_args(args=[]))
+        print u"[{}] {}: Guardando credenciales en {}".format(datetime.datetime.now(), __file__, credential_path)
+    return credentials
+    
 
 
 
@@ -19,10 +42,8 @@ def main(argv):
 		bmp180Pres= argv[3]
 		dht22Temp	= argv[4]
 		dht22Hr		= argv[5]
-
-		json_key = json.load(open(os.environ['GSREAD_JSON']))
-		scope = ['https://spreadsheets.google.com/feeds']
-		credentials = SignedJwtAssertionCredentials(json_key['client_email'], json_key['private_key'], scope)
+		
+		credentials = get_credentials()
 
 		gc = gspread.authorize(credentials)
 		wks = gc.open("test").sheet1
