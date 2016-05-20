@@ -480,13 +480,13 @@ miniinterruptor que está junto a las baterías'
         self.sendChatAction(self.CHAT_GROUP, 'typing')
         query = "select * from sensors order by date desc limit 1"        
         date, cpu_temp, bmp180_temp, bmp180_press, dht22_temp, dht22_hr = self.run_query(query)[0]
-        text = self.MSG_CMD_SENSORS.format(date.strftime("%Y/%m/%d"), 
+        text = self.MSG_CMD_SENSORS.format(date.strftime("%Y/%m/%d"),		 
                                                                       date.strftime("%H:%M"), 
-                                                                      cpu_temp, 
-                                                                      dht22_hr, 
-                                                                      dht22_temp, 
-                                                                      bmp180_press, 
-                                                                      bmp180_temp)        
+                                                                      cpu_temp,
+                                                                      dht22_temp,
+                                                                      bmp180_temp,  
+                                                                      dht22_hr,
+                                                                      bmp180_press)        
         
         self.sendMessage(self.CHAT_GROUP, text.replace('None', '? '), parse_mode="Markdown")
         
