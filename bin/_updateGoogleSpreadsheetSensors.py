@@ -9,6 +9,7 @@ import gspread
 import oauth2client
 import oauth2client.client
 import oauth2client.file
+import oauth2client.tools
 import datetime as dat
 
 
@@ -21,7 +22,7 @@ APPLICATION_NAME = 'SVVPA'
         
         
 def get_credentials():    
-    credential_path = os.path.join(os.environ['CONFIG_DIR'], 'google-drive-credentials.json')
+    credential_path = os.path.join(os.environ['CONFIG_DIR'], 'google-spreadsheet-credentials.json')
     store           = oauth2client.file.Storage(credential_path)
     credentials     = store.get()
     if not credentials or credentials.invalid:
