@@ -211,7 +211,7 @@
 									</tr>
 									<tr>
 										<td>Temperatura RPI</td>
-										<td><?php system(BIN_DIR.'readInternalTemp.sh');?>ºC</td>
+										<td><?php system(BIN_DIR.'_readInternalTemp.sh');?>ºC</td>
 										<td><a href="/sensors.php?h=0,1,4" class="button icon small fa-eye">ver</a></td>
 									</tr>
 								</tbody>

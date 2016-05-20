@@ -28,9 +28,9 @@ function endsWith($haystack, $needle) {
 
 
 foreach (new DirectoryIterator(MOTION_DIR) as $fileInfo) {
-	if(!$fileInfo->isDot() && ( endsWith($fileInfo->getFilename(),'.' . MOTION_IMAGE_EXT))){
+	if(preg_match("/^([0-9]+_)+[0-9]+.jpg$/", $fileInfo->getBasename())){
 		$file = $fileInfo->getBasename('.' . MOTION_IMAGE_EXT);
-		list($y, $m, $d, $H, $M, $S, $p, $n, $J, $w, $h, $t) = split ("_", $file);
+        list($y, $m, $d, $H, $M, $S, $p, $n, $i, $J, $w, $h, $t) = split ("_", $file);        
 		$key= $y . $m . $d . $H . $M . $S;
 
 		$filesByName[] = array(
@@ -38,7 +38,7 @@ foreach (new DirectoryIterator(MOTION_DIR) as $fileInfo) {
 			"name"		=> $file,
 			"year"		=> $y,
 			"month"		=> $m,
-			"day"			=> $d
+			"day"		=> $d
 		);
 	}
 }
@@ -131,7 +131,7 @@ arsort($filesByName);
 						echo "<span class=\"image fit\">";
 						echo "<a href=\"view.php?n=".$file["name"]."\">";	
 						if (file_exists (MOTION_DIR . $name . "." . MOTION_IMAGE_EXT)){
-							echo "<img src=\"".MOTION_DIR."$name." . MOTION_IMAGE_EXT . "\"/>";
+							echo "<img src=\"".basename(MOTION_DIR)."/$name." . MOTION_IMAGE_EXT . "\"/>";
 						} else{
 							echo "<img width=\"50%\" src=\"images/video.jpg\" />";
 						}

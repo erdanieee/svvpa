@@ -50,17 +50,17 @@
 				echo "<h3>$d $meses[$m] $y</h3>";
 				echo "<span class=\"image fit\">";
 				if ($isVideo && $isImage){
-					echo "<video width=\"100%\" controls poster=\"".MOTION_DIR."$name.".MOTION_IMAGE_EXT."\" preload=\"none\" autoplay>";
-					echo "<source src=\"".MOTION_DIR."$name.".MOTION_VIDEO_EXT."\" type=\"video/mp4\">";
+					echo "<video width=\"100%\" controls poster=\"".basename(MOTION_DIR)."/$name.".MOTION_IMAGE_EXT."\" preload=\"none\" autoplay>";
+					echo "<source src=\"".basename(MOTION_DIR)."/$name.".MOTION_VIDEO_EXT."\" type=\"video/mp4\">";
 					echo "</video>";
 
 				} elseif ($isVideo){
 					echo "<video width=\"100%\" controls preload=\"none\" autoplay>";
-					echo "<source src=\"".MOTION_DIR."$name.".MOTION_VIDEO_EXT."\" type=\"video/mp4\">";
+					echo "<source src=\"".basename(MOTION_DIR)."/$name.".MOTION_VIDEO_EXT."\" type=\"video/mp4\">";
 					echo "</video>";
 
 				} elseif ($isImage){
-					echo "<img src=\"".MOTION_DIR."$name.".MOTION_IMAGE_EXT."\" />";
+					echo "<img src=\"".basename(MOTION_DIR)."$name.".MOTION_IMAGE_EXT."\" />";
 				}
 
 				echo "</span>";

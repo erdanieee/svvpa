@@ -121,11 +121,11 @@ require_once('CONSTANTS.php');
 						echo "<div class=\"12u$\">";
 						echo "<span class=\"image fit\">";
 						if(file_exists (MOTION_DIR . $name . "." . MOTION_IMAGE_EXT)){
-							echo "<video width=\"100%\" controls poster=\"".MOTION_DIR."$name." . MOTION_IMAGE_EXT . "\" preload=\"none\">";
+							echo "<video width=\"100%\" controls poster=\"".basename(MOTION_DIR)."/$name." . MOTION_IMAGE_EXT . "\" preload=\"none\">";
 						}else{
 							echo "<video width=\"100%\" controls preload=\"none\">";
 						}
-						echo "<source src=\"".MOTION_DIR."$name." . MOTION_VIDEO_EXT . "\" type=\"video/mp4\">";
+						echo "<source src=\"".basename(MOTION_DIR)."/$name." . MOTION_VIDEO_EXT . "\" type=\"video/mp4\">";
 						echo "</video></span></div>";
 
 						echo "<ul class=\"actions\">";
@@ -171,11 +171,11 @@ require_once('CONSTANTS.php');
 						echo "<div class=\"12u$\">";
 						echo "<span class=\"image fit\">";
 						if(file_exists (MOTION_DIR.$name.".".MOTION_IMAGE_EXT)){
-							echo "<video width=\"100%\" controls poster=\"".MOTION_DIR."$name.".MOTION_IMAGE_EXT."\" preload=\"none\">";
+							echo "<video width=\"100%\" controls poster=\"".basename(MOTION_DIR)."/$name.".MOTION_IMAGE_EXT."\" preload=\"none\">";
 						}else{
 							echo "<video width=\"100%\" controls preload=\"none\">";
 						}
-						echo "<source src=\"".MOTION_DIR."$name.".MOTION_VIDEO_EXT."\" type=\"video/mp4\">";
+						echo "<source src=\"".basename(MOTION_DIR)."/$name.".MOTION_VIDEO_EXT."\" type=\"video/mp4\">";
 						echo "</video></span></div>";
 						echo "<ul class=\"actions\">";
 						echo "<li><a href=\"download.php/?n=$name.".MOTION_VIDEO_EXT."\" class=\"button icon fa-download\">Descargar</a></li>";
@@ -224,7 +224,7 @@ require_once('CONSTANTS.php');
 							</tr>
 							<tr>
 								<td>Temperatura RPI</td>
-								<td><?php system(BIN_DIR.'readInternalTemp.sh');?>ºC</td>
+								<td><?php system(BIN_DIR.'_readInternalTemp.sh');?>ºC</td>
 							</tr>
 						</tbody>
 					</table>
