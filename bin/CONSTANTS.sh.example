@@ -1,21 +1,23 @@
 #!/bin/bash
 
-#comprueba que no se está usando un archivo de configuración obsoleto
-v_example=$(egrep export CONSTANTS.sh.example|cut -f 1 -d "="|sort|uniq|md5sum|awk '{print $1}')
-v_local=$(egrep export $BASH_SOURCE|cut -f 1 -d "="|sort|uniq|md5sum|awk '{print $1}')
-if [[ ! "$v_local" == "$v_example" ]]
-then
-        echo "ERROR!!! El archivo de configuración está obsoleto"
-        return
-fi
-
-
-export SVVPA_DIR="/var/www/svvpa/"
+export SVVPA_DIR=~/temp/"svvpa/"
 export APACHE_DIR=${SVVPA_DIR}"www/"
 export MOTION_DIR=${APACHE_DIR}"motion/"
 export BIN_DIR=${SVVPA_DIR}"bin/"
 export CONFIG_DIR=${SVVPA_DIR}"config/"
-		
+
+
+
+#comprueba que no se está usando un archivo de configuración obsoleto
+v_example=$(egrep export ${BIN_DIR}CONSTANTS.sh.example|cut -f 1 -d "="|md5sum|awk '{print $1}')
+v_local=$(egrep export $BASH_SOURCE|cut -f 1 -d "="|md5sum|awk '{print $1}')
+if [[ ! "$v_local" == "$v_example" ]]
+then
+        echo "[$(date)] $0: WARNING!! El archivo de configuración está obsoleto"
+fi
+	
+
+	
 export APACHE_PORT="9999"
 
 export RCLONE_BIN="/home/pi/software/rclone-v1.27-linux-arm/rclone"
