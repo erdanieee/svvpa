@@ -1118,7 +1118,7 @@ miniinterruptor que está junto a las baterías'
 
     def shutdown(self):
         try:
-            proc.check_call('sudo /sbin/shutdown -r now', shell=True)
+            proc.check_call('sudo /sbin/shutdown -h now', shell=True)
             
         except Exception as e:
             print >> sys.stderr, u"[{}] {}: ERROR! Hubo un problema inesperado al tratar de apagar el sistema:".format(datetime.datetime.now(), __file__)
