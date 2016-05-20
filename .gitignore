@@ -16,3 +16,4 @@ gspread.json
 rclone.conf
 svvpa.log
 svvpa.logrotate
+google-spreadsheet-credentials.json
