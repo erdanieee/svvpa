@@ -14,7 +14,7 @@
 
 
 function getMysqlVal(){ r="NULL"; if [[ "$1" ]]; then r="'$1'"; fi; echo $r; }
-function getGoogleSpVal(){ r="nan"; if [[ "$1" ]]; then r="$1"; fi; echo ${r/\./\,}; }
+function getGoogleSpVal(){ r=""; if [[ "$1" != "NULL" ]]; then r="$1"; fi; echo ${r/\./\,}; }
 
 
 #. /lib/lsb/init-functions
@@ -193,17 +193,18 @@ case $1 in
 		if [[ $# -gt 1 ]]
 		then
 			avg=$2	#número de muestras sobre el que se calculan los datos de los sensores
+			query="select avg(x) from (select XXX as x from sensors order by date desc limit $avg) s"
 
 			#datetime=$( mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo "select date from sensors order by date desc limit 1") --skip-column-names )
-			cpuTemp=$( mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo "select avg(CPU_temp) from sensors order by date desc limit $avg") --skip-column-names )
-			bmp180Temp=$( mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo "select avg(BMP180_temp) from sensors order by date desc limit $avg") --skip-column-names )
-			bmp180Pres=$( mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo "select avg(BMP180_press) from sensors order by date desc limit $avg") --skip-column-names )
-			dht22Temp=$( mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo "select avg(DHT22_temp) from sensors order by date desc limit $avg") --skip-column-names )
-			dht22Hr=$( mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo "select avg(DHT22_HR) from sensors order by date desc limit $avg") --skip-column-names )
+			cpuTemp=$( mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo "${query/XXX/CPU_temp}") --skip-column-names )
+			bmp180Temp=$( mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo "${query/XXX/BMP180_temp}") --skip-column-names )
+			bmp180Pres=$( mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo "${query/XXX/BMP180_press}") --skip-column-names )
+			dht22Temp=$( mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo "${query/XXX/DHT22_temp}") --skip-column-names )
+			dht22Hr=$( mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo "${query/XXX/DHT22_HR}") --skip-column-names )
 
 			if [[ "${SENSOR_GOOGLE_SHEET}" == "ON" ]]
 			then
-				python -u _updateGoogleSpreadsheetSensors.py $cpuTemp $bmp180Temp $bmp180Pres $dht22Temp $dht22Hr
+				python -u _updateGoogleSpreadsheetSensors.py "$(getGoogleSpVal $cpuTemp)" "$(getGoogleSpVal $bmp180Temp)" "$(getGoogleSpVal $bmp180Pres)" "$(getGoogleSpVal $dht22Temp)" "$(getGoogleSpVal $dht22Hr)" 
 				RETVAL=$(($RETVAL|$?))
 			fi
 
