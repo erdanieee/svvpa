@@ -1105,7 +1105,6 @@ miniinterruptor que está junto a las baterías'
         
     def reboot(self):        
         try:
-            #FIXME: Añadir un threading.Timer para apagar, ya que si no no se lee el mensaje y se procesa una y otra vez tras en reinicio. Hacer lo mismo con shutdown
             proc.check_call('sudo /sbin/shutdown -r now', shell=True)
             
         except Exception as e:
