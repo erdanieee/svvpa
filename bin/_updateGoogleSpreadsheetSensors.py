@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
-import sys
+import sys, traceback
 import json
 import time
 import gspread
@@ -43,14 +43,23 @@ def main(argv):
 		bmp180Pres= argv[3]
 		dht22Temp	= argv[4]
 		dht22Hr		= argv[5]
+
+		n = 0		
+		while n<5:
+			try:
+				n+=1		
+				credentials = get_credentials()
+
+				gc = gspread.authorize(credentials)
+				wks = gc.open("test").sheet1
+				print u"[{}] {}: Nueva fila en hoja de calculo de google drive con los datos de sensores: CPU_TEMP:{}, BMP180_TEMP:{}, BMP180_PRESS:{}, DHT22_TEMP:{}, DHT22_HR:{}".format(dat.datetime.now(), __file__,cpuTemp,bmp180Temp,bmp180Pres,dht22Temp,dht22Hr)
+				wks.append_row([datetime, cpuTemp, bmp180Temp, bmp180Pres, dht22Temp, dht22Hr])
+				break
 		
-		credentials = get_credentials()
-
-		gc = gspread.authorize(credentials)
-		wks = gc.open("test").sheet1
-		print u"[{}] {}: Nueva fila en hoja de calculo de google drive con los datos de sensores: CPU_TEMP:{}, BMP180_TEMP:{}, BMP180_PRESS:{}, DHT22_TEMP:{}, DHT22_HR:{}".format(dat.datetime.now(), __file__,cpuTemp,bmp180Temp,bmp180Pres,dht22Temp,dht22Hr)
-		wks.append_row([datetime, cpuTemp, bmp180Temp, bmp180Pres, dht22Temp, dht22Hr])
-
+			except Exception as e:
+				print >> sys.stderr, u'[{}] {}: WARNING! No se ha podido enviar mensaje de telegram. Reintento: {}'.format(dat.datetime.now(), __file__, n)
+            			traceback.print_exc()
+            			time.sleep(random.randint(20,60))
 	else:
 		print >> sys.stderr, u"[{}] {}: ERROR! Numero incorrecto de argumentos".format(dat.datetime.now(), __file__)
 
