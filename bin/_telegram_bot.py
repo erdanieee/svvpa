@@ -1034,7 +1034,7 @@ miniinterruptor que está junto a las baterías'
                 print u"[{}] {}: Enviando snapshot".format(datetime.datetime.now(), __file__)
                 self.sendChatAction(self.CHAT_GROUP, 'upload_photo')
                 fd = open(file, 'rb')
-                self.sendPhoto(self.CHAT_GROUP, fd, datetime.datetime.now())
+                self.sendPhoto(self.CHAT_GROUP, fd, datetime.datetime.fromtimestamp(os.path.getctime(file)).strftime("%Y/%m/%d %H:%M:%S"))
                 fd.close()
                 
             except Exception as e:
