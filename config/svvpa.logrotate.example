@@ -1,7 +1,6 @@
-compress
-
-/home/dlopez/temp/svvpa/svvpa.log {
+/var/www/svvpa/svvpa.log {
+	compress	
 	rotate 20
 	monthly
-	size 5M
+	maxsize 1M
 }
