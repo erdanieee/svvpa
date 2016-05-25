@@ -51,7 +51,7 @@ def main(argv):
 				credentials = get_credentials()
 
 				gc = gspread.authorize(credentials)
-				wks = gc.open("test").sheet1
+				wks = gc.open("sensores").sheet1
 				print u"[{}] {}: Nueva fila en hoja de calculo de google drive con los datos de sensores: CPU_TEMP:{}, BMP180_TEMP:{}, BMP180_PRESS:{}, DHT22_TEMP:{}, DHT22_HR:{}".format(dat.datetime.now(), __file__,cpuTemp,bmp180Temp,bmp180Pres,dht22Temp,dht22Hr)
 				wks.append_row([datetime, cpuTemp, bmp180Temp, bmp180Pres, dht22Temp, dht22Hr])
 				break
