@@ -208,10 +208,10 @@ case $1 in
 				RETVAL=$(($RETVAL|$?))
 			fi
 
-			if [[ "${SENSOR_PLOTLY}" == "ON" ]]
-			then
-				RETVAL=$(($RETVAL|$?))
-			fi
+			#if [[ "${SENSOR_PLOTLY}" == "ON" ]]
+			#then
+			#	RETVAL=$(($RETVAL|$?))
+			#fi
 		else
 			echo "[$(date)] $0: Servicio '$1': ERROR! Invalid number of arguments: $#"
 			RETVAL=1
