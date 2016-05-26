@@ -552,15 +552,16 @@ el comando bash'
      
 
         
-    def cmd_shell(self, msg):
-        cmd=re.sub("/[a-zA-Z]+ ", "", msg['text'])
-        t = threading.Timer(3, self.exec_cmd, args=(cmd,))
+    def cmd_shell(self, msg):        
+        t = threading.Timer(3, self.exec_cmd, args=(msg,))
         t.setDaemon(True)
         t.start()        
         
 
 
-    def exec_cmd(self, cmd):
+    def exec_cmd(self, msg):
+        cmd=re.sub("/[a-zA-Z]+ ", "", msg['text'])
+        
         if not cmd:
            self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_NO_SHELL_CMD)
            
