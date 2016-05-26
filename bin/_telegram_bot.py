@@ -129,6 +129,8 @@ miniinterruptor que está junto a las baterías'
     MSG_ERROR_NO_SHELL_CMD = u'Este comando sirve para ejecutar un comando shell en SVVPA. \
 Debes especificar el comando a ejecutar despues del comando shell. Para ello, \
 envía el mensaje /shell comando'
+    MSG_ERROR_SHELL_CMD = u'ERROR! Se produjo un error inesperado al ejecutar \
+el comando bash'
     
 
     
@@ -562,9 +564,9 @@ envía el mensaje /shell comando'
                 self.sendMessage(msg['chat']['id'], p)                
                      
             except Exception as e:
-                print >>sys.stderr, u"[{}] {}: ERROR! Se produjo un error inesperado al incluir un nuevo usuario en la lista de usuarios autorizados:".format(datetime.datetime.now(), __file__)
+                print >>sys.stderr, u"[{}] {}: ERROR! Se produjo un error inesperado al ejecutar el comando bash:".format(datetime.datetime.now(), __file__)
                 traceback.print_exc()            
-                self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_ADDING_USER)
+                self.sendMessage(msg['chat']['id'], self.MSG_ERROR_SHELL_CMD)
 
 
      
