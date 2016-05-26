@@ -252,7 +252,7 @@ def cmd_openReverseSsh(args):
 		msg_subject	= cmd_openReverseSsh_subject_OPEN
 		msg_html	= cmd_openReverseSsh_html_OPEN.format(port=os.environ['SSH_REMOTE_TUNEL_PORT'], server=os.environ['SSH_REMOTE_SERVER'], time=timeout)
 
-		cmd="sshpass -e ssh -p {port} -fCNR {tunelPort}:localhost:22 {user}@{server}".format(
+		cmd="sshpass -e ssh -oStrictHostKeyChecking=no -p {port} -fCNR {tunelPort}:localhost:22 {user}@{server}".format(
                         port      = os.environ['SSH_REMOTE_PORT'],
                         tunelPort = os.environ['SSH_REMOTE_TUNEL_PORT'],
                         user      = os.environ['SSH_REMOTE_USER'],

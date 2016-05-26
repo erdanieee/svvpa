@@ -54,6 +54,7 @@ pulsar sobre la captura.
 /actualizar - actualiza el repositorio github
 /reiniciar - reinicia el sistema
 /apagar - Apaga el sistema
+/shell - ejecuta un comando bash
     '''
     MSG_USER_ADDED = u'''{} ha añadido a {} {} a la lista de usuarios autorizados. \
 A partir de este momento {} puede ejecutar comandos a traves de telegram!'''
@@ -425,7 +426,7 @@ el comando bash'
             #cerramos puerto ssh si ya esta abierto para evitar problemas
             self.close_ssh()
             
-            cmd="sshpass -e ssh -p {port} -fCNR {tunelPort}:localhost:22 {user}@{server}".format(
+            cmd="sshpass -e ssh -oStrictHostKeyChecking=no -p {port} -fCNR {tunelPort}:localhost:22 {user}@{server}".format(
                             port      = os.environ['SSH_REMOTE_PORT'],
                             tunelPort = os.environ['SSH_REMOTE_TUNEL_PORT'],
                             user      = os.environ['SSH_REMOTE_USER'],
