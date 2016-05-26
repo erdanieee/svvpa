@@ -231,8 +231,7 @@ el comando bash'
             '/ssh'            : self.cmd_open_ssh,      # abre tunel ssh en Bacmine
             '/actualizar'     : self.cmd_update,        # actualiza el repositorio github
             '/reiniciar'      : self.cmd_reboot,        # reinicia el sistema
-            '/apagar'         : self.cmd_shutdown,      # Apaga el sistema. Por seguridad te pide la ubicacion
-            '/shell'          : self.cmd_shell          # Ejecuta el comando mandado en una shell
+            '/apagar'         : self.cmd_shutdown
         }
     
   
