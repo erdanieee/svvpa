@@ -560,7 +560,7 @@ el comando bash'
 
 
     def exec_cmd(self, msg):
-        cmd=re.sub("/[a-zA-Z]+ ", "", msg['text'])
+        cmd=re.sub("/[a-zA-Z]+ ", "", msg['text']).strip()
         
         if not cmd:
            self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_NO_SHELL_CMD)
