@@ -126,6 +126,10 @@ google drive. Inténtalo de nuevo más tarde'
     MSG_SHUTTING_DOWN = u'El sistema se apagará en unos segundos. Recuerda que \
 para volver a iniciarlo es necesario desactivar y activar físicamente el \
 miniinterruptor que está junto a las baterías'
+    MSG_ERROR_NO_SHELL_CMD = u'Este comando sirve para ejecutar un comando shell en SVVPA. \
+Debes especificar el comando a ejecutar despues del comando shell. Para ello, \
+envía el mensaje /shell comando'
+    
 
     
     BUT_CANCEL                  = u'Cancelar'
@@ -224,7 +228,8 @@ miniinterruptor que está junto a las baterías'
             '/ssh'            : self.cmd_open_ssh,      # abre tunel ssh en Bacmine
             '/actualizar'     : self.cmd_update,        # actualiza el repositorio github
             '/reiniciar'      : self.cmd_reboot,        # reinicia el sistema
-            '/apagar'         : self.cmd_shutdown       # Apaga el sistema. Por seguridad te pide la ubicacion
+            '/apagar'         : self.cmd_shutdown,      # Apaga el sistema. Por seguridad te pide la ubicacion
+            '/shell'          : self.cmd_shell          # Ejecuta el comando mandado en una shell
         }
     
   
@@ -543,8 +548,27 @@ miniinterruptor que está junto a las baterías'
         self.addMsgTimeout(*self.getMsgChatId(m))
 
      
+
+        
+    def cmd_shell(self, msg):
+        cmd=re.sub("/[a-zA-Z]+ ", "", msg['text'])
+        
+        if not cmd:
+           self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_NO_SHELL_CMD)
+           
+        else:        
+            try:            
+                p = proc.check_output(cmd, shell=True).strip()
+                self.sendMessage(msg['chat']['id'], p)                
+                     
+            except Exception as e:
+                print >>sys.stderr, u"[{}] {}: ERROR! Se produjo un error inesperado al incluir un nuevo usuario en la lista de usuarios autorizados:".format(datetime.datetime.now(), __file__)
+                traceback.print_exc()            
+                self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_ADDING_USER)
+
+
      
-     
+ 
      
      
      
