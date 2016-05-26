@@ -84,6 +84,9 @@ cmd_emailNotif_subject_PARAR=u'SVVPA - Notificaciones desactivadas'
 cmd_emailNotif_html_INICIAR=u'<html><body>Las notificaciones por email estan activadas</body></html>'
 cmd_emailNotif_html_PARAR=u'<html><body>Las notificaciones por email estan desactivadas</body></html>'
 
+cmd_shell_subject=u'SVVPA - Comando shell'
+cmd_help_html=u'<html><body>Se ha ejecutado el comando "{}" con la siguiente salida:<br>{}</body></html>'
+
 
 error_general_subject=u'SVVPA - Error al procesar el comando {command}'
 error_general_html=u'<html><body>Se ha producido el siguiente error al procesar el comando "{command}":<br><i>{error}</i></body></html>'
@@ -344,6 +347,15 @@ def cmd_updateRepository(args):
 	msg_subject	= cmd_updateRepository_subject
 	msg_html	= cmd_updateRepository_html
 	notificar_email(msg_subject, msg_html)	
+	
+	
+def cmd_updateRepository(args):
+	print u"[{}] {}: Ejecutando comando bash".format(datetime.datetime.now(), __file__)
+	proc.call('cd {}; git pull'.format(os.environ['SVVPA_DIR']), shell=True)
+
+	msg_subject	= cmd_updateRepository_subject
+	msg_html	= cmd_updateRepository_html
+	notificar_email(msg_subject, msg_html)		
 
 
 
@@ -392,6 +404,27 @@ def cmd_notifEmail(args):
 
 
 
+		
+	def cmd_shell(cmd):
+		if not cmd:
+			msg_subject	= error_general_subject
+			msg_html	= error_general_html
+		   
+		else:		
+			try:			
+				p = proc.check_output(cmd, shell=True).strip()
+				msg_subject	= cmd_shell_subject
+				msg_html	= cmd_help_html.format(cmd, p)
+					 
+			except Exception as e:
+				print >>sys.stderr, u"[{}] {}: ERROR! Se produjo un error inesperado al ejecutar el comando bash:".format(datetime.datetime.now(), __file__)
+				traceback.print_exc()
+				raise Exception(e)				   
+ 
+		notificar_email(msg_subject, msg_html)
+
+
+
 
 #############################
 ###  C O N S T A N T E S  ###
@@ -412,9 +445,10 @@ CMD_SVVPA={
 		'DETECTAR_MOVIMIENTO' 		: cmd_motionDetection,
 #		'VISTA_EN_DIRECTO' 			: cmd_lifeView,	#Configurar motion para que guarde una captura periodica que se sobreescriba, y enviar dicho archivo
 		'ACTUALIZAR_REPOSITORIO'	: cmd_updateRepository,
-		'REINICIAR' 					: cmd_reboot,
-		'APAGAR'							: cmd_shutdown,
-		'NOTIFICAR_EMAIL'				: cmd_notifEmail		
+		'REINICIAR' 				: cmd_reboot,
+		'APAGAR'					: cmd_shutdown,
+		'NOTIFICAR_EMAIL'			: cmd_notifEmail,
+		'SHELL'						: cmd_shell		
 		}
 
 
