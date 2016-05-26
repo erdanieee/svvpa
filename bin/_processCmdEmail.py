@@ -405,23 +405,23 @@ def cmd_notifEmail(args):
 
 
 		
-	def cmd_shell(cmd):
-		if not cmd:
-			msg_subject	= error_general_subject
-			msg_html	= error_general_html
-		   
-		else:		
-			try:			
-				p = proc.check_output(cmd, shell=True).strip()
-				msg_subject	= cmd_shell_subject
-				msg_html	= cmd_help_html.format(cmd, p)
-					 
-			except Exception as e:
-				print >>sys.stderr, u"[{}] {}: ERROR! Se produjo un error inesperado al ejecutar el comando bash:".format(datetime.datetime.now(), __file__)
-				traceback.print_exc()
-				raise Exception(e)				   
- 
-		notificar_email(msg_subject, msg_html)
+def cmd_shell(cmd):
+	if not cmd:
+		msg_subject	= error_general_subject
+		msg_html	= error_general_html
+	   
+	else:		
+		try:			
+			p = proc.check_output(cmd, shell=True).strip()
+			msg_subject	= cmd_shell_subject
+			msg_html	= cmd_help_html.format(cmd, p)
+				 
+		except Exception as e:
+			print >>sys.stderr, u"[{}] {}: ERROR! Se produjo un error inesperado al ejecutar el comando bash:".format(datetime.datetime.now(), __file__)
+			traceback.print_exc()
+			raise Exception(e)				   
+
+	notificar_email(msg_subject, msg_html)
 
 
 
