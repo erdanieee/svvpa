@@ -54,7 +54,6 @@ pulsar sobre la captura.
 /actualizar - actualiza el repositorio github
 /reiniciar - reinicia el sistema
 /apagar - Apaga el sistema
-/shell - ejecuta un comando bash
     '''
     MSG_USER_ADDED = u'''{} ha añadido a {} {} a la lista de usuarios autorizados. \
 A partir de este momento {} puede ejecutar comandos a traves de telegram!'''
