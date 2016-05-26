@@ -85,7 +85,7 @@ cmd_emailNotif_html_INICIAR=u'<html><body>Las notificaciones por email estan act
 cmd_emailNotif_html_PARAR=u'<html><body>Las notificaciones por email estan desactivadas</body></html>'
 
 cmd_shell_subject=u'SVVPA - Comando shell'
-cmd_help_html=u'<html><body>Se ha ejecutado el comando "{}" con la siguiente salida:<br><code>{}</code></body></html>'
+cmd_help_html=u'<html><body>Se ha ejecutado el comando "{}" con la siguiente salida:<br><pre>{}</pre></body></html>'
 
 
 error_general_subject=u'SVVPA - Error al procesar el comando {command}'
