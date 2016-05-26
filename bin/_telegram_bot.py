@@ -45,12 +45,12 @@ del comando /subir, también puedes escribir mi nombre seguido de un espacio y \
 pulsar sobre la captura.
 
 /ayuda - Muestra esta ayuda
-/movimiento - Inicia/para/pausa la deteccion de movimiento
-/foto - Toma una instantanea            
+/movimiento - Inicia/para/pausa la detección de movimiento
+/foto - Toma una instantánea            
 /subir - Sube una captura a google drive
 /sensores - Muestra el estado de los sensores
-/emails - Activa/desactiva la notificacion por emails
-/ssh - Abre tunel inverso ssh para gestion remota de SVVPA
+/emails - Activa/desactiva la notificación por emails
+/ssh - Abre tunel inverso ssh para gestión remota de SVVPA
 /actualizar - actualiza el repositorio github
 /reiniciar - reinicia el sistema
 /apagar - Apaga el sistema
