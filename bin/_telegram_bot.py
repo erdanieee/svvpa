@@ -616,8 +616,8 @@ miniinterruptor que está junto a las baterías'
             self.cbq_MotionAskTime(msg, self.MOTION_HOURS)        
         elif not self._motionDelay.isMinutesSetted():
             self.cbq_MotionAskTime(msg, self.MOTION_MINUTES)        
-        elif not self._motionDelay.isSecondsSetted():
-            self.cbq_MotionAskTime(msg, self.MOTION_SECONDS)
+        #elif not self._motionDelay.isSecondsSetted():
+        #    self.cbq_MotionAskTime(msg, self.MOTION_SECONDS)
             
         else:
             if self._motionDelay.getTime()==0:
@@ -635,7 +635,7 @@ miniinterruptor que está junto a las baterías'
             
             m = self._timers.pop(self.MOTION_TIMER, None)
             if m:
-                print u"[{}] {}: Timer motion cancelado".format(datetime.datetime.now(), __file__)
+                print u"[{}] {}: Cancelando timer motion".format(datetime.datetime.now(), __file__)
                 m.cancel()
                                             
             self._timers[self.MOTION_TIMER] = threading.Timer(self._motionDelay.getTime(), self.cbq_motionStart)
@@ -693,6 +693,11 @@ miniinterruptor que está junto a las baterías'
       
     def cbq_motionStart(self, msg=None):
         try:
+            m = self._timers.pop(self.MOTION_TIMER, None)
+            if m:
+                print u"[{}] {}: Cancelando timer motion".format(datetime.datetime.now(), __file__)
+                m.cancel()
+
             print u"[{}] {}: Reiniciando servicio motion".format(datetime.datetime.now(), __file__)
             proc.call('sudo service motion restart', shell=True)
             
@@ -711,6 +716,11 @@ miniinterruptor que está junto a las baterías'
         
     def cbq_motionStop(self, msg=None):            
         try:
+            m = self._timers.pop(self.MOTION_TIMER, None)
+            if m:
+                print u"[{}] {}: Cancelando timer motion".format(datetime.datetime.now(), __file__)
+                m.cancel()
+
             print u"[{}] {}: Parando servicio motion".format(datetime.datetime.now(), __file__)
             proc.call('sudo service motion stop', shell=True)
             
@@ -1034,7 +1044,7 @@ miniinterruptor que está junto a las baterías'
                 print u"[{}] {}: Enviando snapshot".format(datetime.datetime.now(), __file__)
                 self.sendChatAction(self.CHAT_GROUP, 'upload_photo')
                 fd = open(file, 'rb')
-                self.sendPhoto(self.CHAT_GROUP, fd, datetime.datetime.now())
+                self.sendPhoto(self.CHAT_GROUP, fd, datetime.datetime.fromtimestamp(os.path.getctime(file)).strftime("%Y/%m/%d %H:%M:%S"))
                 fd.close()
                 
             except Exception as e:
