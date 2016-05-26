@@ -555,7 +555,13 @@ el comando bash'
         
     def cmd_shell(self, msg):
         cmd=re.sub("/[a-zA-Z]+ ", "", msg['text'])
+        t = threading.Timer(3, self.exec_cmd, args=(cmd,))
+        t.setDaemon(True)
+        t.start()        
         
+
+
+    def exec_cmd(self, cmd):
         if not cmd:
            self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_NO_SHELL_CMD)
            
@@ -567,10 +573,7 @@ el comando bash'
             except Exception as e:
                 print >>sys.stderr, u"[{}] {}: ERROR! Se produjo un error inesperado al ejecutar el comando bash:".format(datetime.datetime.now(), __file__)
                 traceback.print_exc()            
-                self.sendMessage(msg['chat']['id'], self.MSG_ERROR_SHELL_CMD)
-
-
-     
+                self.sendMessage(msg['chat']['id'], self.MSG_ERROR_SHELL_CMD)       
  
      
      
