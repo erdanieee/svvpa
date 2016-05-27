@@ -16,7 +16,7 @@ import datetime
 from _google_drive_uploader import main as fileuploader
 
 #poner a TRUE cuando deje de estar en fase Beta!!!!
-INLINE_KEYBOARDS_GROUP_ACTIVE = False
+INLINE_KEYBOARDS_GROUP_ACTIVE = True
 
 
 
