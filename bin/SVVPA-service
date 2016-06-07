@@ -236,9 +236,12 @@ case $1 in
 				mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo $sqlStm)
 				RETVAL=$(($RETVAL|$?))
 
-				#Sube automáticamente a google drive y actualiza mysql con el link y el tamaño de la imagen. 
-				python -u _google_drive_uploader.py $fileIn				
+				#Sube automáticamente a google drive y actualiza mysql con el link y el tamaño de la imagen.
+				python -u _google_drive_uploader.py $fileIn
 				RETVAL=$(($RETVAL|$?))
+
+				#pausa necesaria porque aveces google tarda un poco en procesar las imágenes
+				sleep 5
 
 				#Manda notificación (por telegram y/o email según configuración)
 				python -u _notificator.py "ON_MOTION" $fileIn
