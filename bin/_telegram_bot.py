@@ -35,14 +35,15 @@ Utiliza el chat de grupo para mandar los commandos'''
 \U0001f238\u203c\ufe0f\n\n¿Te has enterado? Pues yo tampoco se lo que quieres. \
 Anda, hazme el favor de escribir los comandos correctamente y solo uno por mensaje \
 , que si no no se puede, aaaaaaaaes?.'''
-    MSG_CMD_HELP = u'''Mu wenas! Me llaman @{}, el *robot telegram* diseñado \
+    MSG_CMD_HELP = u'''Mu wenas! Soy @{}, el *robot telegram* diseñado \
 específicamente para el control remoto de _SVVPA_ \U0001f60e. Al final de este \
-mensaje puedes ver los comandos disponibles.
+mensaje puedes ver los comandos disponibles. Para más información visita este \
+[enlace](https://docs.google.com/document/d/1L5-JcmTxsYVXZKHnDxlkZrFGeXPqNvtwgtptdFnbYlc/edit?usp=sharing).
     
 Para enviar un comando, escribe */* (o usa el icono) y pulsa sobre la opcion que \
 te interese. Adicionalmente, para subir un video capturado a google drive, ademas \
 del comando /subir, también puedes escribir mi nombre seguido de un espacio y \
-pulsar sobre la captura.
+pulsar sobre la captura que te interese.
 
 /ayuda - Muestra esta ayuda
 /movimiento - Inicia/para/pausa la detección de movimiento
