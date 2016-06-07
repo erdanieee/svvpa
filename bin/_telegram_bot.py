@@ -181,7 +181,9 @@ el comando bash'
     SIZE_KiB = 1024.0
     SIZE_MiB = 1048576.0 
     SIZE_GiB = 1073741824.0 
-    SIZE_TiB = 1099511627776.0 
+    SIZE_TiB = 1099511627776.0
+    
+    GET_MORE = u'more' 
     
     
     def __init__(self, *args, **kwargs):    
@@ -452,8 +454,8 @@ el comando bash'
         
         
                     
-    def cmd_upload_video(self, msg):
-        videos = self.run_query('select id,size from videos order by id desc limit 20')
+    def cmd_upload_video(self, msg, count=5, onlyUpdate=False):
+        videos = self.run_query('select id,size from videos order by id desc limit {}'.format(count))
                         
         if len(videos)==0:
             print u"[{}] {}: Todavia no hay eventos capturados".format(datetime.datetime.now(), __file__)            
@@ -461,7 +463,6 @@ el comando bash'
         
         else:
             buttons=[]
-            i=0
             for v in videos:
                 id        = v[0]
                 y,m,d,H,M = id.split("_")[:5]
@@ -469,16 +470,19 @@ el comando bash'
                 t         = u'{}/{}/{} {}:{} ({})'.format(y, m, d, H, M, size)
                 
                 buttons.append([ InlineKeyboardButton( text=t, callback_data=self.callback2string(self.CBQ_UPLOAD_FILE, [id])) ])
-                
-                i+=1
-                if i >=20:
-                    break
-                          
+                                
+            buttons.append([ InlineKeyboardButton( text=u'Más antiguos', callback_data=self.callback2string(self.CBQ_UPLOAD_FILE, [self.GET_MORE, count])) ])
             buttons.append([ InlineKeyboardButton( text=self.BUT_CANCEL, callback_data=self.callback2string(self.CBQ_FUNCTION_CANCEL) ) ])
                       
-            markup  = InlineKeyboardMarkup(inline_keyboard=buttons)    
-            chat    = self.CHAT_GROUP if INLINE_KEYBOARDS_GROUP_ACTIVE else msg['from']['id']            
-            m       = self.sendMessage(chat, self.MSG_CMD_UPLOAD.format(self.get_datosConsumidos(), os.environ['DATOS_MENSUALES']), reply_markup=markup)
+            markup  = InlineKeyboardMarkup(inline_keyboard=buttons)
+            
+            if onlyUpdate:
+                m = self.editMessageReplyMarkup(self.getMsgChatId(msg), markup)
+                
+            else:    
+                chat = self.CHAT_GROUP if INLINE_KEYBOARDS_GROUP_ACTIVE else msg['from']['id']            
+                m    = self.sendMessage(chat, self.MSG_CMD_UPLOAD.format(self.get_datosConsumidos(), os.environ['DATOS_MENSUALES']), reply_markup=markup)
+            
             self.addMsgTimeout(*self.getMsgChatId(m))             
            
         
@@ -859,11 +863,15 @@ el comando bash'
            
            
       
-    def cbq_uploadVideo(self, msg, eventId):
-        file = os.environ['MOTION_DIR'] + eventId + '.' + os.environ['MOTION_VIDEO_EXT']
-        
-        t = threading.Thread(target=self.upload_video, args=(file,msg,))
-        t.start()
+    def cbq_uploadVideo(self, msg, eventId, count=5):
+        if eventId in self.GET_MORE:
+            self.cmd_upload_video(msg, '%s' % (int(count)+10), True )
+            
+        else:        
+            file = os.environ['MOTION_DIR'] + eventId + '.' + os.environ['MOTION_VIDEO_EXT']
+            
+            t = threading.Thread(target=self.upload_video, args=(file,msg,))
+            t.start()
               
 
 
