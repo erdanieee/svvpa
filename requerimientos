@@ -64,7 +64,7 @@
 	- MOTION   ALL = NOPASSWD: /usr/bin/vnstat, /usr/sbin/service
 	- CRONUSER ALL = NOPASSWD: ALL
 * Crear directorio motion (ver CONSTANTS para la ubicación) que pertenezca a www-data y motion con permisos 774
-* Copiar config/svvpa.logrotate.example a /etc/logrotate.d/svvpa y modificarlo convenientemente	
+* Copiar config/svvpa.logrotate.example a /etc/logrotate.d/svvpa, modificarlo convenientemente y cambiar usuario a root:root
 
 
 
