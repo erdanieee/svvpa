@@ -572,7 +572,7 @@ el comando bash'
            
         else:        
             try:            
-                p = proc.Popen(" ".join(cmd), shell=True, stdout=proc.PIPE)
+                p = proc.Popen(cmd, shell=True, stdout=proc.PIPE)
 		p.wait()
                 self.sendMessage(msg['chat']['id'], "".join(p.stdout))                
                      
