@@ -68,6 +68,8 @@ export TELEGRAM_CHAT_GROUP="-136XXXXXX"
 export TELEGRAM_ALLOWED_USERS="202XXXXXX"
 export TELEGRAM_BANNED_USERS=""
 export TELEGRAM_UPDATE_TIME="30"
+export TELEGRAM_BOT="ON"
+
 export GOOGLE_DRIVE_CREDENTIALS=${CONFIG_DIR}"google_drive_client_secret.json"
 
 export CAMERA_DEVICES="/dev/video0, /dev/video1"

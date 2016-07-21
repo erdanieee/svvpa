@@ -35,6 +35,7 @@ cmd_help_html=u'''
 			<li><b>NOTIFICAR_EMAIL accion</b> - Este comando sirve para controlar las notificaciones que se reciben por email (deteccion de nuevos movimientos, arranque/parada del sistema, errores, ...), donde <i>accion</i> puede tomar los valores <i>INICIAR</i> para activar (<a href="mailto:{correo}?subject=CMD_SVVPA NOTIFICAR_EMAIL INICIAR">Ver ejemplo</a>), <i>PARAR</i> para desactivar (<a href="mailto:{correo}?subject=CMD_SVVPA NOTIFICAR_EMAIL PARAR">Ver ejemplo</a>) o <i>ESTADO</i> para comprobar el estado (<a href="mailto:{correo}?subject=CMD_SVVPA NOTIFICAR_EMAIL ESTADO">Ver ejemplo</a>).</li>	
 			<li><b>ACTUALIZAR_REPOSITORIO</b> - Actualiza el repositorio Github de SVVPA. Normalmente este comando solo lo ejecuta Er Danie. <a href="mailto:{correo}?subject=CMD_SVVPA ACTUALIZAR_REPOSITORIO">Ver ejemplo</a></li>
 			<li><b>ACTIVAR_GESTION_REMOTA</b> - Abre un puerto en un servidor remoto para realizar un ssh reverso. Esta opcion es util para administrar SVVPA cuando no tiene conexion a internet a traves de una IP publica real (ej: conexion 3g). Normalmente este comando solo lo ejecuta Er Danie. <a href="mailto:{correo}?subject=CMD_SVVPA ACTIVAR_GESTION_REMOTA">Ver ejemplo</a></li>
+			<li><b>TELEGRAM_BOT accion</b> - Gestiona el servidor del bot Telegram. El argumento <i>accion</i> puede ser <i>ON</i> para iniciar el servicio (<a href="mailto:{correo}?subject=CMD_SVVPA TELEGRAM_BOT ON">Ver ejemplo</a>) u <i>OFF</i> para detener el servicio (<a href="mailto:{correo}?subject=CMD_SVVPA TELEGRAM_BOT OFF">Ver ejemplo</a>). Este comando es útil para ahorrar datos de la tarifa de internet, ya que el bot telegram consume bastantes datos!</li>
 			<li><b>REINICIAR</b> - Reinicia el sistema. Este comando es util cuando algo no esta funcionando correctamente. El reinicio tarda aproximadamente 1 minuto. <a href="mailto:{correo}?subject=CMD_SVVPA REINICIAR">Ver ejemplo</a></li>
 			<li><b>APAGAR</b> - Apaga el sistema. Cuando se envia este comando, SVVPA responde con un correo de confirmacion. Para apagar correctamente SVVPA, se debe confirmar el apagado respondiendo al correo de confirmacion sin modificar el asunto. Atencion: Una vez apagado el sistema, solo se puede volver a iniciar desactivando y activando fisicamente el mini-interruptor que esta junto a las baterias. Asegurate de <b>no ejecutar NUNCA</b> este comando cuando estes fuera de E.C. <a href="mailto:{correo}?subject=CMD_SVVPA APAGAR">Ver ejemplo</a></li>
 			</ul>							
@@ -87,6 +88,10 @@ cmd_emailNotif_html_PARAR=u'<html><body>Las notificaciones por email estan desac
 cmd_shell_subject=u'SVVPA - Comando shell'
 cmd_help_html=u'<html><body>Se ha ejecutado el comando "{}" con la siguiente salida:<br><pre>{}</pre></body></html>'
 
+cmd_telegramBot_subjet_ON=u'SVVPA - Bot telegram activado'
+cmd_telegramBot_subjet_OFF=u'SVVPA - Bot telegram desactivado'
+cmd_telegramBot_html_ON=u'El bot de telegram se ha activado correctamente. A partir de ahora se podrán enviar comandos a SVVPA mediante el chat de grupo de telegram.'
+cmd_telegramBot_html_OFF=u'Se ha detenido el bot de telegram. A partir de ahora no se podrán enviar comandos a por telegram, aunque sí se recibirán notificaciones por este canal.'
 
 error_general_subject=u'SVVPA - Error al procesar el comando {command}'
 error_general_html=u'<html><body>Se ha producido el siguiente error al procesar el comando "{command}":<br><i>{error}</i></body></html>'
@@ -94,7 +99,6 @@ error_general_html=u'<html><body>Se ha producido el siguiente error al procesar 
 
 error_sintaxis_subject=u'SVVPA - Error en comando'
 error_sintaxis_html=u'<html><body>Error al procesar el comando <i>{command}</i>. Probablemente la sintaxis no es correcta. Para ver los comandos disponibles y su sintaxis envia el comando ayuda haciendo <a href="mailto:{correo}?subject=CMD_SVVPA AYUDA">click aqui</a></body></html>'
-
 
 
 FILE_CONSTANTS = os.environ['BIN_DIR']+'CONSTANTS.sh' 
@@ -214,6 +218,36 @@ def cmd_reboot(args):
 	msg_html		= cmd_reboot_html
 	notificar_email(msg_subject, msg_html)
 	proc.call('sudo /sbin/shutdown -r now', shell=True)
+
+
+
+def cmd_telegramBot(args):
+	args=args.upper()
+
+	if args in "ON":
+		print u"[{}] {}: Activando el bot telegram".format(datetime.datetime.now(), __file__)
+		cmd = u"sed -i -r 's/export TELEGRAM_BOT=\"([a-zA-Z]+)\"/export TELEGRAM_BOT=\"{}\"/g' {}".format('ON', FILE_CONSTANTS)
+		proc.call(cmd, shell=True)
+		cmd = u"sudo /usr/sbin/service SVVPA-service check_telegram_service"
+		proc.call(cmd, shell=True)
+		msg_subject	= cmd_telegramBot_subjet_ON
+		msg_html		= cmd_telegramBot_html_ON
+		notificar_email(msg_subject, msg_html)
+
+	elif args in "OFF":
+		print u"[{}] {}: Activando el bot telegram".format(datetime.datetime.now(), __file__)
+		cmd = u"sed -i -r 's/export TELEGRAM_BOT=\"([a-zA-Z]+)\"/export TELEGRAM_BOT=\"{}\"/g' {}".format('OFF', FILE_CONSTANTS)
+		proc.call(cmd, shell=True)
+		cmd = u"sudo /usr/sbin/service SVVPA-service check_telegram_service"
+		proc.call(cmd, shell=True)
+		msg_subject	= cmd_telegramBot_subjet_OFF
+		msg_html		= cmd_telegramBot_html_OFF
+		notificar_email(msg_subject, msg_html)
+
+	else:
+		e=u"Error en el formato del comando TELEGRAM_BOT."
+		print >> sys.stderr, u"[{}] {}: ERROR! {}".format(datetime.datetime.now(), __file__, e)
+		raise Exception(e)
 
 
 
@@ -445,10 +479,11 @@ CMD_SVVPA={
 		'DETECTAR_MOVIMIENTO' 		: cmd_motionDetection,
 #		'VISTA_EN_DIRECTO' 			: cmd_lifeView,	#Configurar motion para que guarde una captura periodica que se sobreescriba, y enviar dicho archivo
 		'ACTUALIZAR_REPOSITORIO'	: cmd_updateRepository,
-		'REINICIAR' 				: cmd_reboot,
-		'APAGAR'					: cmd_shutdown,
-		'NOTIFICAR_EMAIL'			: cmd_notifEmail,
-		'SHELL'						: cmd_shell		
+		'REINICIAR' 					: cmd_reboot,
+		'APAGAR'							: cmd_shutdown,
+		'NOTIFICAR_EMAIL'				: cmd_notifEmail,
+		'SHELL'							: cmd_shell,
+		'TELEGRAM_BOT'					: cmd_telegramBot		
 		}
 
 
