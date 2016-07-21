@@ -93,6 +93,13 @@ descartar un problema transitorio. Si no te encuentras en E.C., puedes probar a 
 reiniciar SVVPA para ver si se soluciona el problema.\u203c'
 
 
+EMAIL_TELEGRAM_BOT_SUBJECT_ON=u'SVVPA - Bot telegram activado'
+EMAIL_TELEGRAM_BOT_SUBJECT_OFF=u'SVVPA - Bot telegram desactivado'
+EMAIL_TELEGRAM_BOT_BODY_ON=u'El bot de telegram se ha activado correctamente. A partir de ahora se podrán enviar comandos a SVVPA mediante el chat de grupo de telegram.'
+EMAIL_TELEGRAM_BOT_BODY_OFF=u'Se ha detenido el bot de telegram. A partir de ahora no se podrán enviar comandos a por telegram, aunque sí se recibirán notificaciones por este canal.'
+TLG_TELEGRAM_BOT_ON="El servicio bot telegram se acaba de activar"
+TLG_TELEGRAM_BOT_OFF="El servicio bot telegram se ha desactivado"
+
            
 
 
@@ -338,9 +345,28 @@ def on_motion(file):
     
 
 
+def on_telegramBot(arg=None):
+	arg=arg.upper()	
 
+	if "ON" in arg:
+		print u'[{}] {}: Notificacion de inicio bot telegram'.format(datetime.datetime.now(), __file__)
+		tlg_msg     = TLG_TELEGRAM_BOT_ON
 
+		email_msg   = gsender.Message(    
+			  subject 	= EMAIL_TELEGRAM_BOT_SUBJECT_ON,
+			  to 			= os.environ['EMAIL_ADDR'],
+			  html 		= EMAIL_TELEGRAM_BOT_BODY_ON)
 
+	elif "OFF" in arg:
+		print u'[{}] {}: Notificacion de parada de bot telegram'.format(datetime.datetime.now(), __file__)
+		tlg_msg     = TLG_TELEGRAM_BOT_OFF
+
+		email_msg   = gsender.Message(    
+			  subject 	= EMAIL_TELEGRAM_BOT_SUBJECT_OFF,
+			  to 			= os.environ['EMAIL_ADDR'],
+			  html 		= EMAIL_TELEGRAM_BOT_BODY_OFF)
+	    
+	sendNotif(tlg_msg,email_msg)
 
 
 
@@ -350,6 +376,7 @@ COMMANDS={
     'ON_SHUTDOWN'       : on_shutdown,
     'ON_MOTION'         : on_motion,
     'ON_CAMERA_FAILURE' : on_cameraFailure,
+	 'ON_TELEGRAM_BOT'	: on_telegramBot
         }
 
 
