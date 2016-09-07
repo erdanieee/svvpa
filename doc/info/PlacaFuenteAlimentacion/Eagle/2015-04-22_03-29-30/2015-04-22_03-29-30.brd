@@ -1,0 +1,477 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE eagle SYSTEM "eagle.dtd">
+<eagle version="7.2.0">
+<drawing>
+<settings>
+<setting alwaysvectorfont="no"/>
+<setting verticaltext="up"/>
+</settings>
+<grid distance="0.05" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.025" altunitdist="inch" altunit="inch"/>
+<layers>
+<layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
+<layer number="16" name="Bottom" color="1" fill="1" visible="yes" active="yes"/>
+<layer number="17" name="Pads" color="2" fill="1" visible="yes" active="yes"/>
+<layer number="18" name="Vias" color="2" fill="1" visible="yes" active="yes"/>
+<layer number="19" name="Unrouted" color="6" fill="1" visible="yes" active="yes"/>
+<layer number="20" name="Dimension" color="15" fill="1" visible="yes" active="yes"/>
+<layer number="21" name="tPlace" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="22" name="bPlace" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="23" name="tOrigins" color="15" fill="1" visible="yes" active="yes"/>
+<layer number="24" name="bOrigins" color="15" fill="1" visible="yes" active="yes"/>
+<layer number="25" name="tNames" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="26" name="bNames" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="27" name="tValues" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="28" name="bValues" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="29" name="tStop" color="7" fill="3" visible="no" active="yes"/>
+<layer number="30" name="bStop" color="7" fill="6" visible="no" active="yes"/>
+<layer number="31" name="tCream" color="7" fill="4" visible="no" active="yes"/>
+<layer number="32" name="bCream" color="7" fill="5" visible="no" active="yes"/>
+<layer number="33" name="tFinish" color="6" fill="3" visible="no" active="yes"/>
+<layer number="34" name="bFinish" color="6" fill="6" visible="no" active="yes"/>
+<layer number="35" name="tGlue" color="7" fill="4" visible="no" active="yes"/>
+<layer number="36" name="bGlue" color="7" fill="5" visible="no" active="yes"/>
+<layer number="37" name="tTest" color="7" fill="1" visible="no" active="yes"/>
+<layer number="38" name="bTest" color="7" fill="1" visible="no" active="yes"/>
+<layer number="39" name="tKeepout" color="4" fill="11" visible="yes" active="yes"/>
+<layer number="40" name="bKeepout" color="1" fill="11" visible="yes" active="yes"/>
+<layer number="41" name="tRestrict" color="4" fill="10" visible="yes" active="yes"/>
+<layer number="42" name="bRestrict" color="1" fill="10" visible="yes" active="yes"/>
+<layer number="43" name="vRestrict" color="2" fill="10" visible="yes" active="yes"/>
+<layer number="44" name="Drills" color="7" fill="1" visible="no" active="yes"/>
+<layer number="45" name="Holes" color="7" fill="1" visible="no" active="yes"/>
+<layer number="46" name="Milling" color="3" fill="1" visible="no" active="yes"/>
+<layer number="47" name="Measures" color="7" fill="1" visible="no" active="yes"/>
+<layer number="48" name="Document" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="49" name="Reference" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="51" name="tDocu" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="52" name="bDocu" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="91" name="Nets" color="2" fill="1" visible="no" active="no"/>
+<layer number="92" name="Busses" color="1" fill="1" visible="no" active="no"/>
+<layer number="93" name="Pins" color="2" fill="1" visible="no" active="no"/>
+<layer number="94" name="Symbols" color="4" fill="1" visible="no" active="no"/>
+<layer number="95" name="Names" color="7" fill="1" visible="no" active="no"/>
+<layer number="96" name="Values" color="7" fill="1" visible="no" active="no"/>
+<layer number="97" name="Info" color="7" fill="1" visible="no" active="no"/>
+<layer number="98" name="Guide" color="6" fill="1" visible="no" active="no"/>
+</layers>
+<board>
+<plain>
+<wire x1="0" y1="0" x2="100" y2="0" width="0" layer="20"/>
+<wire x1="100" y1="0" x2="100" y2="80" width="0" layer="20"/>
+<wire x1="100" y1="80" x2="0" y2="80" width="0" layer="20"/>
+<wire x1="0" y1="80" x2="0" y2="0" width="0" layer="20"/>
+</plain>
+<libraries>
+<library name="AcceleratedDesigns_Lib">
+<packages>
+<package name="0805">
+<pad name="1" x="-0.9017" y="0" drill="0"/>
+<pad name="2" x="0.9017" y="0" drill="0"/>
+</package>
+<package name="1206">
+<pad name="1" x="-1.4986" y="0" drill="0"/>
+<pad name="2" x="1.4986" y="0" drill="0"/>
+</package>
+<package name="3528-21">
+<pad name="1" x="-1.1303" y="0" drill="0"/>
+<pad name="2" x="1.1303" y="0" drill="0"/>
+</package>
+<package name="SMC">
+<pad name="1" x="-3.3147" y="0" drill="0"/>
+<pad name="2" x="3.3147" y="0" drill="0"/>
+</package>
+<package name="WB_GND">
+<pad name="1" x="0" y="0" drill="0"/>
+</package>
+<package name="WB_CURRENT_LOAD">
+<pad name="1" x="0" y="0" drill="0"/>
+<pad name="2" x="0" y="0" drill="0"/>
+</package>
+<package name="SDR1307">
+<pad name="1" x="-4.6228" y="0" drill="0"/>
+<pad name="2" x="4.6228" y="0" drill="0"/>
+</package>
+<package name="TJ7A">
+<pad name="1" x="-3.81" y="-8.3439" drill="0"/>
+<pad name="2" x="-2.54" y="-8.3439" drill="0"/>
+<pad name="3" x="-1.27" y="-8.3439" drill="0"/>
+<pad name="4" x="0" y="-8.3439" drill="0"/>
+<pad name="5" x="1.27" y="-8.3439" drill="0"/>
+<pad name="6" x="2.54" y="-8.3439" drill="0"/>
+<pad name="7" x="3.81" y="-8.3439" drill="0"/>
+<pad name="8" x="0" y="0.1524" drill="0"/>
+</package>
+<package name="WB_BATTERY">
+<pad name="1" x="0" y="0" drill="0"/>
+<pad name="2" x="0" y="0" drill="0"/>
+</package>
+</packages>
+</library>
+</libraries>
+<attributes>
+</attributes>
+<variantdefs>
+</variantdefs>
+<classes>
+<class number="0" name="default" width="0" drill="0">
+</class>
+</classes>
+<designrules name="default">
+<description language="de">&lt;b&gt;EAGLE Design Rules&lt;/b&gt;
+&lt;p&gt;
+Die Standard-Design-Rules sind so gewählt, dass sie für 
+die meisten Anwendungen passen. Sollte ihre Platine 
+besondere Anforderungen haben, treffen Sie die erforderlichen
+Einstellungen hier und speichern die Design Rules unter 
+einem neuen Namen ab.</description>
+<description language="en">&lt;b&gt;EAGLE Design Rules&lt;/b&gt;
+&lt;p&gt;
+The default Design Rules have been set to cover
+a wide range of applications. Your particular design
+may have different requirements, so please make the
+necessary adjustments and save your customized
+design rules under a new name.</description>
+<param name="layerSetup" value="(1*16)"/>
+<param name="mtCopper" value="0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm"/>
+<param name="mtIsolate" value="1.5mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm"/>
+<param name="mdWireWire" value="8mil"/>
+<param name="mdWirePad" value="8mil"/>
+<param name="mdWireVia" value="8mil"/>
+<param name="mdPadPad" value="8mil"/>
+<param name="mdPadVia" value="8mil"/>
+<param name="mdViaVia" value="8mil"/>
+<param name="mdSmdPad" value="8mil"/>
+<param name="mdSmdVia" value="8mil"/>
+<param name="mdSmdSmd" value="8mil"/>
+<param name="mdViaViaSameLayer" value="8mil"/>
+<param name="mnLayersViaInSmd" value="2"/>
+<param name="mdCopperDimension" value="40mil"/>
+<param name="mdDrill" value="8mil"/>
+<param name="mdSmdStop" value="0mil"/>
+<param name="msWidth" value="10mil"/>
+<param name="msDrill" value="24mil"/>
+<param name="msMicroVia" value="9.99mm"/>
+<param name="msBlindViaRatio" value="0.5"/>
+<param name="rvPadTop" value="0.25"/>
+<param name="rvPadInner" value="0.25"/>
+<param name="rvPadBottom" value="0.25"/>
+<param name="rvViaOuter" value="0.25"/>
+<param name="rvViaInner" value="0.25"/>
+<param name="rvMicroViaOuter" value="0.25"/>
+<param name="rvMicroViaInner" value="0.25"/>
+<param name="rlMinPadTop" value="10mil"/>
+<param name="rlMaxPadTop" value="20mil"/>
+<param name="rlMinPadInner" value="10mil"/>
+<param name="rlMaxPadInner" value="20mil"/>
+<param name="rlMinPadBottom" value="10mil"/>
+<param name="rlMaxPadBottom" value="20mil"/>
+<param name="rlMinViaOuter" value="8mil"/>
+<param name="rlMaxViaOuter" value="20mil"/>
+<param name="rlMinViaInner" value="8mil"/>
+<param name="rlMaxViaInner" value="20mil"/>
+<param name="rlMinMicroViaOuter" value="4mil"/>
+<param name="rlMaxMicroViaOuter" value="20mil"/>
+<param name="rlMinMicroViaInner" value="4mil"/>
+<param name="rlMaxMicroViaInner" value="20mil"/>
+<param name="psTop" value="-1"/>
+<param name="psBottom" value="-1"/>
+<param name="psFirst" value="-1"/>
+<param name="psElongationLong" value="100"/>
+<param name="psElongationOffset" value="100"/>
+<param name="mvStopFrame" value="1"/>
+<param name="mvCreamFrame" value="0"/>
+<param name="mlMinStopFrame" value="4mil"/>
+<param name="mlMaxStopFrame" value="4mil"/>
+<param name="mlMinCreamFrame" value="0mil"/>
+<param name="mlMaxCreamFrame" value="0mil"/>
+<param name="mlViaStopLimit" value="0mil"/>
+<param name="srRoundness" value="0"/>
+<param name="srMinRoundness" value="0mil"/>
+<param name="srMaxRoundness" value="0mil"/>
+<param name="slThermalIsolate" value="10mil"/>
+<param name="slThermalsForVias" value="0"/>
+<param name="dpMaxLengthDifference" value="10mm"/>
+<param name="dpGapFactor" value="2.5"/>
+<param name="checkGrid" value="0"/>
+<param name="checkAngle" value="0"/>
+<param name="checkFont" value="1"/>
+<param name="checkRestrict" value="1"/>
+<param name="useDiameter" value="13"/>
+<param name="maxErrors" value="50"/>
+</designrules>
+<autorouter>
+<pass name="Default">
+<param name="RoutingGrid" value="50mil"/>
+<param name="AutoGrid" value="1"/>
+<param name="Efforts" value="0"/>
+<param name="TopRouterVariant" value="1"/>
+<param name="tpViaShape" value="round"/>
+<param name="PrefDir.1" value="a"/>
+<param name="PrefDir.2" value="0"/>
+<param name="PrefDir.3" value="0"/>
+<param name="PrefDir.4" value="0"/>
+<param name="PrefDir.5" value="0"/>
+<param name="PrefDir.6" value="0"/>
+<param name="PrefDir.7" value="0"/>
+<param name="PrefDir.8" value="0"/>
+<param name="PrefDir.9" value="0"/>
+<param name="PrefDir.10" value="0"/>
+<param name="PrefDir.11" value="0"/>
+<param name="PrefDir.12" value="0"/>
+<param name="PrefDir.13" value="0"/>
+<param name="PrefDir.14" value="0"/>
+<param name="PrefDir.15" value="0"/>
+<param name="PrefDir.16" value="a"/>
+<param name="cfVia" value="8"/>
+<param name="cfNonPref" value="5"/>
+<param name="cfChangeDir" value="2"/>
+<param name="cfOrthStep" value="2"/>
+<param name="cfDiagStep" value="3"/>
+<param name="cfExtdStep" value="0"/>
+<param name="cfBonusStep" value="1"/>
+<param name="cfMalusStep" value="1"/>
+<param name="cfPadImpact" value="4"/>
+<param name="cfSmdImpact" value="4"/>
+<param name="cfBusImpact" value="0"/>
+<param name="cfHugging" value="3"/>
+<param name="cfAvoid" value="4"/>
+<param name="cfPolygon" value="10"/>
+<param name="cfBase.1" value="0"/>
+<param name="cfBase.2" value="1"/>
+<param name="cfBase.3" value="1"/>
+<param name="cfBase.4" value="1"/>
+<param name="cfBase.5" value="1"/>
+<param name="cfBase.6" value="1"/>
+<param name="cfBase.7" value="1"/>
+<param name="cfBase.8" value="1"/>
+<param name="cfBase.9" value="1"/>
+<param name="cfBase.10" value="1"/>
+<param name="cfBase.11" value="1"/>
+<param name="cfBase.12" value="1"/>
+<param name="cfBase.13" value="1"/>
+<param name="cfBase.14" value="1"/>
+<param name="cfBase.15" value="1"/>
+<param name="cfBase.16" value="0"/>
+<param name="mnVias" value="20"/>
+<param name="mnSegments" value="9999"/>
+<param name="mnExtdSteps" value="9999"/>
+<param name="mnRipupLevel" value="10"/>
+<param name="mnRipupSteps" value="100"/>
+<param name="mnRipupTotal" value="100"/>
+</pass>
+<pass name="Follow-me" refer="Default" active="yes">
+</pass>
+<pass name="Busses" refer="Default" active="yes">
+<param name="cfNonPref" value="4"/>
+<param name="cfBusImpact" value="4"/>
+<param name="cfHugging" value="0"/>
+<param name="mnVias" value="0"/>
+</pass>
+<pass name="Route" refer="Default" active="yes">
+</pass>
+<pass name="Optimize1" refer="Default" active="yes">
+<param name="cfVia" value="99"/>
+<param name="cfExtdStep" value="10"/>
+<param name="cfHugging" value="1"/>
+<param name="mnExtdSteps" value="1"/>
+<param name="mnRipupLevel" value="0"/>
+</pass>
+<pass name="Optimize2" refer="Optimize1" active="yes">
+<param name="cfNonPref" value="0"/>
+<param name="cfChangeDir" value="6"/>
+<param name="cfExtdStep" value="0"/>
+<param name="cfBonusStep" value="2"/>
+<param name="cfMalusStep" value="2"/>
+<param name="cfPadImpact" value="2"/>
+<param name="cfSmdImpact" value="2"/>
+<param name="cfHugging" value="0"/>
+</pass>
+<pass name="Optimize3" refer="Optimize2" active="yes">
+<param name="cfChangeDir" value="8"/>
+<param name="cfPadImpact" value="0"/>
+<param name="cfSmdImpact" value="0"/>
+</pass>
+<pass name="Optimize4" refer="Optimize3" active="yes">
+<param name="cfChangeDir" value="25"/>
+</pass>
+</autorouter>
+<elements>
+<element name="CBST" library="AcceleratedDesigns_Lib" package="0805" value="10nF" x="-15.24" y="20.32">
+<attribute name="ESR" value="1.739" x="-15.24" y="20.32" size="1.778" layer="27" display="off"/>
+<attribute name="VDC" value="50.0" x="-15.24" y="20.32" size="1.778" layer="27" display="off"/>
+<attribute name="VENDOR" value="Kemet" x="-15.24" y="20.32" size="1.778" layer="27" display="off"/>
+<attribute name="MANUFACTURER_NAME" value="Kemet" x="-15.24" y="20.32" size="1.778" layer="27" display="off"/>
+<attribute name="CAP" value="1.0E-8" x="-15.24" y="20.32" size="1.778" layer="27" display="off"/>
+<attribute name="MANUFACTURER_PART_NUMBER" value="C0805C103K5RACTU" x="-15.24" y="20.32" size="1.778" layer="27" display="off"/>
+<attribute name="IRMS" value="0.411" x="-15.24" y="20.32" size="1.778" layer="27" display="off"/>
+</element>
+<element name="CIN" library="AcceleratedDesigns_Lib" package="1206" value="4.7uF" x="-25.4" y="15.24">
+<attribute name="ESR" value="0.0" x="-25.4" y="15.24" size="1.778" layer="27" display="off"/>
+<attribute name="VDC" value="50.0" x="-25.4" y="15.24" size="1.778" layer="27" display="off"/>
+<attribute name="VENDOR" value="MuRata" x="-25.4" y="15.24" size="1.778" layer="27" display="off"/>
+<attribute name="MANUFACTURER_NAME" value="MuRata" x="-25.4" y="15.24" size="1.778" layer="27" display="off"/>
+<attribute name="CAP" value="4.7E-6" x="-25.4" y="15.24" size="1.778" layer="27" display="off"/>
+<attribute name="MANUFACTURER_PART_NUMBER" value="GRM31CR71H475KA12L" x="-25.4" y="15.24" size="1.778" layer="27" display="off"/>
+<attribute name="IRMS" value="0.0" x="-25.4" y="15.24" size="1.778" layer="27" display="off"/>
+</element>
+<element name="CINX" library="AcceleratedDesigns_Lib" package="0805" value="1uF" x="-20.32" y="20.32">
+<attribute name="ESR" value="0.0" x="-20.32" y="20.32" size="1.778" layer="27" display="off"/>
+<attribute name="VDC" value="35.0" x="-20.32" y="20.32" size="1.778" layer="27" display="off"/>
+<attribute name="VENDOR" value="Taiyo Yuden" x="-20.32" y="20.32" size="1.778" layer="27" display="off"/>
+<attribute name="MANUFACTURER_NAME" value="Taiyo Yuden" x="-20.32" y="20.32" size="1.778" layer="27" display="off"/>
+<attribute name="CAP" value="1.0E-6" x="-20.32" y="20.32" size="1.778" layer="27" display="off"/>
+<attribute name="MANUFACTURER_PART_NUMBER" value="GMK212B7105KG-T" x="-20.32" y="20.32" size="1.778" layer="27" display="off"/>
+<attribute name="IRMS" value="0.0" x="-20.32" y="20.32" size="1.778" layer="27" display="off"/>
+</element>
+<element name="CIN_2" library="AcceleratedDesigns_Lib" package="1206" value="4.7uF" x="-15.24" y="17.78">
+<attribute name="ESR" value="0.0" x="-15.24" y="17.78" size="1.778" layer="27" display="off"/>
+<attribute name="VDC" value="50.0" x="-15.24" y="17.78" size="1.778" layer="27" display="off"/>
+<attribute name="VENDOR" value="MuRata" x="-15.24" y="17.78" size="1.778" layer="27" display="off"/>
+<attribute name="MANUFACTURER_NAME" value="MuRata" x="-15.24" y="17.78" size="1.778" layer="27" display="off"/>
+<attribute name="CAP" value="4.7E-6" x="-15.24" y="17.78" size="1.778" layer="27" display="off"/>
+<attribute name="MANUFACTURER_PART_NUMBER" value="GRM31CR71H475KA12L" x="-15.24" y="17.78" size="1.778" layer="27" display="off"/>
+<attribute name="IRMS" value="0.0" x="-15.24" y="17.78" size="1.778" layer="27" display="off"/>
+</element>
+<element name="CIN_3" library="AcceleratedDesigns_Lib" package="1206" value="4.7uF" x="-20.32" y="17.78">
+<attribute name="ESR" value="0.0" x="-20.32" y="17.78" size="1.778" layer="27" display="off"/>
+<attribute name="VDC" value="50.0" x="-20.32" y="17.78" size="1.778" layer="27" display="off"/>
+<attribute name="VENDOR" value="MuRata" x="-20.32" y="17.78" size="1.778" layer="27" display="off"/>
+<attribute name="MANUFACTURER_NAME" value="MuRata" x="-20.32" y="17.78" size="1.778" layer="27" display="off"/>
+<attribute name="CAP" value="4.7E-6" x="-20.32" y="17.78" size="1.778" layer="27" display="off"/>
+<attribute name="MANUFACTURER_PART_NUMBER" value="GRM31CR71H475KA12L" x="-20.32" y="17.78" size="1.778" layer="27" display="off"/>
+<attribute name="IRMS" value="0.0" x="-20.32" y="17.78" size="1.778" layer="27" display="off"/>
+</element>
+<element name="COUT" library="AcceleratedDesigns_Lib" package="3528-21" value="100uF" x="-25.4" y="17.78">
+<attribute name="ESR" value="0.035" x="-25.4" y="17.78" size="1.778" layer="27" display="off"/>
+<attribute name="VDC" value="8.0" x="-25.4" y="17.78" size="1.778" layer="27" display="off"/>
+<attribute name="DATASHEET_URL" value="%20" x="-25.4" y="17.78" size="1.778" layer="27" display="off"/>
+<attribute name="VENDOR" value="Panasonic" x="-25.4" y="17.78" size="1.778" layer="27" display="off"/>
+<attribute name="MANUFACTURER_NAME" value="Panasonic" x="-25.4" y="17.78" size="1.778" layer="27" display="off"/>
+<attribute name="CAP" value="1.0E-4" x="-25.4" y="17.78" size="1.778" layer="27" display="off"/>
+<attribute name="MANUFACTURER_PART_NUMBER" value="8TPE100MAZB" x="-25.4" y="17.78" size="1.778" layer="27" display="off"/>
+<attribute name="IRMS" value="1.4" x="-25.4" y="17.78" size="1.778" layer="27" display="off"/>
+</element>
+<element name="CSS" library="AcceleratedDesigns_Lib" package="0805" value="39nF" x="-25.4" y="20.32">
+<attribute name="ESR" value="0.038" x="-25.4" y="20.32" size="1.778" layer="27" display="off"/>
+<attribute name="VDC" value="50.0" x="-25.4" y="20.32" size="1.778" layer="27" display="off"/>
+<attribute name="VENDOR" value="AVX" x="-25.4" y="20.32" size="1.778" layer="27" display="off"/>
+<attribute name="MANUFACTURER_NAME" value="AVX" x="-25.4" y="20.32" size="1.778" layer="27" display="off"/>
+<attribute name="CAP" value="3.9E-8" x="-25.4" y="20.32" size="1.778" layer="27" display="off"/>
+<attribute name="MANUFACTURER_PART_NUMBER" value="08055C393KAT2A" x="-25.4" y="20.32" size="1.778" layer="27" display="off"/>
+<attribute name="IRMS" value="0.0" x="-25.4" y="20.32" size="1.778" layer="27" display="off"/>
+</element>
+<element name="D1" library="AcceleratedDesigns_Lib" package="SMC" value="700mV" x="-17.78" y="15.24">
+<attribute name="IO" value="5.0" x="-17.78" y="15.24" size="1.778" layer="27" display="off"/>
+<attribute name="DATASHEET_URL" value="http://www.diodes.com/datasheets/ds13012.pdf" x="-17.78" y="15.24" size="1.778" layer="27" display="off"/>
+<attribute name="VRRM" value="60.0" x="-17.78" y="15.24" size="1.778" layer="27" display="off"/>
+<attribute name="VFATIO" value="0.7" x="-17.78" y="15.24" size="1.778" layer="27" display="off"/>
+<attribute name="VENDOR" value="Diodes Inc." x="-17.78" y="15.24" size="1.778" layer="27" display="off"/>
+<attribute name="MANUFACTURER_NAME" value="Diodes Inc." x="-17.78" y="15.24" size="1.778" layer="27" display="off"/>
+<attribute name="MANUFACTURER_PART_NUMBER" value="B560C-13-F" x="-17.78" y="15.24" size="1.778" layer="27" display="off"/>
+</element>
+<element name="GND" library="AcceleratedDesigns_Lib" package="WB_GND" value="WB_GND" x="-13.97" y="22.86">
+<attribute name="MANUFACTURER_NAME" value="WB_GND" x="-13.97" y="22.86" size="1.778" layer="27" display="off"/>
+<attribute name="MANUFACTURER_PART_NUMBER" value="WB_GND" x="-13.97" y="22.86" size="1.778" layer="27" display="off"/>
+<attribute name="POWERPORTTYPE" value="POWER_GROUND" x="-13.97" y="22.86" size="1.778" layer="27" display="off"/>
+</element>
+<element name="IOUT" library="AcceleratedDesigns_Lib" package="WB_CURRENT_LOAD" value="WB_CURRENT_LOAD" x="-16.51" y="22.86">
+<attribute name="MANUFACTURER_NAME" value="WB_CURRENT_LOAD" x="-16.51" y="22.86" size="1.778" layer="27" display="off"/>
+<attribute name="MANUFACTURER_PART_NUMBER" value="WB_CURRENT_LOAD" x="-16.51" y="22.86" size="1.778" layer="27" display="off"/>
+<attribute name="POWERPORTTYPE" value="POWER_GROUND" x="-16.51" y="22.86" size="1.778" layer="27" display="off"/>
+</element>
+<element name="L1" library="AcceleratedDesigns_Lib" package="SDR1307" value="10uH" x="-19.05" y="12.7">
+<attribute name="IDC" value="5.6" x="-19.05" y="12.7" size="1.778" layer="27" display="off"/>
+<attribute name="L" value="1.0E-5" x="-19.05" y="12.7" size="1.778" layer="27" display="off"/>
+<attribute name="VENDOR" value="Bourns" x="-19.05" y="12.7" size="1.778" layer="27" display="off"/>
+<attribute name="MANUFACTURER_NAME" value="Bourns" x="-19.05" y="12.7" size="1.778" layer="27" display="off"/>
+<attribute name="MANUFACTURER_PART_NUMBER" value="SDR1307-100ML" x="-19.05" y="12.7" size="1.778" layer="27" display="off"/>
+<attribute name="DCR" value="0.021" x="-19.05" y="12.7" size="1.778" layer="27" display="off"/>
+</element>
+<element name="U1" library="AcceleratedDesigns_Lib" package="TJ7A" value="LM22679TJ-5.0/NOPB" x="-17.78" y="10.16">
+<attribute name="PACKAGE" value="NA" x="-17.78" y="10.16" size="1.778" layer="27" display="off"/>
+<attribute name="NSID" value="LM22679TJ-5.0/NOPB" x="-17.78" y="10.16" size="1.778" layer="27" display="off"/>
+<attribute name="FREQUENCY" value="500000.0" x="-17.78" y="10.16" size="1.778" layer="27" display="off"/>
+<attribute name="MKTG_PACKAGE" value="NA" x="-17.78" y="10.16" size="1.778" layer="27" display="off"/>
+<attribute name="DATASHEET_URL" value="http://www.ti.com/product/lm22679" x="-17.78" y="10.16" size="1.778" layer="27" display="off"/>
+<attribute name="IMAX" value="5.0" x="-17.78" y="10.16" size="1.778" layer="27" display="off"/>
+<attribute name="VENDOR" value="Texas Instruments" x="-17.78" y="10.16" size="1.778" layer="27" display="off"/>
+<attribute name="MANUFACTURER_NAME" value="Texas Instruments" x="-17.78" y="10.16" size="1.778" layer="27" display="off"/>
+<attribute name="MANUFACTURER_PART_NUMBER" value="LM22679TJ-5.0/NOPB" x="-17.78" y="10.16" size="1.778" layer="27" display="off"/>
+</element>
+<element name="VIN" library="AcceleratedDesigns_Lib" package="WB_BATTERY" value="WB_BATTERY" x="-19.05" y="22.86">
+<attribute name="MANUFACTURER_NAME" value="WB_BATTERY" x="-19.05" y="22.86" size="1.778" layer="27" display="off"/>
+<attribute name="MANUFACTURER_PART_NUMBER" value="WB_BATTERY" x="-19.05" y="22.86" size="1.778" layer="27" display="off"/>
+<attribute name="POWERPORTTYPE" value="POWER_GROUND" x="-19.05" y="22.86" size="1.778" layer="27" display="off"/>
+</element>
+</elements>
+<signals>
+<signal name="4">
+<contactref element="CBST" pad="1"/>
+<contactref element="D1" pad="1"/>
+<contactref element="L1" pad="1"/>
+<contactref element="U1" pad="1"/>
+<wire x1="-23.6728" y1="12.7" x2="-21.59" y2="1.8161" width="0" layer="19" extent="1-1"/>
+<wire x1="-21.0947" y1="15.24" x2="-23.6728" y2="12.7" width="0" layer="19" extent="1-1"/>
+<wire x1="-16.1417" y1="20.32" x2="-21.0947" y2="15.24" width="0" layer="19" extent="1-1"/>
+</signal>
+<signal name="5">
+<contactref element="CBST" pad="2"/>
+<contactref element="U1" pad="3"/>
+<wire x1="-14.3383" y1="20.32" x2="-19.05" y2="1.8161" width="0" layer="19" extent="1-1"/>
+</signal>
+<signal name="3">
+<contactref element="CIN" pad="1"/>
+<contactref element="CINX" pad="1"/>
+<contactref element="U1" pad="2"/>
+<contactref element="VIN" pad="1"/>
+<contactref element="CIN_2" pad="1"/>
+<contactref element="CIN_3" pad="1"/>
+<wire x1="-26.8986" y1="15.24" x2="-20.32" y2="1.8161" width="0" layer="19" extent="1-1"/>
+<wire x1="-21.8186" y1="17.78" x2="-26.8986" y2="15.24" width="0" layer="19" extent="1-1"/>
+<wire x1="-21.2217" y1="20.32" x2="-21.8186" y2="17.78" width="0" layer="19" extent="1-1"/>
+<wire x1="-19.05" y1="22.86" x2="-21.2217" y2="20.32" width="0" layer="19" extent="1-1"/>
+<wire x1="-16.7386" y1="17.78" x2="-21.8186" y2="17.78" width="0" layer="19" extent="1-1"/>
+</signal>
+<signal name="0">
+<contactref element="CIN" pad="2"/>
+<contactref element="CINX" pad="2"/>
+<contactref element="COUT" pad="2"/>
+<contactref element="D1" pad="2"/>
+<contactref element="GND" pad="1"/>
+<contactref element="CSS" pad="2"/>
+<contactref element="U1" pad="4"/>
+<contactref element="U1" pad="8"/>
+<contactref element="VIN" pad="2"/>
+<contactref element="IOUT" pad="2"/>
+<contactref element="CIN_2" pad="2"/>
+<contactref element="CIN_3" pad="2"/>
+<wire x1="-17.78" y1="10.3124" x2="-17.78" y2="1.8161" width="0" layer="19" extent="1-1"/>
+<wire x1="-14.4653" y1="15.24" x2="-17.78" y2="10.3124" width="0" layer="19" extent="1-1"/>
+<wire x1="-13.7414" y1="17.78" x2="-14.4653" y2="15.24" width="0" layer="19" extent="1-1"/>
+<wire x1="-18.8214" y1="17.78" x2="-14.4653" y2="15.24" width="0" layer="19" extent="1-1"/>
+<wire x1="-19.4183" y1="20.32" x2="-18.8214" y2="17.78" width="0" layer="19" extent="1-1"/>
+<wire x1="-19.05" y1="22.86" x2="-19.4183" y2="20.32" width="0" layer="19" extent="1-1"/>
+<wire x1="-16.51" y1="22.86" x2="-19.05" y2="22.86" width="0" layer="19" extent="1-1"/>
+<wire x1="-13.97" y1="22.86" x2="-16.51" y2="22.86" width="0" layer="19" extent="1-1"/>
+<wire x1="-24.4983" y1="20.32" x2="-19.4183" y2="20.32" width="0" layer="19" extent="1-1"/>
+<wire x1="-24.2697" y1="17.78" x2="-24.4983" y2="20.32" width="0" layer="19" extent="1-1"/>
+<wire x1="-23.9014" y1="15.24" x2="-24.2697" y2="17.78" width="0" layer="19" extent="1-1"/>
+</signal>
+<signal name="2">
+<contactref element="COUT" pad="1"/>
+<contactref element="L1" pad="2"/>
+<contactref element="U1" pad="6"/>
+<contactref element="IOUT" pad="1"/>
+<wire x1="-14.4272" y1="12.7" x2="-15.24" y2="1.8161" width="0" layer="19" extent="1-1"/>
+<wire x1="-16.51" y1="22.86" x2="-14.4272" y2="12.7" width="0" layer="19" extent="1-1"/>
+<wire x1="-26.5303" y1="17.78" x2="-16.51" y2="22.86" width="0" layer="19" extent="1-1"/>
+</signal>
+<signal name="1">
+<contactref element="CSS" pad="1"/>
+<contactref element="U1" pad="7"/>
+<wire x1="-26.3017" y1="20.32" x2="-13.97" y2="1.8161" width="0" layer="19" extent="1-1"/>
+</signal>
+</signals>
+</board>
+</drawing>
+</eagle>

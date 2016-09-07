@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html class="wf-dincondensedweb-n4-active wf-ffdinweb-i3-active wf-ffdinweb-i4-active wf-ffdinweb-i6-active wf-ffdinweb-i7-active wf-ffdinweb-n3-active wf-ffdinweb-n4-active wf-ffdinweb-n6-active wf-ffdinweb-n7-active wf-active" prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb#" lang="en-US"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"><script src="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/menu173.js" type="text/javascript"></script><script src="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/layers099.js" type="text/javascript"></script><script src="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/es.js" type="text/javascript"></script>
+
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>User-Friendly Raspberry Pi Wireless Communication</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11">
+	<link rel="pingback" href="http://spin.atomicobject.com/xmlrpc.php">
+	<link rel="icon" type="image/x-icon" href="http://d1u2s20mo6at4b.cloudfront.net/wp-content/themes/atomic-spin-wordpress-theme/images/favicon.ico">
+
+	<!-- Styles -->
+	<script src="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/ga.js" async="" type="text/javascript"></script><script src="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/upt0gyp.js"></script>
+	<style type="text/css">.tk-ff-din-web{font-family:"ff-din-web",sans-serif;}.tk-din-condensed-web{font-family:"din-condensed-web",sans-serif;}</style><link href="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/d.css" rel="stylesheet"><script>try{Typekit.load();}catch(e){}</script>
+	<link rel="stylesheet" type="text/css" href="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/css.css">
+
+	<!-- WP Head -->
+	
+	<style type="text/css">
+		#fancybox-close{right:-15px;top:-15px}
+		div#fancybox-content{border-color:#FFFFFF}
+		div#fancybox-title{background-color:#FFFFFF}
+		div#fancybox-outer{background-color:#FFFFFF}
+		div#fancybox-title-inside{color:#333333}
+	</style>
+
+	
+<!-- This site is optimized with the Yoast WordPress SEO plugin v1.7.1 - https://yoast.com/wordpress/plugins/seo/ -->
+<meta name="description" content="A Raspberry Pi wireless configuration that broadcasts an ad-hoc network and allows you to easily connect with computers.">
+<link rel="canonical" href="http://spin.atomicobject.com/2013/04/22/raspberry-pi-wireless-communication/">
+<link rel="publisher" href="https://plus.google.com/b/110228015808150756207/+Atomicobject">
+<meta property="og:locale" content="en_US">
+<meta property="og:type" content="article">
+<meta property="og:title" content="User-Friendly Raspberry Pi Wireless Communication">
+<meta property="og:description" content="A Raspberry Pi wireless configuration that broadcasts an ad-hoc network and allows you to easily connect with computers.">
+<meta property="og:url" content="http://spin.atomicobject.com/2013/04/22/raspberry-pi-wireless-communication/">
+<meta property="og:site_name" content="Atomic Spin">
+<meta property="article:publisher" content="https://www.facebook.com/atomicobject">
+<meta property="article:tag" content="dhcp">
+<meta property="article:tag" content="embedded">
+<meta property="article:tag" content="raspberry pi">
+<meta property="article:section" content="Extracurricular Activities">
+<meta property="article:published_time" content="2013-04-22T08:00:05+00:00">
+<meta property="article:modified_time" content="2014-01-09T10:57:09+00:00">
+<meta property="og:updated_time" content="2014-01-09T10:57:09+00:00">
+<meta property="fb:admins" content="886890430">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:description" content="A Raspberry Pi wireless configuration that broadcasts an ad-hoc network and allows you to easily connect with computers.">
+<meta name="twitter:title" content="User-Friendly Raspberry Pi Wireless Communication">
+<meta name="twitter:site" content="@atomicobject">
+<meta name="twitter:domain" content="Atomic Spin">
+<meta name="twitter:creator" content="@atomicobject">
+<!-- / Yoast WordPress SEO plugin. -->
+
+<link rel="alternate" type="application/rss+xml" title="Atomic Spin » Feed" href="http://spin.atomicobject.com/feed/">
+<link rel="alternate" type="application/rss+xml" title="Atomic Spin » Comments Feed" href="http://spin.atomicobject.com/comments/feed/">
+<link rel="alternate" type="application/rss+xml" title="Atomic Spin » Wireless Communication Between Raspberry Pi and Your Computer Comments Feed" href="http://spin.atomicobject.com/2013/04/22/raspberry-pi-wireless-communication/feed/">
+<link rel="stylesheet" id="fancybox-css" href="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/fancybox.css" type="text/css" media="all">
+<link rel="stylesheet" id="wp-syntax-css-css" href="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/wp-syntax.css" type="text/css" media="all">
+<link rel="stylesheet" id="spin_styles-css" href="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/style.css" type="text/css" media="all">
+<link rel="stylesheet" id="jetpack_css-css" href="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/jetpack.css" type="text/css" media="all">
+<!-- This site uses the Yoast Google Analytics plugin v5.2.8 - Universal disabled - https://yoast.com/wordpress/plugins/google-analytics/ -->
+<script type="text/javascript">
+
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-628002-3']);
+	_gaq.push(['_gat._forceSSL']);
+	_gaq.push(['_trackPageview']);
+
+	(function () {
+		var ga = document.createElement('script');
+		ga.type = 'text/javascript';
+		ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(ga, s);
+	})();
+
+</script>
+<!-- / Yoast Google Analytics -->
+<script type="text/javascript" src="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/jquery_002.js"></script>
+<script type="text/javascript" src="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/jquery-migrate.js"></script>
+<script type="text/javascript" src="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/jquery.js"></script>
+<script type="text/javascript" src="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/waypoints.js"></script>
+<script type="text/javascript" src="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/scripts.js"></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://spin.atomicobject.com/xmlrpc.php?rsd">
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://d1u2s20mo6at4b.cloudfront.net/wp-includes/wlwmanifest.xml"> 
+<meta name="generator" content="WordPress 4.0.1">
+<link rel="shortlink" href="http://spin.atomicobject.com/?p=96063">
+
+<script type="text/javascript">var _sf_startpt=(new Date()).getTime()</script>
+
+<!-- Fancybox for WordPress v3.0.1 -->
+<script type="text/javascript">
+jQuery(function(){
+
+jQuery.fn.getTitle = function() { // Copy the title of every IMG tag and add it to its parent A so that fancybox can show titles
+	var arr = jQuery("a.fancybox");
+	jQuery.each(arr, function() {
+		var title = jQuery(this).children("img").attr("title");
+		jQuery(this).attr('title',title);
+	})
+}
+
+// Supported file extensions
+var thumbnails = jQuery("a:has(img)").not(".nolightbox").filter( function() { return /\.(jpe?g|png|gif|bmp)$/i.test(jQuery(this).attr('href')) });
+
+thumbnails.addClass("fancybox").attr("rel","fancybox").getTitle();
+jQuery("a.fancybox").fancybox({
+	'cyclic': false,
+	'autoScale': true,
+	'padding': 10,
+	'opacity': true,
+	'speedIn': 500,
+	'speedOut': 500,
+	'changeSpeed': 300,
+	'overlayShow': true,
+	'overlayOpacity': "0.3",
+	'overlayColor': "#666666",
+	'titleShow': true,
+	'titlePosition': 'inside',
+	'enableEscapeButton': true,
+	'showCloseButton': true,
+	'showNavArrows': true,
+	'hideOnOverlayClick': true,
+	'hideOnContentClick': false,
+	'width': 560,
+	'height': 340,
+	'transitionIn': "fade",
+	'transitionOut': "fade",
+	'centerOnScroll': true
+});
+
+
+})
+</script>
+<!-- END Fancybox for WordPress -->
+<link rel="https://github.com/WP-API/WP-API" href="https://spin.atomicobject.com/wp-json">
+<style type="text/css">
+#author-bio-box {
+        width 100%;
+}
+#author-bio-box > img.photo {
+        margin-bottom: 16px;
+        width: 147px;
+       border: 1px solid transparent;
+       border-radius: 147px;
+}
+#author-bio-box .author-name {
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin: 0px;
+        margin-bottom: 16px;
+        font-size: 14px;
+}
+#author-bio-box p {
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: 200;
+        font-style: normal;
+        width: 95%;
+        padding-right: 5%;
+}
+#author-bio-box thead th {
+        border: 0;
+}
+#author-bio-box tbody {
+        border: 0;
+}
+.bio-spacer { display: none;}
+.bio-socials {
+        height: 32px;
+        clear: both;
+}
+.bio-socials a   {
+display: inline-block;
+margin-right: 5px;
+}
+</style>
+<!-- Dynamic Widgets by QURL - http://www.qurl.nl //-->
+
+<link media="all" href="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/widget014.css" type="text/css" rel="stylesheet"><link media="all" href="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/layers077.css" type="text/css" rel="stylesheet"><style media="screen" type="text/css" id="share-offset">#at4-share,#at4-soc {top:250px;bottom:auto}</style></head>
+
+<body class="single single-post postid-96063 single-format-standard custom-background group-blog" data-has-drawer="true">
+
+	<div id="border-top" class="borders border-h"></div>
+	<div id="border-left" class="borders border-v"></div>
+	<div id="border-right" class="borders border-v"></div>
+	<div id="border-bottom" class="borders border-h"></div>
+
+		<div id="mobile-header" class="mobile-header">
+		<a href="http://spin.atomicobject.com/" class="mobile-wordmark-logo">
+			<img src="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/ao-wordmark-logo.svg" alt="Atomic Spin">
+		</a>
+		<a href="#main-nav" class="mobile-nav-trigger" data-toggle="#main-nav">
+			<img src="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/icon-mobile-menu.svg" alt="Show Nav" width="20" height="15">
+		</a>
+	</div>
+
+		<div id="logo">
+		<a href="http://atomicobject.com/">
+			<img src="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/ao-symbol-red.svg" alt="Atomic Object" class="symbol-red animated fadeInDown">
+			<img src="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/ao-wordmark-logo.svg" alt="Atomic Object" class="wordmark-logo animated fadeOutUp" id="ao-logo-wordmark">
+		</a>
+	</div>
+
+		<nav id="main-nav" class="main-nav">
+
+		<img src="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/icon-mobile-close.svg" alt="Close Menu" class="mobile-nav-close" data-toggle="#main-nav" width="16" height="16">
+
+					<a href="http://spin.atomicobject.com/" class="backlink">&lt; Atomic Spin</a>
+		
+					<span class="nav-link-holder">
+				<a href="http://atomicobject.com/services">
+					Services					<span>
+				</span></a>
+			</span>
+					<span class="nav-link-holder">
+				<a href="http://atomicobject.com/credentials">
+					Credentials					<span>
+				</span></a>
+			</span>
+					<span class="nav-link-holder">
+				<a href="http://atomicobject.com/portfolio">
+					Portfolio					<span>
+				</span></a>
+			</span>
+					<span class="nav-link-holder">
+				<a href="http://atomicobject.com/approach">
+					Approach					<span>
+				</span></a>
+			</span>
+					<span class="nav-link-holder">
+				<a href="http://atomicobject.com/culture">
+					Culture					<span>
+				</span></a>
+			</span>
+					<span class="nav-link-holder">
+				<a href="http://spin.atomicobject.com/">
+					Blog					<span>
+				</span></a>
+			</span>
+					<span class="nav-link-holder">
+				<a href="http://atomicobject.com/contact">
+					Contact					<span>
+				</span></a>
+			</span>
+		
+	</nav>
+
+	<div id="page" class="hfeed site">
+
+		<header id="masthead" class="site-header" role="banner">
+			<div class="site-branding">
+				<h1 class="site-title">
+					<a href="http://spin.atomicobject.com/" rel="home">
+						Atomic Spin					</a>
+				</h1>
+				<h2 class="site-description">Atomic Object’s blog on everything we find fascinating.</h2>
+			</div>
+		</header><!-- #masthead -->
+
+		<div id="content" class="site-content">
+
+
+	
+<div id="secondary" class="secondary" role="complementary">
+	
+		<a class="secondary-close" data-toggle="#secondary">Close</a>
+
+		<div class="secondary-inner">
+			
+		<div class="author-bio">
+			<a href="http://spin.atomicobject.com/author/schaenzle/" class="author-bio-img">
+				<img src="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/schaenzle-43.jpg" alt="">
+			</a>
+			<h6 class="author-bio-name">
+				By: <a href="http://spin.atomicobject.com/author/schaenzle/">Jordan Schaenzle</a>
+			</h6>
+			<p class="author-bio-description">I specialize in embedded systems 
+development but enjoy all types of programming. I love taking ideas and 
+turning them into real things!</p>
+			<ul class="author-bio-links"></ul>
+		</div>
+				<div class="post-categories">
+				<div class="cat-title">Posted In</div>
+				<ul class="cat-list"><li><a href="http://spin.atomicobject.com/category/software-life/extracurriculars/" rel="category tag" class="cat-extracurriculars">Extracurricular Activities</a></li></ul>			</div>
+		</div>
+
+	</div>
+
+<div id="primary" class="primary content-area">
+
+	
+		<a href="#secondary" data-toggle="#secondary" class="secondary-toggle btn">
+			<svg class="icon" version="1.1" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 32 32" enable-background="new 0 0 32 32" xml:space="preserve">
+				<g class="bookmark">
+					<polygon points="24,32 16,24 8,32 8,0 24,0 "></polygon>
+				</g>
+				<g class="close">
+					<rect x="13" transform="matrix(0.7071 -0.7071 0.7071 0.7071 -6.6274 16)" width="6" height="32"></rect>
+					<rect x="13" transform="matrix(-0.7071 -0.7071 0.7071 -0.7071 16 38.6274)" width="6" height="32"></rect>
+				</g>
+			</svg>
+			<span class="text">About This Post</span>
+		</a>
+	
+	<main id="main" class="site-main" role="main">
+
+		<article id="post-96063" class="post-96063 post type-post status-publish format-standard hentry category-extracurriculars tag-dhcp tag-embedded tag-raspberry-pi single-article">
+
+			<header class="entry-header">
+
+				<div class="entry-top-bar">
+					<div class="post-date">
+						April 22, 2013					</div>
+					<div class="post-comment-count">
+						<a href="#comments">6 Comments</a>					</div>
+				</div><!-- .entry-meta -->
+
+				<h1 class="entry-title">Wireless Communication Between Raspberry Pi and Your Computer</h1>
+			</header><!-- .entry-header -->
+
+			<div class="entry-content">
+
+				<p>Imagine for a moment that you want to develop a product that uses
+ a Raspberry Pi. Let’s say that this product requires the ability to 
+connect up to a wireless network. Maybe it’s a device that streams music
+ from an online&nbsp;web-service,&nbsp;or maybe it hosts some type of 
+webpage. This functionality should be easy to accomplish with the amount
+ of power that the Pi has to offer, but how would a typical user 
+configure it to connect up to their network? I can see several possible 
+options.</p>
+<h2>Raspberry Pi Wireless Options</h2>
+<p>You could include a display and some type of keyboard input that 
+customers can use to enter their network credentials. This option would 
+be very simple to use, but it would require a lot of extra cost if the 
+display and keyboard aren’t necessary for normal operation of the 
+device.</p>
+<p><span id="more-96063"></span>A second option would be to require that
+ the users provide their own display and keyboard for 
+configuration.&nbsp;This would also work well but could be a major 
+inconvenience for users who don’t happen to have an extra television or 
+computer monitor laying around.</p>
+<p>Wouldn’t it be nice if there was a third option that would allow 
+allow users to temporarily&nbsp;connect up to your device wirelessly 
+from their personal computer, and then configure the device using a 
+simple web interface? Fortunately&nbsp;they can, using something called 
+an <b>ad hoc wireless network</b>.</p>
+<p>The typical LAN wireless network that we’re used to is called an infrastructure network. It uses a router or <em>access point</em>
+ to allow devices to share a wired connection the internet or other 
+resources.&nbsp;But in an ad-hoc network configuration (also known as a 
+peer-to-peer network), devices connect directly to&nbsp;each other and 
+communicate without the use of an access point or router.</p>
+<h2>Setting Up an Ad-hoc Wireless Network with Linux</h2>
+<p>In the rest of this post, I will demonstrate how to configure the 
+Raspberry Pi to broadcast an ad hoc network using only the Linux 
+command-line. I will also show how to enable DHCP so that users do not 
+have to configure their computers with a static IP address.</p>
+<h3>Basic Setup</h3>
+<p>I am starting with a fresh installation of the Raspian Wheezy distro, which you can find on the <a href="http://www.raspberrypi.org/downloads" onclick="_gaq.push(['_trackEvent', 'outbound-article', 'http://www.raspberrypi.org/downloads', 'Raspberry Pi downloads page']);" title="Raspberry Pi Downloads">Raspberry Pi downloads page</a>.</p>
+<p>You will also need a wireless ethernet adapter connected to your Pi. I use the <a href="http://www.edimax.com/en/produce_detail.php?pd_id=347&amp;pl1_id=1" onclick="_gaq.push(['_trackEvent', 'outbound-article', 'http://www.edimax.com/en/produce_detail.php?pd_id=347&amp;pl1_id=1', 'Edimax ED-7811Un']);" title="ed-7811">Edimax ED-7811Un</a>, which works really well and doesn’t require any driver installation when used on Linux!</p>
+<h3>Broadcasting an Ad-Hoc Network</h3>
+<p>First we need to modify the network interfaces file that Debian uses to configure the network. I will be using <i>vi</i> (the built-in text editor)&nbsp;to edit files. You can also use&nbsp;<em>nano</em>, which is simpler if you are unfamiliar with vi; just substitute “nano” for “vi” in the following commands.</p>
+<p>Make a backup copy of the network interfaces file:</p>
+
+<div class="wp_syntax"><table><tbody><tr><td class="line_numbers"><pre style="min-width:37px;">1
+</pre></td><td class="code"><pre class="linux" style="font-family:monospace;">sudo cp /etc/network/interfaces /etc/network/interfaces_backup</pre></td></tr></tbody></table></div>
+
+<p>Open the network interfaces file for editing:</p>
+
+<div class="wp_syntax"><table><tbody><tr><td class="line_numbers"><pre style="min-width:37px;">1
+</pre></td><td class="code"><pre class="linux" style="font-family:monospace;">sudo vi /etc/network/interfaces</pre></td></tr></tbody></table></div>
+
+<p>Edit the file so that it contains the following and then save and close:</p>
+
+<div class="wp_syntax"><table><tbody><tr><td class="line_numbers"><pre style="min-width:37px;">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre></td><td class="code"><pre class="linux" style="font-family:monospace;">auto lo
+iface lo inet loopback
+iface eth0 inet dhcp
+&nbsp;
+auto wlan0
+iface wlan0 inet static
+  address 192.168.1.1
+  netmask 255.255.255.0
+  wireless-channel 1
+  wireless-essid RPiAdHocNetwork
+  wireless-mode ad-hoc</pre></td></tr></tbody></table></div>
+
+<p>Next, restart the <code>wlan0</code> network connection with the following two commands:</p>
+
+<div class="wp_syntax"><table><tbody><tr><td class="line_numbers"><pre style="min-width:37px;">1
+2
+</pre></td><td class="code"><pre class="linux" style="font-family:monospace;">sudo ifdown wlan0
+sudo ifup wlan0</pre></td></tr></tbody></table></div>
+
+<p>If you have already configured your Pi to connect to an infrastructure network in the past, you might have to use the <code>-f</code> option to force the new changes.</p>
+<p>Now, on your computer, refresh the list of available wireless 
+networks and you should see a new one called RPiAdHocNetwork! Pretty 
+cool, eh?</p>
+<h3>Configuring the Raspberry Pi as a DHCP Server</h3>
+<p>Well, there is one thing left to do. With the current setup, the 
+Raspberry Pi is assigning itself the IP address 192.168.1.1. Normally, 
+when you connect your computer to a WiFi network it gets an IP addressed
+ assigned to it from a machine that is configured as the DHCP server. 
+Often times the DHCP server is your router. Well, in our ad-hoc network 
+we don’t have a DHCP server. This means if you try to connect to the new
+ network that the Raspberry Pi is broadcasting, no one will assign your 
+computer an IP address, and your computer will likely assign itself one 
+in the 169.254.x.x range. If that happens, you will not be on the same 
+subnet as the Raspberry Pi, so you will not be able to communicate with 
+it.</p>
+<p>To resolve this problem, we will configure the Raspberry Pi as a DHCP
+ server so that it assigns IP addresses to whoever connects to its ad 
+hoc network.</p>
+<p>Connect your Raspberry Pi to the internet by connecting an ethernet cable or other means and install the dhcp server package:</p>
+
+<div class="wp_syntax"><table><tbody><tr><td class="line_numbers"><pre style="min-width:37px;">1
+2
+</pre></td><td class="code"><pre class="linux" style="font-family:monospace;">sudo apt-get update
+sudo apt-get install dhcp3-server</pre></td></tr></tbody></table></div>
+
+<p>Once that finishes, we just have to configure the DHCP server. The 
+default configuration file is now located at /etc/dhcp/dhcpd.conf. 
+Update the file so that it contains the following:</p>
+
+<div class="wp_syntax"><table><tbody><tr><td class="line_numbers"><pre style="min-width:37px;">1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="code"><pre class="linux" style="font-family:monospace;">ddns-update-style interim;
+default-lease-time 600;
+max-lease-time 7200;
+authoritative;
+log-facility local7;
+subnet 192.168.1.0 netmask 255.255.255.0 {
+  range 192.168.1.5 192.168.1.150;
+}</pre></td></tr></tbody></table></div>
+
+<p>Now restart the Raspberry Pi and connect up to the ad hoc network 
+RPiAdHocNetwork. The Pi will assign your computer an IP Address on the 
+same subnet as itself so you can ping it and ssh into it for full 
+control! To connect with ssh, try the following:</p>
+
+<div class="wp_syntax"><table><tbody><tr><td class="line_numbers"><pre style="min-width:37px;">1
+</pre></td><td class="code"><pre class="linux" style="font-family:monospace;">ssh -lpi 192.168.1.1</pre></td></tr></tbody></table></div>
+
+<h2>How Can I Use This?</h2>
+<p>I started off by suggesting that an ad hoc network could be used as a
+ way for customers to configure a device to connect up their personal 
+infrastructure network. To achieve that, you would simply set up a web 
+server on the Raspberry Pi that serves up a configuration page.&nbsp;The
+ configuration page could display a list of all the wireless networks in
+ range. Users could connect up to the ad hoc network, view the 
+configuration web page, select their personal wireless network, and then
+ enter the appropriate network credentials. The Raspberry Pi could then 
+switch the newly configured network through which it could get access to
+ the internet or other resources.<br>
+&nbsp;</p>
+
+				
+				<footer class="entry-footer">
+					<div class="share-article">
+						<span class="">Share this article :</span> <a href="#icon">icon</a> | <a href="#icon">icon</a> | <a href="#icon">icon</a> | <a href="#icon">icon</a>
+					</div>
+					<span class="tags-links">Tagged: <a href="http://spin.atomicobject.com/tag/dhcp/" rel="tag">dhcp</a> <a href="http://spin.atomicobject.com/tag/embedded/" rel="tag">embedded</a> <a href="http://spin.atomicobject.com/tag/raspberry-pi/" rel="tag">raspberry pi</a></span><span class="posted-on">Posted on <a href="http://spin.atomicobject.com/2013/04/22/raspberry-pi-wireless-communication/" rel="bookmark">April 22, 2013</a></span><span class="byline"> by <span class="author vcard"><a class="url fn n" href="http://spin.atomicobject.com/author/schaenzle/">Jordan Schaenzle</a></span></span><span class="cat-links"> in  <a href="http://spin.atomicobject.com/category/software-life/extracurriculars/" rel="category tag" class="cat-extracurriculars">Extracurricular Activities</a></span>				</footer><!-- .entry-footer -->
+
+			</div><!-- .entry-content -->
+
+		</article><!-- #post-## -->
+
+	</main>
+
+	
+<div id="comments" class="comments-area">
+
+	
+			<h2 class="comments-title">
+			6 Comments		</h2>
+
+		
+		<ol class="comment-list">
+				<li class="comment even thread-even depth-1" id="comment-43227">
+		<div id="div-comment-43227" class="comment-body">
+		<div class="comment-author vcard">
+	<img alt="" src="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/cc9d9c7a1a7ab4a977c87b5c78d53188.jpeg" class="avatar avatar-100 photo" width="100" height="100">	<cite class="fn">Matt Shirilla</cite> <span class="says">says:</span>	</div>
+	
+	<div class="comment-meta commentmetadata"><a href="http://spin.atomicobject.com/2013/04/22/raspberry-pi-wireless-communication/#comment-43227">
+		April 23, 2013</a>	</div>
+
+	<p>I’ve been curious about the Pi and Wi-Fi for a while, thanks for the
+ read.  Have you been able to put the interface into monitor mode?  The 
+Pi would make a good low cost Wi-Fi sensor.</p>
+
+	<div class="reply">
+	<a class="comment-reply-link" href="http://spin.atomicobject.com/2013/04/22/raspberry-pi-wireless-communication/?replytocom=43227#respond" onclick='return addComment.moveForm("div-comment-43227", "43227", "respond", "96063")'>Reply</a>	</div>
+		</div>
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1" id="comment-44882">
+		<div id="div-comment-44882" class="comment-body">
+		<div class="comment-author vcard">
+	<img alt="" src="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/e0cc52da21b566416207f17562b12a28.png" class="avatar avatar-100 photo" width="100" height="100">	<cite class="fn"><a href="http://steampunkdiaries.blogspot.com/" rel="external nofollow" class="url">Thomas</a></cite> <span class="says">says:</span>	</div>
+	
+	<div class="comment-meta commentmetadata"><a href="http://spin.atomicobject.com/2013/04/22/raspberry-pi-wireless-communication/#comment-44882">
+		April 30, 2013</a>	</div>
+
+	<p>Nice post, definitely a good tutorial for beginners. You might want 
+to add a section about avahi though, to make the setup truely ad-hoc, 
+and eliminate the need for a dhcp server, which a) can be a hassle at 
+times and b) is really somewhat overkill just for an ad-hoc network</p>
+
+	<div class="reply">
+	<a class="comment-reply-link" href="http://spin.atomicobject.com/2013/04/22/raspberry-pi-wireless-communication/?replytocom=44882#respond" onclick='return addComment.moveForm("div-comment-44882", "44882", "respond", "96063")'>Reply</a>	</div>
+		</div>
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1" id="comment-57623">
+		<div id="div-comment-57623" class="comment-body">
+		<div class="comment-author vcard">
+	<img alt="" src="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/724c6cac8145f49bf11228eb0df63f05.jpeg" class="avatar avatar-100 photo" width="100" height="100">	<cite class="fn"><a href="http://www.mahmoudzalt.com/" rel="external nofollow" class="url">Mahmoud Zalt</a></cite> <span class="says">says:</span>	</div>
+	
+	<div class="comment-meta commentmetadata"><a href="http://spin.atomicobject.com/2013/04/22/raspberry-pi-wireless-communication/#comment-57623">
+		July 5, 2013</a>	</div>
+
+	<p>I’ve been looking for such solution for the past 3 days.<br>
+Thank you :D</p>
+
+	<div class="reply">
+	<a class="comment-reply-link" href="http://spin.atomicobject.com/2013/04/22/raspberry-pi-wireless-communication/?replytocom=57623#respond" onclick='return addComment.moveForm("div-comment-57623", "57623", "respond", "96063")'>Reply</a>	</div>
+		</div>
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1" id="comment-60059">
+		<div id="div-comment-60059" class="comment-body">
+		<div class="comment-author vcard">
+	<img alt="" src="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/dbfb6a4fa64a936ffd1c6a1503a762c7.png" class="avatar avatar-100 photo" width="100" height="100">	<cite class="fn">Ollie</cite> <span class="says">says:</span>	</div>
+	
+	<div class="comment-meta commentmetadata"><a href="http://spin.atomicobject.com/2013/04/22/raspberry-pi-wireless-communication/#comment-60059">
+		July 30, 2013</a>	</div>
+
+	<p>I liked the tutorial, but got stuck a step one. Ad-Hoc is not visible !</p>
+<p>pi@raspberrypi /etc/network $ cat interfaces<br>
+auto lo<br>
+iface lo inet loopback</p>
+<p>auto eth0<br>
+iface eth0 inet dhcp</p>
+<p>auto wlan0<br>
+iface wlan0 inet static<br>
+address 192.168.1.1<br>
+netmask 255.255.255.0<br>
+wireless-channel 4<br>
+wireless-essid PiNet<br>
+wireless-mode ad-hoc</p>
+
+	<div class="reply">
+	<a class="comment-reply-link" href="http://spin.atomicobject.com/2013/04/22/raspberry-pi-wireless-communication/?replytocom=60059#respond" onclick='return addComment.moveForm("div-comment-60059", "60059", "respond", "96063")'>Reply</a>	</div>
+		</div>
+	</li><!-- #comment-## -->
+	<li class="comment even thread-even depth-1" id="comment-63127">
+		<div id="div-comment-63127" class="comment-body">
+		<div class="comment-author vcard">
+	<img alt="" src="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/f34a54332cf763d5feb2bee6d7c18511.png" class="avatar avatar-100 photo" width="100" height="100">	<cite class="fn">Shyam</cite> <span class="says">says:</span>	</div>
+	
+	<div class="comment-meta commentmetadata"><a href="http://spin.atomicobject.com/2013/04/22/raspberry-pi-wireless-communication/#comment-63127">
+		September 9, 2013</a>	</div>
+
+	<p>Hi,</p>
+<p>Nice post. But nowhere have you mentioned how to communicate on wlan0 between the two (isolated PI’s) [as per your post here (<a href="http://www.raspberrypi.org/phpBB3/viewtopic.php?t=39927&amp;p=331286" onclick="_gaq.push(['_trackEvent', 'outbound-comment', 'http://www.raspberrypi.org/phpBB3/viewtopic.php?t=39927&amp;p=331286', 'http://www.raspberrypi.org/phpBB3/viewtopic.php?t=39927&amp;p=331286']);" rel="nofollow">http://www.raspberrypi.org/phpBB3/viewtopic.php?t=39927&amp;p=331286</a>)</p>
+<p>In my case, I have two RPis configured with same configuration. 
+Configured in Adhoc, with ESSID channel 10 settings. Both are on the 
+same subnet.</p>
+<p>The problem is I cannot see one RPi from the other. Atleast, they 
+should be able to ping each other am I correct? Where am i going wrong 
+here?</p>
+<p>Thanks, hope to have your help in here!</p>
+
+	<div class="reply">
+	<a class="comment-reply-link" href="http://spin.atomicobject.com/2013/04/22/raspberry-pi-wireless-communication/?replytocom=63127#respond" onclick='return addComment.moveForm("div-comment-63127", "63127", "respond", "96063")'>Reply</a>	</div>
+		</div>
+	</li><!-- #comment-## -->
+	<li class="comment odd alt thread-odd thread-alt depth-1" id="comment-500978">
+		<div id="div-comment-500978" class="comment-body">
+		<div class="comment-author vcard">
+	<img alt="" src="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/1524ba20701f1f0efc3058e1569321e8.png" class="avatar avatar-100 photo" width="100" height="100">	<cite class="fn">Talha</cite> <span class="says">says:</span>	</div>
+	
+	<div class="comment-meta commentmetadata"><a href="http://spin.atomicobject.com/2013/04/22/raspberry-pi-wireless-communication/#comment-500978">
+		January 12, 2015</a>	</div>
+
+	<p>Thank you so much for this tutorial. It saved us hours of debugging.</p>
+
+	<div class="reply">
+	<a class="comment-reply-link" href="http://spin.atomicobject.com/2013/04/22/raspberry-pi-wireless-communication/?replytocom=500978#respond" onclick='return addComment.moveForm("div-comment-500978", "500978", "respond", "96063")'>Reply</a>	</div>
+		</div>
+	</li><!-- #comment-## -->
+		</ol><!-- .comment-list -->
+
+		
+	
+	
+
+									<div id="respond" class="comment-respond">
+				<h3 id="reply-title" class="comment-reply-title">Join the conversation <small><a rel="nofollow" id="cancel-comment-reply-link" href="http://spin.atomicobject.com/2013/04/22/raspberry-pi-wireless-communication/#respond" style="display:none;">Cancel reply</a></small></h3>
+									<form action="http://spin.atomicobject.com/wp-comments-post.php" method="post" id="commentform" class="comment-form" novalidate="">
+																			<p class="comment-notes">Your email address will not be published. Required fields are marked <span class="required">*</span></p>							<p class="comment-form-author"><label for="author">Name <span class="required">*</span></label> <input id="author" name="author" size="30" aria-required="true" type="text"></p>
+<p class="comment-form-email"><label for="email">Email <span class="required">*</span></label> <input id="email" name="email" size="30" aria-required="true" type="email"></p>
+<p class="comment-form-url"><label for="url">Website</label> <input id="url" name="url" size="30" type="url"></p>
+												<p class="comment-form-comment"><label for="comment">Comment</label> <textarea id="comment" name="comment" cols="45" rows="8" aria-required="true"></textarea></p>						<p class="form-allowed-tags">You may use these <abbr title="HyperText Markup Language">HTML</abbr> tags and attributes:  <code>&lt;a
+ href="" title=""&gt; &lt;abbr title=""&gt; &lt;acronym title=""&gt; 
+&lt;b&gt; &lt;blockquote cite=""&gt; &lt;cite&gt; &lt;code&gt; &lt;del 
+datetime=""&gt; &lt;em&gt; &lt;i&gt; &lt;q cite=""&gt; &lt;strike&gt; 
+&lt;strong&gt; </code></p>						<p class="form-submit">
+							<input name="submit" id="submit" value="Submit Comment" type="submit">
+							<input name="comment_post_ID" value="96063" id="comment_post_ID" type="hidden">
+<input name="comment_parent" id="comment_parent" value="0" type="hidden">
+						</p>
+						<p style="display: none;"><input id="akismet_comment_nonce" name="akismet_comment_nonce" value="afdcab2e8c" type="hidden"></p><!-- BEGIN: subscribe to comments reloaded --><p><label for="subscribe-reloaded"><select name="subscribe-reloaded" id="subscribe-reloaded">
+									<option selected="selected" value="none">Don't subscribe</option>
+									<option value="yes">All</option>
+									<option value="replies">Replies to my comments</option>
+								</select> Notify me of followup comments via e-mail. You can also <a href="http://spin.atomicobject.com/comment-subscriptions?srp=96063&amp;sra=s">subscribe</a> without commenting.</label></p><!-- END: subscribe to comments reloaded --><p style="display: none;"></p>					<input id="ak_js" name="ak_js" value="1424168723685" type="hidden"></form>
+							</div><!-- #respond -->
+			
+</div><!-- #comments -->
+
+</div>
+
+
+	</div>
+</div> <!-- closing #page -->
+
+<footer class="call-to-action-footer red" style="background-image: url('https://craft-staging.atomicobject.com/uploadedImages/services/AOWebsite-1056.jpg'); background-size: cover; background-position: 50% 50%;">
+
+	<div class="trapezoid"></div>
+
+	<div class="footer-content">
+		<p>Atomic does more than talk about software. We also make it — for clients large and small in all kinds of industries.</p>
+		<a href="http://atomicobject.com/portfolio">Check out our portfolio.</a>
+	</div>
+</footer>
+
+<footer id="main-footer">
+	<div id="footer-container">
+
+		<p class="atomic-slug">
+			<img src="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/ao-wordmark-white.svg" width="160">
+			Atomic is a software design + development consultancy.
+		</p>
+
+		<small class="copyright">© 2015 Atomic Object LLC</small>
+
+		<div class="footer-links" id="footer-explore">
+			<h5>Explore</h5>
+			<ul>
+				<li><a href="https://atomicobject.com/careers">Careers</a></li>
+				<li><a href="https://atomicobject.com/resources">Resources</a></li>
+				<li><a href="http://spin.atomicobject.com/">Atomic Blog</a></li>
+			</ul>
+		</div>
+
+		<div class="footer-links" id="footer-offices">
+			<h5>Offices</h5>
+			<ul>
+				<li><a href="https://atomicobject.com/contact/grand-rapids">Grand Rapids</a></li>
+				<li><a href="https://atomicobject.com/contact/detroit">Detroit</a></li>
+				<li><a href="https://atomicobject.com/contact/ann-arbor">Ann Arbor</a></li>
+			</ul>
+		</div>
+
+		<div class="footer-links" id="footer-details">
+			<h5>Details</h5>
+			<ul>
+				<li><a href="https://atomicobject.com/uploadedImages/services/atomic-fact-sheet-2014.pdf">Fact Sheet</a></li>
+				<li><a href="https://atomicobject.com/contact">Contact</a></li>
+				<li><a href="https://atomicobject.com/">+1 616 776 6020</a></li>
+			</ul>
+		</div>
+
+		<div class="social footer-links">
+			<ul>
+				<li>
+					<a href="https://twitter.com/atomicobject">
+						<img src="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/circle-twitter.svg">
+					</a>
+				</li>
+				<li>
+					<a href="https://github.com/atomicobject">
+						<img src="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/circle-github.svg">
+					</a>
+				</li>
+				<li>
+					<a href="https://www.facebook.com/atomicobject">
+						<img src="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/circle-facebook.svg">
+					</a>
+				</li>
+				<li>
+					<a href="http://instagram.com/atomicobject">
+						<img src="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/circle-instagram.svg">
+					</a>
+				</li>
+				<li>
+					<a href="https://www.linkedin.com/company/atomic-object">
+						<img src="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/circle-linkedin.svg">
+					</a>
+				</li>
+				<li>
+					<a href="https://dribbble.com/atomicobject">
+						<img src="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/circle-dribbble.svg">
+					</a>
+				</li>
+				<li>
+					<a href="https://plus.google.com/+Atomicobject/">
+						<img src="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/circle-googleplus.svg">
+					</a>
+				</li>
+			</ul>
+		</div>
+
+	</div>
+</footer>
+
+<script type="text/javascript">var addthis_product = 'wpp-1.0.10';
+</script><script type="text/javascript" src="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/addthis_widget.js"></script><div id="_atssh" style="visibility: hidden; height: 1px; width: 1px; position: absolute; top: -9999px; z-index: 100000;"><iframe src="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/sh200.html" style="height: 1px; width: 1px; position: absolute; top: 0px; z-index: 100000; border: 0px none; left: 0px;" title="AddThis utility frame" id="_atssh598"></iframe></div><script src="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/core200.js" type="text/javascript"></script><script type="text/javascript">addthis.layers({
+    'theme' : 'transparent',
+    'share' : {
+        'position' : 'left',
+        'services': 'twitter,linkedin,facebook,google_plusone_share,hackernews,more',
+        'offset': {'top':'250px'}
+    },  
+    'responsive': {'maxWidth': '1045px' } 
+}
+);</script><style type="text/css">.addthis_toolbox {float:left;width:100%;margin:0 0 15px 0;} .addthis_button_tweet {min-width: 83px;float:left;}</style><script type="text/javascript">
+var _sf_async_config={uid:17044,domain:"atomicobject.com"};
+(function(){
+  function loadChartbeat() {
+    window._sf_endpt=(new Date()).getTime();
+    var e = document.createElement('script');
+    e.setAttribute('language', 'javascript');
+    e.setAttribute('type', 'text/javascript');
+    e.setAttribute('src',
+       (("https:" == document.location.protocol) ? "https://s3.amazonaws.com/" : "http://") +
+       "static.chartbeat.com/js/chartbeat.js");
+    document.body.appendChild(e);
+  }
+  var oldonload = window.onload;
+  window.onload = (typeof window.onload != 'function') ?
+     loadChartbeat : function() { oldonload(); loadChartbeat(); };
+})();
+</script>
+	<div style="display:none">
+	<div class="grofile-hash-map-ec6d5764d117f128c9128e07e0a9727c">
+	</div>
+	<div class="grofile-hash-map-e0cc52da21b566416207f17562b12a28">
+	</div>
+	<div class="grofile-hash-map-724c6cac8145f49bf11228eb0df63f05">
+	</div>
+	<div class="grofile-hash-map-dbfb6a4fa64a936ffd1c6a1503a762c7">
+	</div>
+	<div class="grofile-hash-map-f34a54332cf763d5feb2bee6d7c18511">
+	</div>
+	<div class="grofile-hash-map-1524ba20701f1f0efc3058e1569321e8">
+	</div>
+	</div>
+<script type="text/javascript" src="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/form.js"></script>
+<script type="text/javascript" src="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/devicepx-jetpack.js"></script>
+<script type="text/javascript" src="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/comment-reply.js"></script>
+
+	<script src="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/e-201508.js" type="text/javascript"></script>
+	<script type="text/javascript">
+	st_go({v:'ext',j:'1:3.3',blog:'48967926',post:'96063',tz:'-5'});
+	var load_cmc = function(){linktracker_init(48967926,96063,2);};
+	if ( typeof addLoadEvent != 'undefined' ) addLoadEvent(load_cmc);
+	else load_cmc();
+	</script><img id="wpstats" src="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/g.gif"><!--wp_footer-->
+
+
+<div id="fancybox-tmp"></div><div id="fancybox-loading"><div></div></div><div id="fancybox-overlay"></div><div id="fancybox-wrap"><div id="fancybox-outer"><div class="fancybox-bg" id="fancybox-bg-n"></div><div class="fancybox-bg" id="fancybox-bg-ne"></div><div class="fancybox-bg" id="fancybox-bg-e"></div><div class="fancybox-bg" id="fancybox-bg-se"></div><div class="fancybox-bg" id="fancybox-bg-s"></div><div class="fancybox-bg" id="fancybox-bg-sw"></div><div class="fancybox-bg" id="fancybox-bg-w"></div><div class="fancybox-bg" id="fancybox-bg-nw"></div><div id="fancybox-content"></div><a id="fancybox-close"></a><div id="fancybox-title"></div><a href="javascript:;" id="fancybox-left"><span class="fancy-ico" id="fancybox-left-ico"></span></a><a href="javascript:;" id="fancybox-right"><span class="fancy-ico" id="fancybox-right-ico"></span></a></div></div><script src="Ad-Hoc%20Raspberry%20Pi%20Wireless%20Communication_files/chartbeat.js" type="text/javascript" language="javascript"></script><div role="region" aria-labelledby="at4-share-label" class="at4-share-outer addthis-smartlayers addthis-smartlayers-desktop"><div id="at4-share-label">AddThis Sharing</div><div class="addthis_32x32_style atss atss-left addthis-animated slideInLeft at4-show" id="at4-share"><a href="#" class="at4-share-btn at-svc-twitter"><span title="Twitter" class=" at4-icon aticon-twitter">Twitter</span></a><a href="#" class="at4-share-btn at-svc-linkedin"><span title="LinkedIn" class=" at4-icon aticon-linkedin">LinkedIn</span></a><a href="#" class="at4-share-btn at-svc-facebook"><span title="Facebook" class=" at4-icon aticon-facebook">Facebook</span></a><a href="#" class="at4-share-btn at-svc-google_plusone_share"><span title="Google+" class=" at4-icon aticon-google_plusone_share">Google+</span></a><a href="#" class="at4-share-btn at-svc-hackernews"><span title="Hacker News" class=" at4-icon aticon-hackernews">Hacker News</span></a><a href="#" class="at4-share-btn at-svc-compact"><span title="Más..." class=" at4-icon aticon-compact">Más...</span></a><div title="Hide" class="at-share-close-control ats-transparent at4-hide-content at4-show" id="at4-scc"><div class="at4-arrow at-left">Hide</div></div></div><div title="Show" class="at-share-open-control-left ats-transparent at4-hide" id="at4-soc"><div class="at4-arrow at-right">Show</div></div></div><div aria-labelledby="at-thankyou-label" role="dialog" class="at4-thankyou at4-thankyou-background at4-hide ats-transparent at4-thankyou-desktop addthis-smartlayers addthis-animated fadeIn at4-show" id="at4-thankyou"><div class="at4lb-inner"><a title="Close" href="#" class="at4x"></a><a target="_blank" title="AddThis" href="http://www.addthis.com/?utm_source=dynpo&amp;utm_medium=img&amp;utm_content=AT_main_WT&amp;utm_campaign=AT_main" class="at4-logo" id="at4-palogo">AddThis</a><a target="_blank" title="Privacidad" href="http://www.addthis.com/privacy/privacy-policy" class="at4-privacy" id="at4-paprivacy">Privacidad</a><div class="at4-thankyou-inner"><div class="thankyou-title" id="at-thankyou-label"></div><div class="thankyou-description"></div><div class="at4-thankyou-layer"></div></div></div></div><div class="addthis-smartlayers addthis-smartlayers-mobile addthis-animated fadeIn at4-show at4-hide" id="at4m-mobile-container"><div class="at4m-dock at4m-dock-bottom ats-light at4-ma1" id="at4m-dock"><a href="#" id="at4m-sb"><i class="at4m-dock-share"></i>Compartir</a></div><div class="at4m-dock-toggle at4m-dock-bottom ats-light"><a href="#" id="at4m-dock-toggle">Toggle Dock</a></div><div class="at4m-menu ats-light" id="at4m-menu"><div class="at4m-menu-inner"><div class="at4m-menu-header"><div class="at4m-menu-header-inner"><div id="at4m-menu-head">Compartir</div><a href="#" class="at4m-menu-cancel" id="at4m-mcc">Close</a></div></div><div id="at4m-menu-body"><div id="scroller"><div class="at4m-menu-search"><input id="at4-searchBox" placeholder="Encuentra un servicio" type="text"><input type="submit"><input id="at4-searchClear" class="at4-hide" type="cancel"></div><div class="at4m-menu-content"><ul class="addthis_32x32_style" id="at4m-services"></ul></div></div></div><div class="at4m-menu-footer"><div class="at4m-menu-footer-inner"><a target="_blank" href="http://www.addthis.com/?utm_source=dynmex&amp;utm_medium=img&amp;utm_content=AT_main_WT&amp;utm_campaign=AT_main" class="at4m-menu-footer-logo">AddThis</a><a target="_blank" href="http://www.addthis.com/privacy/privacy-policy" class="at4m-menu-footer-privacy">Privacidad</a></div></div></div></div></div></body></html>
+<!-- CDN Linker <https://github.com/wmark/CDN-Linker/tags> active -->

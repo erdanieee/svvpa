@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 18.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" [
+	<!ENTITY ns_extend "http://ns.adobe.com/Extensibility/1.0/">
+	<!ENTITY ns_ai "http://ns.adobe.com/AdobeIllustrator/10.0/">
+	<!ENTITY ns_graphs "http://ns.adobe.com/Graphs/1.0/">
+	<!ENTITY ns_vars "http://ns.adobe.com/Variables/1.0/">
+	<!ENTITY ns_imrep "http://ns.adobe.com/ImageReplacement/1.0/">
+	<!ENTITY ns_sfw "http://ns.adobe.com/SaveForWeb/1.0/">
+	<!ENTITY ns_custom "http://ns.adobe.com/GenericCustomNamespace/1.0/">
+	<!ENTITY ns_adobe_xpath "http://ns.adobe.com/XPath/1.0/">
+]>
+<svg version="1.1" id="Layer_1" xmlns:x="&ns_extend;" xmlns:i="&ns_ai;" xmlns:graph="&ns_graphs;"
+	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 500 500"
+	 enable-background="new 0 0 500 500" xml:space="preserve">
+<switch>
+	<foreignObject requiredExtensions="&ns_ai;" x="0" y="0" width="1" height="1">
+		<i:pgfRef  xlink:href="#adobe_illustrator_pgf">
+		</i:pgfRef>
+	</foreignObject>
+	<g i:extraneous="self">
+		<path fill="#FFFFFF" d="M105.8,375c-23.6,0-44.7,4.6-64,12.2C16.1,347.5,1,300.8,1,250c0-4.6,0-8.8,0.5-13.4
+			c12.2,42.3,50.8,72.7,103.8,72.7c4.1,0,8.8,0,12.6,0c-3.9,8-6.8,16.8-6.8,26.5c0,15.6,8.5,28.2,19,39.1
+			C122.1,375,114.6,375,105.8,375z M250,1C150.8,1,65.4,58.6,25.3,142.7c23.6-24.1,58.6-40.4,95.1-40.4c35.7,0,141.8,0,141.8,0
+			l-31.9,23.1h-44.7c29.9,11.4,45.5,46.2,45.5,81.9c0,29.9-16.3,55.9-39.9,74.2c-23.1,18-27,25.5-27,40.4c0,13.4,24.1,35.3,37,44.5
+			c37.4,26.5,50.1,50.6,50.1,91.7c0,13.9-4.1,27.5-10.9,40.9c3.4,0,6.3,0,9.7,0c137.9,0,249-111.1,249-249S387.9,1,250,1z
+			 M48.2,206.2c-6.3-47.9,18-84.9,54.2-83.6c37,1.2,71.5,39.9,77.8,87.5c6.3,47.9-18.5,86.1-54.7,84.9S54.5,254.1,48.2,206.2z
+			 M214.3,463.7c0,11.7-1.7,21.9-6.3,31.9c-61.8-10.5-115.3-43.3-152.7-90c18.5-10.9,41.3-17.8,65.7-17.3c12.6,0,24.3,2.2,35.3,5.8
+			c29.4,20.2,50.6,31.6,56.4,55.2C213.8,454,214.3,459.1,214.3,463.7z M374.5,187.7V250h-31.1v-62.2h-62.2v-31.1h62.2V94.4h31.1
+			v62.3h62.2v31.1H374.5z"/>
+	</g>
+</switch>
+</svg>
