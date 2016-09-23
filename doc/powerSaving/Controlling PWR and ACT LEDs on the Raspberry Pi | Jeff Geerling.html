@@ -1,0 +1,443 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML+RDFa 1.1//EN">
+<html class="js" dir="ltr" version="HTML+RDFa 1.1" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/terms/" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:og="http://ogp.me/ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:sioc="http://rdfs.org/sioc/ns#" xmlns:sioct="http://rdfs.org/sioc/types#" xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:xsd="http://www.w3.org/2001/XMLSchema#" lang="en"><head profile="http://www.w3.org/1999/xhtml/vocab">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+  <!--[if IE]><![endif]-->
+<meta charset="utf-8">
+<link rel="dns-prefetch" href="http://www.google-analytics.com/">
+<link rel="dns-prefetch" href="http://stats.g.doubleclick.net/">
+<meta name="Generator" content="Drupal 7 (http://drupal.org)">
+<link rel="canonical" href="http://www.jeffgeerling.com/blogs/jeff-geerling/controlling-pwr-act-leds-raspberry-pi">
+<link rel="shortlink" href="http://www.jeffgeerling.com/node/2512">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="shortcut icon" href="http://www.jeffgeerling.com/favicon.ico" type="image/vnd.microsoft.icon">
+  <title>Controlling PWR and ACT LEDs on the Raspberry Pi | Jeff Geerling</title>
+  <link type="text/css" rel="stylesheet" href="Controlling%20PWR%20and%20ACT%20LEDs%20on%20the%20Raspberry%20Pi%20%7C%20Jeff%20Geerling_files/css__BJ6Ou6QsBRtnFTmxaakamOIS8n4QswDP2XnnZ1sxtaM__NBuvkP6eIn.css" media="all">
+<link type="text/css" rel="stylesheet" href="Controlling%20PWR%20and%20ACT%20LEDs%20on%20the%20Raspberry%20Pi%20%7C%20Jeff%20Geerling_files/css__rQ1alF2wtRJheC4MwbTGQHhDW1u3JWtM73MeXej8ZCI__fhvJVXXQ_0.css" media="screen">
+<link type="text/css" rel="stylesheet" href="Controlling%20PWR%20and%20ACT%20LEDs%20on%20the%20Raspberry%20Pi%20%7C%20Jeff%20Geerling_files/css__ONfPAI4O6qwkOjA3Y45skLL9317UKloyGB-P2dg7XzA__wSdLKf_U-o.css" media="all">
+<link type="text/css" rel="stylesheet" href="Controlling%20PWR%20and%20ACT%20LEDs%20on%20the%20Raspberry%20Pi%20%7C%20Jeff%20Geerling_files/css__cBrSec9yPwLcvH5ZGbsae2zjr1nPozYnZ2-ygm1FNUQ__besQRbGhHN.css" media="screen">
+<link type="text/css" rel="stylesheet" href="Controlling%20PWR%20and%20ACT%20LEDs%20on%20the%20Raspberry%20Pi%20%7C%20Jeff%20Geerling_files/css__QAw34ynQZBfNWJeyPl9ACfjQ3N2d0xwpdVcaBzLVMAA__8iH9n02Qn5.css" media="all">
+  <script src="Controlling%20PWR%20and%20ACT%20LEDs%20on%20the%20Raspberry%20Pi%20%7C%20Jeff%20Geerling_files/analytics.js" async=""></script><script type="text/javascript" src="Controlling%20PWR%20and%20ACT%20LEDs%20on%20the%20Raspberry%20Pi%20%7C%20Jeff%20Geerling_files/js__QKbGtKF7i376uqxn6MNh6Q6rTNHUwBTy6_40RtOQwr0__LbcU8Gqhf6g9.js"></script>
+<script type="text/javascript">
+<!--//--><![CDATA[//><!--
+(function(e,o,c,s,t,n,a){e['GoogleAnalyticsObject']=t;e[t]=e[t]||function(){(e[t].q=e[t].q||[]).push(arguments)},e[t].l=1*new Date();n=o.createElement(c),a=o.getElementsByTagName(c)[0];n.async=1;n.src=s;a.parentNode.insertBefore(n,a)})(window,document,'script','http://www.jeffgeerling.com/sites/jeffgeerling.com/files/googleanalytics/analytics.js?ocl6ks','ga');ga('create','UA-2478239-27',{'cookieDomain':'auto'});ga('send','pageview');
+//--><!]]>
+</script>
+<script type="text/javascript">
+<!--//--><![CDATA[//><!--
+;jQuery.extend(Drupal.settings,{"basePath":"\/","pathPrefix":"","ajaxPageState":{"theme":"jeffgeerling","theme_token":"raZ1szpYMBWkvaZUJHL-sysc80BY2e1BLBjkSIdBluk","css":{"modules\/system\/system.base.css":1,"modules\/system\/system.menus.css":1,"modules\/system\/system.messages.css":1,"modules\/system\/system.theme.css":1,"sites\/all\/modules\/codefilter\/codefilter.css":1,"modules\/comment\/comment.css":1,"sites\/all\/modules\/date\/date_api\/date.css":1,"sites\/all\/modules\/date\/date_popup\/themes\/datepicker.1.7.css":1,"modules\/field\/theme\/field.css":1,"sites\/all\/modules\/mollom\/mollom.css":1,"modules\/node\/node.css":1,"modules\/user\/user.css":1,"sites\/all\/modules\/views\/css\/views.css":1,"sites\/all\/modules\/ckeditor\/css\/ckeditor.css":1,"sites\/all\/modules\/colorbox\/styles\/default\/colorbox_style.css":1,"sites\/all\/modules\/ctools\/css\/ctools.css":1,"sites\/jeffgeerling.com\/themes\/jeffgeerling\/css\/blog.css":1,"sites\/all\/themes\/boron\/css\/layout.css":1,"sites\/jeffgeerling.com\/themes\/jeffgeerling\/css\/style.css":1},"js":{"misc\/jquery.js":1,"misc\/jquery.once.js":1,"misc\/drupal.js":1,"sites\/all\/modules\/codefilter\/codefilter.js":1,"sites\/all\/libraries\/colorbox\/jquery.colorbox-min.js":1,"sites\/all\/modules\/colorbox\/js\/colorbox.js":1,"sites\/all\/modules\/colorbox\/styles\/default\/colorbox_style.js":1,"sites\/all\/modules\/google_analytics\/googleanalytics.js":1}},"colorbox":{"opacity":"0.85","current":"{current} of {total}","previous":"\u00ab Prev","next":"Next \u00bb","close":"Close","maxWidth":"98%","maxHeight":"98%","fixed":true,"mobiledetect":true,"mobiledevicewidth":"480px"},"googleanalytics":{"trackOutbound":1,"trackMailto":1,"trackDownload":1,"trackDownloadExtensions":"7z|aac|arc|arj|asf|asx|avi|bin|csv|doc(x|m)?|dot(x|m)?|exe|flv|gif|gz|gzip|hqx|jar|jpe?g|js|mp(2|3|4|e?g)|mov(ie)?|msi|msp|pdf|phps|png|ppt(x|m)?|pot(x|m)?|pps(x|m)?|ppam|sld(x|m)?|thmx|qtm?|ra(m|r)?|sea|sit|tar|tgz|torrent|txt|wav|wma|wmv|wpd|xls(x|m|b)?|xlt(x|m)|xlam|xml|z|zip","trackColorbox":1},"urlIsAjaxTrusted":{"\/blogs\/jeff-geerling\/controlling-pwr-act-leds-raspberry-pi":true}});
+//--><!]]>
+</script>
+  
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+</head>
+<body class="html not-front not-logged-in no-sidebars page-node page-node- page-node-2512 node-type-blog-post">
+
+    
+<div id="page-wrapper"><div id="page">
+
+  <header id="header" role="banner"><div class="section clearfix">
+
+    
+          <div id="name-and-slogan">
+                              <div id="site-name"><strong>
+              <a href="http://www.jeffgeerling.com/" title="Home" rel="home"><span>Jeff Geerling</span></a>
+            </strong></div>
+                  
+              </div> <!-- /#name-and-slogan -->
+    
+    
+          <p id="skip-link"><em><a href="#navigation">Skip to Navigation</a></em> ↓</p>
+    
+  </div></header> <!-- /.section, /#header -->
+
+
+  <div id="main-wrapper"><div id="main" class="clearfix with-navigation">
+
+    <div id="content" class="column" role="main"><div class="section">
+                                      <h1 class="title" id="page-title">Controlling PWR and ACT LEDs on the Raspberry Pi</h1>
+                          <div class="tabs"></div>
+                          <div class="region region-content">
+    <div id="block-system-main" class="block block-system">
+
+      
+  <div class="content">
+    <article id="node-2512" class="node node-blog-post node-promoted clearfix" about="/blogs/jeff-geerling/controlling-pwr-act-leds-raspberry-pi" typeof="sioc:Item foaf:Document">
+
+      <header>
+      
+                  <span property="dc:title" content="Controlling PWR and ACT LEDs on the Raspberry Pi" class="rdf-meta element-hidden"></span><span property="sioc:num_replies" content="16" datatype="xsd:integer" class="rdf-meta element-hidden"></span>
+              <p class="submitted">
+          <span property="dc:date dc:created" content="2015-03-15T13:09:17-05:00" datatype="xsd:dateTime" rel="sioc:has_creator">March 15, 2015</span>        </p>
+          </header>
+  
+  <div class="content">
+    <div class="field field-name-body field-type-text-with-summary field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p>All
+ Raspberry Pi models have a few built-in LEDs; the earlier models had 
+PWR, ACT, and networking status LEDs all lined up on the board itself; 
+for the B+ and model 2 B, the networking LEDs moved onto the network 
+jack itself, leaving just two LEDs; PWR (a red LED) and ACT (a green 
+LED).</p>
+<p>Normally, whenever the Pi is powered on—except if the power supply 
+dips below something like 4.5VDC—the red PWR LED remains lit no matter 
+what. If you wanted to 'disable' the LED, you'd have to put a piece of 
+tape or something else over the LED, or get out a soldering iron and 
+modify the hardware a bit.</p>
+<h2>Raspberry Pi model 2 B, B+ and A+</h2>
+<p>Luckily, with the Pi 2 model B, B+, A+, and Zero, you can control the
+ LEDs in software, in a few different ways. The simplest way to change 
+the way these LEDs work is to modify the <code>trigger</code> for each LED by setting it in <code>/sys/class/leds/led[LED_ID]/trigger</code>, where you replace <code>[LED_ID]</code> with <code>0</code> for the green ACT LED, and <code>1</code> for the red PWR LED.</p>
+<p>For example:</p>
+<p></p><div class="codeblock"><code># Set the PWR LED to GPIO mode (set 'off' by default).<br>echo gpio | sudo tee /sys/class/leds/led1/trigger<br><br># (Optional) Turn on (1) or off (0) the PWR LED.<br>echo 1 | sudo tee /sys/class/leds/led1/brightness<br>echo 0 | sudo tee /sys/class/leds/led1/brightness<br><br># Revert the PWR LED back to 'under-voltage detect' mode.<br>echo input | sudo tee /sys/class/leds/led1/trigger<br><br># Set the ACT LED to trigger on cpu0 instead of mmc0 (SD card access).<br>echo cpu0 | sudo tee /sys/class/leds/led0/trigger</code></div><p></p>
+<p>I'm using this ability to turn off the bright red PWR LED on my 
+Raspberry Pis, as I use decent power supplies and would rather save the 
+few mW used by the LED so I can save a penny or two over the next couple
+ years :)</p>
+<p>If you want to disable both LEDs permanently, add the following to <code>/boot/config.txt</code>:</p>
+<p></p><div class="codeblock"><code># Disable the ACT LED.<br>dtparam=act_led_trigger=none<br>dtparam=act_led_activelow=off<br><br># Disable the PWR LED.<br>dtparam=pwr_led_trigger=none<br>dtparam=pwr_led_activelow=off</code></div><p></p>
+<h2>Raspberry Pi Zero</h2>
+<p>The Pi Zero's values are opposite, and it only has one LED, <code>led0</code> (labeled 'ACT' on the board). The LED defaults to on (brightness <code>0</code>), and turns <em>off</em> (brightness <code>1</code>) to indicate disk activity.</p>
+<p>If you want to turn off the LED on the Pi Zero completely, run the following two commands:</p>
+<p></p><div class="codeblock"><code># Set the Pi Zero ACT LED trigger to 'none'.<br>echo none | sudo tee /sys/class/leds/led0/trigger<br><br># Turn off the Pi Zero ACT LED.<br>echo 1 | sudo tee /sys/class/leds/led0/brightness</code></div><p></p>
+<p>To make these settings permanent, add the following lines to your Pi's <code>/boot/config.txt</code> file and reboot:</p>
+<p></p><div class="codeblock"><code># Disable the ACT LED on the Pi Zero.<br>dtparam=act_led_trigger=none<br>dtparam=act_led_activelow=on</code></div><p></p>
+</div></div></div>  </div> <!-- /.content -->
+
+      <div class="region region-node-bottom">
+      <section id="block-views-related-content-block" class="block block-views">
+
+        <h2>Further reading</h2>
+    
+  <div class="content">
+    <div class="view view-related-content view-id-related_content view-display-id-block view-dom-id-465283399e8ca6614f83549fdd569962">
+        
+  
+  
+      <div class="view-content">
+      <div class="item-list">    <ul>          <li class="views-row views-row-1 views-row-odd views-row-first">  
+  <div class="views-field views-field-title">        <span class="field-content"><a href="http://www.jeffgeerling.com/blogs/jeff-geerling/raspberry-pi-zero-conserve-energy">Raspberry Pi Zero - Conserve power and reduce draw to 80mA</a></span>  </div></li>
+          <li class="views-row views-row-2 views-row-even">  
+  <div class="views-field views-field-title">        <span class="field-content"><a href="http://www.jeffgeerling.com/blogs/jeff-geerling/raspberry-pi-zero-power">Raspberry Pi Zero - Power Consumption Comparison</a></span>  </div></li>
+          <li class="views-row views-row-3 views-row-odd views-row-last">  
+  <div class="views-field views-field-title">        <span class="field-content"><a href="http://www.jeffgeerling.com/blog/2016/review-raspberry-pi-model-3-b-benchmarks-vs-pi-2">Review: Raspberry Pi model 3 B, with Benchmarks vs Pi 2</a></span>  </div></li>
+      </ul></div>    </div>
+  
+  
+  
+  
+  
+  
+</div>  </div> <!-- /.content -->
+
+</section> <!-- /.block -->
+    </div>
+  
+      <footer>
+      <div class="field field-name-field-tags field-type-taxonomy-term-reference field-label-hidden"><div class="field-items"><div class="field-item even"><a href="http://www.jeffgeerling.com/category/raspberry-pi" typeof="skos:Concept" property="rdfs:label skos:prefLabel" datatype="">raspberry pi</a></div><div class="field-item odd"><a href="http://www.jeffgeerling.com/category/dramble" typeof="skos:Concept" property="rdfs:label skos:prefLabel" datatype="">dramble</a></div><div class="field-item even"><a href="http://www.jeffgeerling.com/category/led" typeof="skos:Concept" property="rdfs:label skos:prefLabel" datatype="">led</a></div><div class="field-item odd"><a href="http://www.jeffgeerling.com/category/status" typeof="skos:Concept" property="rdfs:label skos:prefLabel" datatype="">status</a></div><div class="field-item even"><a href="http://www.jeffgeerling.com/category/gpio" typeof="skos:Concept" property="rdfs:label skos:prefLabel" datatype="">gpio</a></div><div class="field-item odd"><a href="http://www.jeffgeerling.com/category/zero" typeof="skos:Concept" property="rdfs:label skos:prefLabel" datatype="">zero</a></div><div class="field-item even"><a href="http://www.jeffgeerling.com/category/model-2" typeof="skos:Concept" property="rdfs:label skos:prefLabel" datatype="">model 2</a></div><div class="field-item odd"><a href="http://www.jeffgeerling.com/category/tags/power" typeof="skos:Concept" property="rdfs:label skos:prefLabel" datatype="">power</a></div><div class="field-item even"><a href="http://www.jeffgeerling.com/category/consumption" typeof="skos:Concept" property="rdfs:label skos:prefLabel" datatype="">consumption</a></div><div class="field-item odd"><a href="http://www.jeffgeerling.com/category/tutorial-tags/energy-efficiency" typeof="skos:Concept" property="rdfs:label skos:prefLabel" datatype="">energy efficiency</a></div></div></div>      <ul class="links inline"><li class="comment-add first last"><a href="http://www.jeffgeerling.com/comment/reply/2512#comment-form" title="Share your thoughts and opinions related to this posting.">Add new comment</a></li>
+</ul>    </footer>
+  
+  <section id="comments" class="comment-wrapper">
+          <h2 class="title">Comments</h2>
+      
+  <a id="comment-2770"></a>
+<div class="comment comment-by-node-author clearfix" about="/comment/2770#comment-2770" typeof="sioc:Post sioct:Comment">
+  
+  <div class="submitted">
+    <span property="dc:date dc:created" content="2015-03-15T13:10:15-05:00" datatype="xsd:dateTime" rel="sioc:has_creator"><span class="username" xml:lang="" about="/users/jeff-geerling" typeof="sioc:UserAccount" property="foaf:name" datatype="">Jeff Geerling</span> – <a href="http://www.jeffgeerling.com/comment/2770#comment-2770" class="permalink" rel="bookmark">1 year ago</a></span>  </div>
+
+  <div class="content">
+    <span rel="sioc:reply_of" resource="/blogs/jeff-geerling/controlling-pwr-act-leds-raspberry-pi" class="rdf-meta element-hidden"></span><div class="field field-name-comment-body field-type-text-long field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p>As a footnote, I'm using these capabilities on my <a href="https://github.com/geerlingguy/raspberry-pi-dramble/blob/master/playbooks/roles/leds/templates/onboard-led-setup.j2">onboard-led-setup</a> script for the <a href="https://github.com/geerlingguy/raspberry-pi-dramble">Raspberry Pi Dramble</a> project.</p>
+</div></div></div>  </div>
+
+  <ul class="links inline"><li class="comment-reply first last"><a href="http://www.jeffgeerling.com/comment/reply/2512/2770">reply</a></li>
+</ul></div>
+<a id="comment-2847"></a>
+<div class="comment comment-by-anonymous clearfix" about="/comment/2847#comment-2847" typeof="sioc:Post sioct:Comment">
+  
+  <div class="submitted">
+    <span property="dc:date dc:created" content="2015-09-25T10:10:30-05:00" datatype="xsd:dateTime" rel="sioc:has_creator"><span class="username" xml:lang="" typeof="sioc:UserAccount" property="foaf:name" datatype="">Hannes</span> – <a href="http://www.jeffgeerling.com/comment/2847#comment-2847" class="permalink" rel="bookmark">12 months ago</a></span>  </div>
+
+  <div class="content">
+    <span rel="sioc:reply_of" resource="/blogs/jeff-geerling/controlling-pwr-act-leds-raspberry-pi" class="rdf-meta element-hidden"></span><div class="field field-name-comment-body field-type-text-long field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p>Many thanks!</p>
+</div></div></div>  </div>
+
+  <ul class="links inline"><li class="comment-reply first last"><a href="http://www.jeffgeerling.com/comment/reply/2512/2847">reply</a></li>
+</ul></div>
+
+<div class="indented"><a id="comment-2867"></a>
+<div class="comment comment-by-anonymous clearfix" about="/comment/2867#comment-2867" typeof="sioc:Post sioct:Comment">
+  
+  <div class="submitted">
+    <span property="dc:date dc:created" content="2015-11-28T02:57:40-06:00" datatype="xsd:dateTime" rel="sioc:has_creator"><span class="username" xml:lang="" typeof="sioc:UserAccount" property="foaf:name" datatype="">Jeremy Hall</span> – <a href="http://www.jeffgeerling.com/comment/2867#comment-2867" class="permalink" rel="bookmark">10 months ago</a></span>  </div>
+
+  <div class="content">
+    <span rel="sioc:reply_of" resource="/blogs/jeff-geerling/controlling-pwr-act-leds-raspberry-pi" class="rdf-meta element-hidden"></span><span rel="sioc:reply_of" resource="/comment/2847#comment-2847" class="rdf-meta element-hidden"></span><div class="field field-name-comment-body field-type-text-long field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p>Thanks!  I've turned off the leds on all my headless Pi's.<br>
+You probably already know this one, but you can turn off the HDMI circuits with<br>
+   /usr/bin/tvservice -o<br>
+saves a little more current (I read somewhere about 28ma).</p>
+</div></div></div>  </div>
+
+  <ul class="links inline"><li class="comment-reply first last"><a href="http://www.jeffgeerling.com/comment/reply/2512/2867">reply</a></li>
+</ul></div>
+
+<div class="indented"><a id="comment-2872"></a>
+<div class="comment comment-by-node-author clearfix" about="/comment/2872#comment-2872" typeof="sioc:Post sioct:Comment">
+  
+  <div class="submitted">
+    <span property="dc:date dc:created" content="2015-11-28T20:36:38-06:00" datatype="xsd:dateTime" rel="sioc:has_creator"><span class="username" xml:lang="" about="/users/jeff-geerling" typeof="sioc:UserAccount" property="foaf:name" datatype="">Jeff Geerling</span> – <a href="http://www.jeffgeerling.com/comment/2872#comment-2872" class="permalink" rel="bookmark">9 months ago</a></span>  </div>
+
+  <div class="content">
+    <span rel="sioc:reply_of" resource="/blogs/jeff-geerling/controlling-pwr-act-leds-raspberry-pi" class="rdf-meta element-hidden"></span><span rel="sioc:reply_of" resource="/comment/2867#comment-2867" class="rdf-meta element-hidden"></span><div class="field field-name-comment-body field-type-text-long field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p>I just checked, and it does indeed save ~30 mA. Thanks!</p>
+</div></div></div>  </div>
+
+  <ul class="links inline"><li class="comment-reply first last"><a href="http://www.jeffgeerling.com/comment/reply/2512/2872">reply</a></li>
+</ul></div>
+</div></div><a id="comment-2850"></a>
+<div class="comment comment-by-anonymous clearfix" about="/comment/2850#comment-2850" typeof="sioc:Post sioct:Comment">
+  
+  <div class="submitted">
+    <span property="dc:date dc:created" content="2015-10-06T03:25:07-05:00" datatype="xsd:dateTime" rel="sioc:has_creator"><span class="username" xml:lang="" typeof="sioc:UserAccount" property="foaf:name" datatype="">TK</span> – <a href="http://www.jeffgeerling.com/comment/2850#comment-2850" class="permalink" rel="bookmark">11 months ago</a></span>  </div>
+
+  <div class="content">
+    <span rel="sioc:reply_of" resource="/blogs/jeff-geerling/controlling-pwr-act-leds-raspberry-pi" class="rdf-meta element-hidden"></span><div class="field field-name-comment-body field-type-text-long field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p>Great article!</p>
+</div></div></div>  </div>
+
+  <ul class="links inline"><li class="comment-reply first last"><a href="http://www.jeffgeerling.com/comment/reply/2512/2850">reply</a></li>
+</ul></div>
+<a id="comment-2860"></a>
+<div class="comment comment-by-anonymous clearfix" about="/comment/2860#comment-2860" typeof="sioc:Post sioct:Comment">
+  
+  <div class="submitted">
+    <span property="dc:date dc:created" content="2015-10-27T12:43:37-05:00" datatype="xsd:dateTime" rel="sioc:has_creator"><span class="username" xml:lang="" typeof="sioc:UserAccount" property="foaf:name" datatype="">Jacquot</span> – <a href="http://www.jeffgeerling.com/comment/2860#comment-2860" class="permalink" rel="bookmark">11 months ago</a></span>  </div>
+
+  <div class="content">
+    <span rel="sioc:reply_of" resource="/blogs/jeff-geerling/controlling-pwr-act-leds-raspberry-pi" class="rdf-meta element-hidden"></span><div class="field field-name-comment-body field-type-text-long field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p>That
+ did the job! I've started a 1-year time-lapse movie project and was 
+getting a red arc in one corner of every photo in low light, and it's 
+now gone away. Thanks!</p>
+</div></div></div>  </div>
+
+  <ul class="links inline"><li class="comment-reply first last"><a href="http://www.jeffgeerling.com/comment/reply/2512/2860">reply</a></li>
+</ul></div>
+
+<div class="indented"><a id="comment-3164"></a>
+<div class="comment comment-by-anonymous clearfix" about="/comment/3164#comment-3164" typeof="sioc:Post sioct:Comment">
+  
+  <div class="submitted">
+    <span property="dc:date dc:created" content="2016-02-15T10:55:50-06:00" datatype="xsd:dateTime" rel="sioc:has_creator"><span class="username" xml:lang="" typeof="sioc:UserAccount" property="foaf:name" datatype="">Neil Stevens</span> – <a href="http://www.jeffgeerling.com/comment/3164#comment-3164" class="permalink" rel="bookmark">7 months ago</a></span>  </div>
+
+  <div class="content">
+    <span rel="sioc:reply_of" resource="/blogs/jeff-geerling/controlling-pwr-act-leds-raspberry-pi" class="rdf-meta element-hidden"></span><span rel="sioc:reply_of" resource="/comment/2860#comment-2860" class="rdf-meta element-hidden"></span><div class="field field-name-comment-body field-type-text-long field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p>NuBe here. How would I put these lines in a Python script<br>
+Thanks in advance for any help.</p>
+</div></div></div>  </div>
+
+  <ul class="links inline"><li class="comment-reply first last"><a href="http://www.jeffgeerling.com/comment/reply/2512/3164">reply</a></li>
+</ul></div>
+</div><a id="comment-3255"></a>
+<div class="comment comment-by-anonymous clearfix" about="/comment/3255#comment-3255" typeof="sioc:Post sioct:Comment">
+  
+  <div class="submitted">
+    <span property="dc:date dc:created" content="2016-03-16T15:58:31-05:00" datatype="xsd:dateTime" rel="sioc:has_creator"><span class="username" xml:lang="" typeof="sioc:UserAccount" property="foaf:name" datatype="">Max</span> – <a href="http://www.jeffgeerling.com/comment/3255#comment-3255" class="permalink" rel="bookmark">6 months ago</a></span>  </div>
+
+  <div class="content">
+    <span rel="sioc:reply_of" resource="/blogs/jeff-geerling/controlling-pwr-act-leds-raspberry-pi" class="rdf-meta element-hidden"></span><div class="field field-name-comment-body field-type-text-long field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p>Hey
+ Jeff, great article.  I've got a question, though- is 
+sys/class/leds/led1 only defined for the model 2 B?  I've tried it on a 
+B+, and sys/class/leds only contains led0.  I don't have access to a 2 B
+ at the moment to check...</p>
+</div></div></div>  </div>
+
+  <ul class="links inline"><li class="comment-reply first last"><a href="http://www.jeffgeerling.com/comment/reply/2512/3255">reply</a></li>
+</ul></div>
+
+<div class="indented"><a id="comment-3256"></a>
+<div class="comment comment-by-node-author clearfix" about="/comment/3256#comment-3256" typeof="sioc:Post sioct:Comment">
+  
+  <div class="submitted">
+    <span property="dc:date dc:created" content="2016-03-16T16:10:58-05:00" datatype="xsd:dateTime" rel="sioc:has_creator"><span class="username" xml:lang="" about="/users/jeff-geerling" typeof="sioc:UserAccount" property="foaf:name" datatype="">Jeff Geerling</span> – <a href="http://www.jeffgeerling.com/comment/3256#comment-3256" class="permalink" rel="bookmark">6 months ago</a></span>  </div>
+
+  <div class="content">
+    <span rel="sioc:reply_of" resource="/blogs/jeff-geerling/controlling-pwr-act-leds-raspberry-pi" class="rdf-meta element-hidden"></span><span rel="sioc:reply_of" resource="/comment/3255#comment-3255" class="rdf-meta element-hidden"></span><div class="field field-name-comment-body field-type-text-long field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p>Could be... I don't have my B+ anymore to test with, though on a Pi 3 it's the same—no <code>led1</code>, just <code>led0</code> which is the green ACT LED.</p>
+</div></div></div>  </div>
+
+  <ul class="links inline"><li class="comment-reply first last"><a href="http://www.jeffgeerling.com/comment/reply/2512/3256">reply</a></li>
+</ul></div>
+</div><a id="comment-3315"></a>
+<div class="comment comment-by-anonymous clearfix" about="/comment/3315#comment-3315" typeof="sioc:Post sioct:Comment">
+  
+  <div class="submitted">
+    <span property="dc:date dc:created" content="2016-03-25T14:42:51-05:00" datatype="xsd:dateTime" rel="sioc:has_creator"><span class="username" xml:lang="" typeof="sioc:UserAccount" property="foaf:name" datatype="">Kris</span> – <a href="http://www.jeffgeerling.com/comment/3315#comment-3315" class="permalink" rel="bookmark">6 months ago</a></span>  </div>
+
+  <div class="content">
+    <span rel="sioc:reply_of" resource="/blogs/jeff-geerling/controlling-pwr-act-leds-raspberry-pi" class="rdf-meta element-hidden"></span><div class="field field-name-comment-body field-type-text-long field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p>Great article, Worked great on my PI2 but for some reason not on the PI3. But have to figure it out.</p>
+</div></div></div>  </div>
+
+  <ul class="links inline"><li class="comment-reply first last"><a href="http://www.jeffgeerling.com/comment/reply/2512/3315">reply</a></li>
+</ul></div>
+
+<div class="indented"><a id="comment-3316"></a>
+<div class="comment comment-by-node-author clearfix" about="/comment/3316#comment-3316" typeof="sioc:Post sioct:Comment">
+  
+  <div class="submitted">
+    <span property="dc:date dc:created" content="2016-03-25T15:07:21-05:00" datatype="xsd:dateTime" rel="sioc:has_creator"><span class="username" xml:lang="" about="/users/jeff-geerling" typeof="sioc:UserAccount" property="foaf:name" datatype="">Jeff Geerling</span> – <a href="http://www.jeffgeerling.com/comment/3316#comment-3316" class="permalink" rel="bookmark">6 months ago</a></span>  </div>
+
+  <div class="content">
+    <span rel="sioc:reply_of" resource="/blogs/jeff-geerling/controlling-pwr-act-leds-raspberry-pi" class="rdf-meta element-hidden"></span><span rel="sioc:reply_of" resource="/comment/3315#comment-3315" class="rdf-meta element-hidden"></span><div class="field field-name-comment-body field-type-text-long field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p>It seems like you can only control one of the two LEDs on the Pi 3. I'm looking into this.</p>
+</div></div></div>  </div>
+
+  <ul class="links inline"><li class="comment-reply first last"><a href="http://www.jeffgeerling.com/comment/reply/2512/3316">reply</a></li>
+</ul></div>
+
+<div class="indented"><a id="comment-3357"></a>
+<div class="comment comment-by-anonymous clearfix" about="/comment/3357#comment-3357" typeof="sioc:Post sioct:Comment">
+  
+  <div class="submitted">
+    <span property="dc:date dc:created" content="2016-03-31T13:59:26-05:00" datatype="xsd:dateTime" rel="sioc:has_creator"><span class="username" xml:lang="" typeof="sioc:UserAccount" property="foaf:name" datatype="">Antimidas</span> – <a href="http://www.jeffgeerling.com/comment/3357#comment-3357" class="permalink" rel="bookmark">5 months ago</a></span>  </div>
+
+  <div class="content">
+    <span rel="sioc:reply_of" resource="/blogs/jeff-geerling/controlling-pwr-act-leds-raspberry-pi" class="rdf-meta element-hidden"></span><span rel="sioc:reply_of" resource="/comment/3316#comment-3316" class="rdf-meta element-hidden"></span><div class="field field-name-comment-body field-type-text-long field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p>The
+ interesting thing for me was that the Pi3 kept the red light off with 
+OpenELEC, but with Raspbian, it stays on.  Once I connected the 7" touch
+ screen to the OpenELEC Pi, the red light stays on.  Not sure if this 
+helps to determine a setting.  It would sure be nice to keep the lights 
+off on my surveillance devices.</p>
+</div></div></div>  </div>
+
+  <ul class="links inline"><li class="comment-reply first last"><a href="http://www.jeffgeerling.com/comment/reply/2512/3357">reply</a></li>
+</ul></div>
+
+<div class="indented"><a id="comment-3364"></a>
+<div class="comment comment-by-anonymous clearfix" about="/comment/3364#comment-3364" typeof="sioc:Post sioct:Comment">
+  
+  <div class="submitted">
+    <span property="dc:date dc:created" content="2016-04-02T09:10:09-05:00" datatype="xsd:dateTime" rel="sioc:has_creator"><span class="username" xml:lang="" typeof="sioc:UserAccount" property="foaf:name" datatype="">KnightAzul</span> – <a href="http://www.jeffgeerling.com/comment/3364#comment-3364" class="permalink" rel="bookmark">5 months ago</a></span>  </div>
+
+  <div class="content">
+    <span rel="sioc:reply_of" resource="/blogs/jeff-geerling/controlling-pwr-act-leds-raspberry-pi" class="rdf-meta element-hidden"></span><span rel="sioc:reply_of" resource="/comment/3357#comment-3357" class="rdf-meta element-hidden"></span><div class="field field-name-comment-body field-type-text-long field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p>I
+ have OpenELEC 6.0.3 installed on my Pi3 and only the red power light 
+seems to work. It is solid red all the time the power is on. The green 
+activity light shows no signs of life either during boot or during a 
+long file transfer to the SD card in the Pi3 :(</p>
+<p>I read somewhere that: On the Pi3 the activity and power LED are no 
+longer connected to Pi (0-53) GPIO. They are connected to an internal 
+I2C GPIO port expander. But this doesn't mean that much to me!!</p>
+<p>Any more info and how to get the green activity light on OpenELEC 6.0.3 would be greatly appreciated.</p>
+</div></div></div>  </div>
+
+  <ul class="links inline"><li class="comment-reply first last"><a href="http://www.jeffgeerling.com/comment/reply/2512/3364">reply</a></li>
+</ul></div>
+
+<div class="indented"><a id="comment-3365"></a>
+<div class="comment comment-by-anonymous clearfix" about="/comment/3365#comment-3365" typeof="sioc:Post sioct:Comment">
+  
+  <div class="submitted">
+    <span property="dc:date dc:created" content="2016-04-02T11:52:14-05:00" datatype="xsd:dateTime" rel="sioc:has_creator"><span class="username" xml:lang="" typeof="sioc:UserAccount" property="foaf:name" datatype="">KnightAzul</span> – <a href="http://www.jeffgeerling.com/comment/3365#comment-3365" class="permalink" rel="bookmark">5 months ago</a></span>  </div>
+
+  <div class="content">
+    <span rel="sioc:reply_of" resource="/blogs/jeff-geerling/controlling-pwr-act-leds-raspberry-pi" class="rdf-meta element-hidden"></span><span rel="sioc:reply_of" resource="/comment/3364#comment-3364" class="rdf-meta element-hidden"></span><div class="field field-name-comment-body field-type-text-long field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p>I
+ just noticed that if I shut down my Pi3 OpenELEC 6.0.3 through Kodi GUI
+ or execute poweroff command in SSH then after it powers down the green 
+activity light is solid green until I boot my Pi3 again when it goes 
+out.</p>
+</div></div></div>  </div>
+
+  <ul class="links inline"><li class="comment-reply first last"><a href="http://www.jeffgeerling.com/comment/reply/2512/3365">reply</a></li>
+</ul></div>
+</div></div></div></div><a id="comment-3377"></a>
+<div class="comment comment-by-anonymous clearfix" about="/comment/3377#comment-3377" typeof="sioc:Post sioct:Comment">
+  
+  <div class="submitted">
+    <span property="dc:date dc:created" content="2016-04-06T16:34:56-05:00" datatype="xsd:dateTime" rel="sioc:has_creator"><span class="username" xml:lang="" typeof="sioc:UserAccount" property="foaf:name" datatype="">Matthew Whited</span> – <a href="http://www.jeffgeerling.com/comment/3377#comment-3377" class="permalink" rel="bookmark">5 months ago</a></span>  </div>
+
+  <div class="content">
+    <span rel="sioc:reply_of" resource="/blogs/jeff-geerling/controlling-pwr-act-leds-raspberry-pi" class="rdf-meta element-hidden"></span><div class="field field-name-comment-body field-type-text-long field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p>Does
+ anyone know the GPIO # for the ACT LED on the Pi Zero? I'm trying to 
+make it flash to show when my script is running, but I can't seem to 
+find the right # to control it.</p>
+</div></div></div>  </div>
+
+  <ul class="links inline"><li class="comment-reply first last"><a href="http://www.jeffgeerling.com/comment/reply/2512/3377">reply</a></li>
+</ul></div>
+
+<div class="indented"><a id="comment-3583"></a>
+<div class="comment comment-by-anonymous clearfix" about="/comment/3583#comment-3583" typeof="sioc:Post sioct:Comment">
+  
+  <div class="submitted">
+    <span property="dc:date dc:created" content="2016-05-09T18:47:55-05:00" datatype="xsd:dateTime" rel="sioc:has_creator"><span class="username" xml:lang="" typeof="sioc:UserAccount" property="foaf:name" datatype="">tec</span> – <a href="http://www.jeffgeerling.com/comment/3583#comment-3583" class="permalink" rel="bookmark">4 months ago</a></span>  </div>
+
+  <div class="content">
+    <span rel="sioc:reply_of" resource="/blogs/jeff-geerling/controlling-pwr-act-leds-raspberry-pi" class="rdf-meta element-hidden"></span><span rel="sioc:reply_of" resource="/comment/3377#comment-3377" class="rdf-meta element-hidden"></span><div class="field field-name-comment-body field-type-text-long field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p>as described above... no need of GPIO here.</p>
+<p>Set the Pi Zero ACT LED trigger to 'none':<br>
+echo none | sudo tee /sys/class/leds/led0/trigger</p>
+<p>Turn off the Pi Zero ACT LED:<br>
+echo 1 | sudo tee /sys/class/leds/led0/brightness</p>
+<p>Turn on the Pi Zero ACT LED:<br>
+echo 0 | sudo tee /sys/class/leds/led0/brightness</p>
+</div></div></div>  </div>
+
+  <ul class="links inline"><li class="comment-reply first last"><a href="http://www.jeffgeerling.com/comment/reply/2512/3583">reply</a></li>
+</ul></div>
+</div>
+  </section> <!-- /#comments -->
+
+</article> <!-- /.node -->
+  </div> <!-- /.content -->
+
+</div> <!-- /.block -->
+  </div>
+          </div></div> <!-- /.section, /#content -->
+
+          <nav id="navigation" role="navigation"><div class="section">
+        <h2 class="element-invisible">Main menu</h2><ul id="main-menu" class="links clearfix"><li class="menu-632 first"><a href="http://www.jeffgeerling.com/blog" title="">Blog</a></li>
+<li class="menu-629"><a href="http://www.jeffgeerling.com/projects" title="">Projects</a></li>
+<li class="menu-630 last"><a href="http://www.jeffgeerling.com/about">About</a></li>
+</ul>              </div></nav> <!-- /.section, /#navigation -->
+    
+    
+    
+  </div></div> <!-- /#main, /#main-wrapper -->
+  <footer id="footer" role="contentinfo"><div class="section">
+      <div class="region region-footer">
+    <div id="block-search-api-page-search" class="block block-search-api-page">
+
+      
+  <div class="content">
+    <form action="/blogs/jeff-geerling/controlling-pwr-act-leds-raspberry-pi" method="post" id="search-api-page-search-form-search" accept-charset="UTF-8"><div><div class="form-item form-type-textfield form-item-keys-1">
+  <label class="element-invisible" for="edit-keys-1">Enter your keywords </label>
+ <input placeholder="Enter your keywords" id="edit-keys-1" name="keys_1" size="15" maxlength="128" class="form-text" type="text">
+</div>
+<input name="id" value="1" type="hidden">
+<input id="edit-submit-1" name="op" value="Search" class="form-submit" type="submit"><input name="form_build_id" value="form-mwTnNS_27BIbKkMVC2Ur3xSY5eWDw-4sLWURpPhysmY" type="hidden">
+<input name="form_id" value="search_api_page_search_form_search" type="hidden">
+</div></form>  </div> <!-- /.content -->
+
+</div> <!-- /.block -->
+<div id="block-block-2" class="block block-block">
+
+      
+  <div class="content">
+    <style>
+<!--/*--><![CDATA[/* ><!--*/
+
+@media screen and (max-width: 600px) {
+  .family-crest {
+    width: 55px;
+    height: auto;
+  }
+}
+
+/*--><!]]>*/
+</style><p><img src="Controlling%20PWR%20and%20ACT%20LEDs%20on%20the%20Raspberry%20Pi%20%7C%20Jeff%20Geerling_files/geerling-family-crest.svg" alt="Geerling Family Crest" class="family-crest" height="65" width="55"><br>
+All content copyright Jeff Geerling. <a href="#top">Top of page</a>.</p>
+  </div> <!-- /.content -->
+
+</div> <!-- /.block -->
+  </div>
+  </div></footer> <!-- /.section, /#footer -->
+
+</div></div> <!-- /#page, /#page-wrapper -->
+  
+
+<div style="display: none;" id="cboxOverlay"></div><div style="display: none;" tabindex="-1" role="dialog" class="" id="colorbox"><div id="cboxWrapper"><div><div style="float: left;" id="cboxTopLeft"></div><div style="float: left;" id="cboxTopCenter"></div><div style="float: left;" id="cboxTopRight"></div></div><div style="clear: left;"><div style="float: left;" id="cboxMiddleLeft"></div><div style="float: left;" id="cboxContent"><div style="float: left;" id="cboxTitle"></div><div style="float: left;" id="cboxCurrent"></div><button id="cboxPrevious" type="button"></button><button id="cboxNext" type="button"></button><button id="cboxSlideshow"></button><div style="float: left;" id="cboxLoadingOverlay"></div><div style="float: left;" id="cboxLoadingGraphic"></div></div><div style="float: left;" id="cboxMiddleRight"></div></div><div style="clear: left;"><div style="float: left;" id="cboxBottomLeft"></div><div style="float: left;" id="cboxBottomCenter"></div><div style="float: left;" id="cboxBottomRight"></div></div></div><div style="position: absolute; width: 9999px; visibility: hidden; display: none; max-width: none;"></div></div></body></html>

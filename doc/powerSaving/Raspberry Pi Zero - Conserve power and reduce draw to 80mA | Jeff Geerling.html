@@ -1,0 +1,637 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML+RDFa 1.1//EN">
+<html class="js" dir="ltr" version="HTML+RDFa 1.1" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/terms/" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:og="http://ogp.me/ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:sioc="http://rdfs.org/sioc/ns#" xmlns:sioct="http://rdfs.org/sioc/types#" xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:xsd="http://www.w3.org/2001/XMLSchema#" lang="en"><head profile="http://www.w3.org/1999/xhtml/vocab">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+  <!--[if IE]><![endif]-->
+<meta charset="utf-8">
+<link rel="dns-prefetch" href="http://www.google-analytics.com/">
+<link rel="dns-prefetch" href="http://stats.g.doubleclick.net/">
+<meta name="Generator" content="Drupal 7 (http://drupal.org)">
+<link rel="canonical" href="http://www.jeffgeerling.com/blogs/jeff-geerling/raspberry-pi-zero-conserve-energy">
+<link rel="shortlink" href="http://www.jeffgeerling.com/node/2511">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="shortcut icon" href="http://www.jeffgeerling.com/favicon.ico" type="image/vnd.microsoft.icon">
+  <title>Raspberry Pi Zero - Conserve power and reduce draw to 80mA | Jeff Geerling</title>
+  <link type="text/css" rel="stylesheet" href="Raspberry%20Pi%20Zero%20-%20Conserve%20power%20and%20reduce%20draw%20to%2080mA%20%7C%20Jeff%20Geerling_files/css__BJ6Ou6QsBRtnFTmxaakamOIS8n4QswDP2XnnZ1sxtaM__NBuvkP6eIn.css" media="all">
+<link type="text/css" rel="stylesheet" href="Raspberry%20Pi%20Zero%20-%20Conserve%20power%20and%20reduce%20draw%20to%2080mA%20%7C%20Jeff%20Geerling_files/css__rQ1alF2wtRJheC4MwbTGQHhDW1u3JWtM73MeXej8ZCI__fhvJVXXQ_0.css" media="screen">
+<link type="text/css" rel="stylesheet" href="Raspberry%20Pi%20Zero%20-%20Conserve%20power%20and%20reduce%20draw%20to%2080mA%20%7C%20Jeff%20Geerling_files/css__ONfPAI4O6qwkOjA3Y45skLL9317UKloyGB-P2dg7XzA__wSdLKf_U-o.css" media="all">
+<link type="text/css" rel="stylesheet" href="Raspberry%20Pi%20Zero%20-%20Conserve%20power%20and%20reduce%20draw%20to%2080mA%20%7C%20Jeff%20Geerling_files/css__cBrSec9yPwLcvH5ZGbsae2zjr1nPozYnZ2-ygm1FNUQ__besQRbGhHN.css" media="screen">
+<link type="text/css" rel="stylesheet" href="Raspberry%20Pi%20Zero%20-%20Conserve%20power%20and%20reduce%20draw%20to%2080mA%20%7C%20Jeff%20Geerling_files/css__QAw34ynQZBfNWJeyPl9ACfjQ3N2d0xwpdVcaBzLVMAA__8iH9n02Qn5.css" media="all">
+  <script src="Raspberry%20Pi%20Zero%20-%20Conserve%20power%20and%20reduce%20draw%20to%2080mA%20%7C%20Jeff%20Geerling_files/analytics.js" async=""></script><script type="text/javascript" src="Raspberry%20Pi%20Zero%20-%20Conserve%20power%20and%20reduce%20draw%20to%2080mA%20%7C%20Jeff%20Geerling_files/js__QKbGtKF7i376uqxn6MNh6Q6rTNHUwBTy6_40RtOQwr0__LbcU8Gqhf6g9.js"></script>
+<script type="text/javascript">
+<!--//--><![CDATA[//><!--
+(function(e,o,c,s,t,n,a){e['GoogleAnalyticsObject']=t;e[t]=e[t]||function(){(e[t].q=e[t].q||[]).push(arguments)},e[t].l=1*new Date();n=o.createElement(c),a=o.getElementsByTagName(c)[0];n.async=1;n.src=s;a.parentNode.insertBefore(n,a)})(window,document,'script','http://www.jeffgeerling.com/sites/jeffgeerling.com/files/googleanalytics/analytics.js?ocl6ks','ga');ga('create','UA-2478239-27',{'cookieDomain':'auto'});ga('send','pageview');
+//--><!]]>
+</script>
+<script type="text/javascript">
+<!--//--><![CDATA[//><!--
+;jQuery.extend(Drupal.settings,{"basePath":"\/","pathPrefix":"","ajaxPageState":{"theme":"jeffgeerling","theme_token":"yRZcZcW7fyVBwkzh1_xRMuChcdodDxabszVAuF4XbsM","css":{"modules\/system\/system.base.css":1,"modules\/system\/system.menus.css":1,"modules\/system\/system.messages.css":1,"modules\/system\/system.theme.css":1,"sites\/all\/modules\/codefilter\/codefilter.css":1,"modules\/comment\/comment.css":1,"sites\/all\/modules\/date\/date_api\/date.css":1,"sites\/all\/modules\/date\/date_popup\/themes\/datepicker.1.7.css":1,"modules\/field\/theme\/field.css":1,"sites\/all\/modules\/mollom\/mollom.css":1,"modules\/node\/node.css":1,"modules\/user\/user.css":1,"sites\/all\/modules\/views\/css\/views.css":1,"sites\/all\/modules\/ckeditor\/css\/ckeditor.css":1,"sites\/all\/modules\/colorbox\/styles\/default\/colorbox_style.css":1,"sites\/all\/modules\/ctools\/css\/ctools.css":1,"sites\/jeffgeerling.com\/themes\/jeffgeerling\/css\/blog.css":1,"sites\/all\/themes\/boron\/css\/layout.css":1,"sites\/jeffgeerling.com\/themes\/jeffgeerling\/css\/style.css":1},"js":{"misc\/jquery.js":1,"misc\/jquery.once.js":1,"misc\/drupal.js":1,"sites\/all\/modules\/codefilter\/codefilter.js":1,"sites\/all\/libraries\/colorbox\/jquery.colorbox-min.js":1,"sites\/all\/modules\/colorbox\/js\/colorbox.js":1,"sites\/all\/modules\/colorbox\/styles\/default\/colorbox_style.js":1,"sites\/all\/modules\/google_analytics\/googleanalytics.js":1}},"colorbox":{"opacity":"0.85","current":"{current} of {total}","previous":"\u00ab Prev","next":"Next \u00bb","close":"Close","maxWidth":"98%","maxHeight":"98%","fixed":true,"mobiledetect":true,"mobiledevicewidth":"480px"},"googleanalytics":{"trackOutbound":1,"trackMailto":1,"trackDownload":1,"trackDownloadExtensions":"7z|aac|arc|arj|asf|asx|avi|bin|csv|doc(x|m)?|dot(x|m)?|exe|flv|gif|gz|gzip|hqx|jar|jpe?g|js|mp(2|3|4|e?g)|mov(ie)?|msi|msp|pdf|phps|png|ppt(x|m)?|pot(x|m)?|pps(x|m)?|ppam|sld(x|m)?|thmx|qtm?|ra(m|r)?|sea|sit|tar|tgz|torrent|txt|wav|wma|wmv|wpd|xls(x|m|b)?|xlt(x|m)|xlam|xml|z|zip","trackColorbox":1},"urlIsAjaxTrusted":{"\/blogs\/jeff-geerling\/raspberry-pi-zero-conserve-energy":true}});
+//--><!]]>
+</script>
+  
+<!--[if lt IE 9]>
+<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+</head>
+<body class="html not-front not-logged-in no-sidebars page-node page-node- page-node-2511 node-type-blog-post">
+
+    
+<div id="page-wrapper"><div id="page">
+
+  <header id="header" role="banner"><div class="section clearfix">
+
+    
+          <div id="name-and-slogan">
+                              <div id="site-name"><strong>
+              <a href="http://www.jeffgeerling.com/" title="Home" rel="home"><span>Jeff Geerling</span></a>
+            </strong></div>
+                  
+              </div> <!-- /#name-and-slogan -->
+    
+    
+          <p id="skip-link"><em><a href="#navigation">Skip to Navigation</a></em> ↓</p>
+    
+  </div></header> <!-- /.section, /#header -->
+
+
+  <div id="main-wrapper"><div id="main" class="clearfix with-navigation">
+
+    <div id="content" class="column" role="main"><div class="section">
+                                      <h1 class="title" id="page-title">Raspberry Pi Zero - Conserve power and reduce draw to 80mA</h1>
+                          <div class="tabs"></div>
+                          <div class="region region-content">
+    <div id="block-system-main" class="block block-system">
+
+      
+  <div class="content">
+    <article id="node-2511" class="node node-blog-post node-promoted clearfix" about="/blogs/jeff-geerling/raspberry-pi-zero-conserve-energy" typeof="sioc:Item foaf:Document">
+
+      <header>
+      
+                  <span property="dc:title" content="Raspberry Pi Zero - Conserve power and reduce draw to 80mA" class="rdf-meta element-hidden"></span><span property="sioc:num_replies" content="26" datatype="xsd:integer" class="rdf-meta element-hidden"></span>
+              <p class="submitted">
+          <span property="dc:date dc:created" content="2015-11-29T20:55:13-06:00" datatype="xsd:dateTime" rel="sioc:has_creator">November 29, 2015</span>        </p>
+          </header>
+  
+  <div class="content">
+    <div class="field field-name-body field-type-text-with-summary field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p>[<strong>Update 2015-12-01</strong>: I bought a <a href="http://www.amazon.com/gp/product/B013FANC9W">PowerJive USB power meter</a>
+ and re-tested everything, and came up with ~80 mA instead of the ~30 mA
+ reported by the Charger Doctor that I was using prior. This seems to be
+ more in line with the results others were measuring with <em>much</em> more expensive/accurate meters in the Raspberry Pi forums: <a href="https://www.raspberrypi.org/forums/viewtopic.php?f=63&amp;t=127210&amp;p=851245#p851245">Raspberry Pi Zero power consumption</a>.
+ I've updated the numbers in the post below to reflect this change. 
+Seems the Pi Zero is only incrementally better than the A+—still 
+excellent news, but not nearly as amazing as I originally thought :(]</p>
+<p>Yesterday my post <a href="http://www.jeffgeerling.com/blogs/jeff-geerling/raspberry-pi-zero-power">comparing the Raspberry Pi Zero's power consumption to other Pis</a>
+ hit the Hacker News front page, and commenters there offered a few 
+suggestions that could be used to reduce the power draw even further, 
+including disabling HDMI, changing the overclock settings, and futzing 
+with the lone ACT LED.</p>
+<p style="text-align: center;"><img src="Raspberry%20Pi%20Zero%20-%20Conserve%20power%20and%20reduce%20draw%20to%2080mA%20%7C%20Jeff%20Geerling_files/pi-zero-new.jpg" alt="Raspberry Pi Zero - new with adapter cable" height="404" width="450"></p>
+<p>I decided to spend some time testing these theoretical power-saving 
+techniques on my Pi Zero, and here are some of the tips I've come up 
+with (note that these techniques work with any Pi, not just the Zero):</p>
+<table border="0"><thead><tr><th>Technique</th>
+<th>Power Saved</th>
+<th>Notes</th>
+</tr></thead><tbody><tr><td width="20%">Disable HDMI</td>
+<td width="20%">25mA</td>
+<td width="60%">If you're running a headless Raspberry Pi, there's no 
+need to power the display circuitry, and you can save a little power by 
+running <code>/usr/bin/tvservice -o</code> (<code>-p</code> to re-enable). Add the line to <code>/etc/rc.local</code> to disable HDMI on boot.</td>
+</tr><tr><td>Disable LEDs</td>
+<td>5mA per LED</td>
+<td>If you don't care to waste 5+ mA for each LED on your Raspberry Pi, you can <a href="http://www.jeffgeerling.com/blogs/jeff-geerling/controlling-pwr-act-leds-raspberry-pi">disable the ACT LED</a> on the Pi Zero.</td>
+</tr><tr><td>Minimize Accessories</td>
+<td>50+ mA</td>
+<td>Every active device you plug into the Raspberry Pi will consume some
+ energy; even a mouse or a simple keyboard will eat up 50-100 mA! If you
+ don't need it, don't plug it in.</td>
+</tr><tr><td>Be Discerning with Software</td>
+<td>100+ mA</td>
+<td>If you're running five or six daemons on your Raspberry Pi, those 
+daemons can waste energy as they cause the processor (or other 
+subsystems) to wake and use extra power frequently. Unless you 
+absolutely need something running, don't install it. Also consider using
+ more power-efficient applications that don't require a large stack of 
+software (e.g. LAMP/LEMP or LEMR) to run.</td>
+</tr></tbody></table><p>A few other seemingly obvious optimizations, 
+like under-clocking the CPU, don't make a discernible impact on idle 
+power consumption, and make a minimal difference in any real-world 
+projects that I've measured. Do you have any other sneaky techniques to 
+steal back a few mA?</p>
+<p>For the Raspberry Pi Zero, I used all the above techniques, and here were the results:</p>
+<ol><li>Raspbian Jessie Lite nothing besides microSD card, and ACT LED on: <strong>100 mA @ idle</strong></li>
+<li>Same as #1, but disable ACT LED and disable HDMI: <strong>80 mA @ idle</strong></li>
+<li>Same as #1, but plug in a display, keyboard, trackpad, and WiFi adapter: <strong>310 mA @ idle</strong>(!!)</li>
+</ol><p>As you can see, it pays to conserve—if you don't need it, cut it
+ away to save power! With the Pi Zero and these power saving techniques,
+ you can extract a <em>lot</em> of usage even in low-power scenarios, like solar energy or running off a battery.</p>
+<p>See related:</p>
+<ul><li><a href="http://www.jeffgeerling.com/blogs/jeff-geerling/raspberry-pi-zero-power">Raspberry Pi Zero - Power Consumption Comparison</a></li>
+</ul></div></div></div>  </div> <!-- /.content -->
+
+      <div class="region region-node-bottom">
+      <section id="block-views-related-content-block" class="block block-views">
+
+        <h2>Further reading</h2>
+    
+  <div class="content">
+    <div class="view view-related-content view-id-related_content view-display-id-block view-dom-id-54b54bcca5eaab0bbe3b08e4f252c01d">
+        
+  
+  
+      <div class="view-content">
+      <div class="item-list">    <ul>          <li class="views-row views-row-1 views-row-odd views-row-first">  
+  <div class="views-field views-field-title">        <span class="field-content"><a href="http://www.jeffgeerling.com/blogs/jeff-geerling/raspberry-pi-zero-power">Raspberry Pi Zero - Power Consumption Comparison</a></span>  </div></li>
+          <li class="views-row views-row-2 views-row-even">  
+  <div class="views-field views-field-title">        <span class="field-content"><a href="http://www.jeffgeerling.com/blogs/jeff-geerling/controlling-pwr-act-leds-raspberry-pi">Controlling PWR and ACT LEDs on the Raspberry Pi</a></span>  </div></li>
+          <li class="views-row views-row-3 views-row-odd views-row-last">  
+  <div class="views-field views-field-title">        <span class="field-content"><a href="http://www.jeffgeerling.com/blog/2016/review-raspberry-pi-model-3-b-benchmarks-vs-pi-2">Review: Raspberry Pi model 3 B, with Benchmarks vs Pi 2</a></span>  </div></li>
+      </ul></div>    </div>
+  
+  
+  
+  
+  
+  
+</div>  </div> <!-- /.content -->
+
+</section> <!-- /.block -->
+    </div>
+  
+      <footer>
+      <div class="field field-name-field-tags field-type-taxonomy-term-reference field-label-hidden"><div class="field-items"><div class="field-item even"><a href="http://www.jeffgeerling.com/category/raspberry-pi" typeof="skos:Concept" property="rdfs:label skos:prefLabel" datatype="">raspberry pi</a></div><div class="field-item odd"><a href="http://www.jeffgeerling.com/category/tags/power" typeof="skos:Concept" property="rdfs:label skos:prefLabel" datatype="">power</a></div><div class="field-item even"><a href="http://www.jeffgeerling.com/category/consumption" typeof="skos:Concept" property="rdfs:label skos:prefLabel" datatype="">consumption</a></div><div class="field-item odd"><a href="http://www.jeffgeerling.com/category/tutorial-tags/energy-efficiency" typeof="skos:Concept" property="rdfs:label skos:prefLabel" datatype="">energy efficiency</a></div></div></div>      <ul class="links inline"><li class="comment-add first last"><a href="http://www.jeffgeerling.com/comment/reply/2511#comment-form" title="Share your thoughts and opinions related to this posting.">Add new comment</a></li>
+</ul>    </footer>
+  
+  <section id="comments" class="comment-wrapper">
+          <h2 class="title">Comments</h2>
+      
+  <a id="comment-2877"></a>
+<div class="comment comment-by-anonymous clearfix" about="/comment/2877#comment-2877" typeof="sioc:Post sioct:Comment">
+  
+  <div class="submitted">
+    <span property="dc:date dc:created" content="2015-11-29T23:04:05-06:00" datatype="xsd:dateTime" rel="sioc:has_creator"><span class="username" xml:lang="" typeof="sioc:UserAccount" property="foaf:name" datatype="">bobthebuilder</span> – <a href="http://www.jeffgeerling.com/comment/2877#comment-2877" class="permalink" rel="bookmark">9 months ago</a></span>  </div>
+
+  <div class="content">
+    <span rel="sioc:reply_of" resource="/blogs/jeff-geerling/raspberry-pi-zero-conserve-energy" class="rdf-meta element-hidden"></span><div class="field field-name-comment-body field-type-text-long field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p>What a noob. Did you even enable the microsleep mode on the main IC or remove the OTG pullup?</p>
+</div></div></div>  </div>
+
+  <ul class="links inline"><li class="comment-reply first last"><a href="http://www.jeffgeerling.com/comment/reply/2511/2877">reply</a></li>
+</ul></div>
+
+<div class="indented"><a id="comment-2885"></a>
+<div class="comment comment-by-node-author clearfix" about="/comment/2885#comment-2885" typeof="sioc:Post sioct:Comment">
+  
+  <div class="submitted">
+    <span property="dc:date dc:created" content="2015-11-30T07:40:05-06:00" datatype="xsd:dateTime" rel="sioc:has_creator"><span class="username" xml:lang="" about="/users/jeff-geerling" typeof="sioc:UserAccount" property="foaf:name" datatype="">Jeff Geerling</span> – <a href="http://www.jeffgeerling.com/comment/2885#comment-2885" class="permalink" rel="bookmark">9 months ago</a></span>  </div>
+
+  <div class="content">
+    <span rel="sioc:reply_of" resource="/blogs/jeff-geerling/raspberry-pi-zero-conserve-energy" class="rdf-meta element-hidden"></span><span rel="sioc:reply_of" resource="/comment/2877#comment-2877" class="rdf-meta element-hidden"></span><div class="field field-name-comment-body field-type-text-long field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p>Care
+ to share how you do this for the benefit of this noob and all the 
+others who might come upon this article? Also, I'd rather not hack the 
+hardware if possible, unless it results in a substantial power savings.</p>
+</div></div></div>  </div>
+
+  <ul class="links inline"><li class="comment-reply first last"><a href="http://www.jeffgeerling.com/comment/reply/2511/2885">reply</a></li>
+</ul></div>
+<a id="comment-2888"></a>
+<div class="comment comment-by-anonymous clearfix" about="/comment/2888#comment-2888" typeof="sioc:Post sioct:Comment">
+  
+  <div class="submitted">
+    <span property="dc:date dc:created" content="2015-11-30T07:43:04-06:00" datatype="xsd:dateTime" rel="sioc:has_creator"><span class="username" xml:lang="" typeof="sioc:UserAccount" property="foaf:name" datatype="">wtg</span> – <a href="http://www.jeffgeerling.com/comment/2888#comment-2888" class="permalink" rel="bookmark">9 months ago</a></span>  </div>
+
+  <div class="content">
+    <span rel="sioc:reply_of" resource="/blogs/jeff-geerling/raspberry-pi-zero-conserve-energy" class="rdf-meta element-hidden"></span><span rel="sioc:reply_of" resource="/comment/2877#comment-2877" class="rdf-meta element-hidden"></span><div class="field field-name-comment-body field-type-text-long field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p>nerd</p>
+</div></div></div>  </div>
+
+  <ul class="links inline"><li class="comment-reply first last"><a href="http://www.jeffgeerling.com/comment/reply/2511/2888">reply</a></li>
+</ul></div>
+<a id="comment-2890"></a>
+<div class="comment comment-by-anonymous clearfix" about="/comment/2890#comment-2890" typeof="sioc:Post sioct:Comment">
+  
+  <div class="submitted">
+    <span property="dc:date dc:created" content="2015-11-30T09:02:08-06:00" datatype="xsd:dateTime" rel="sioc:has_creator"><span class="username" xml:lang="" typeof="sioc:UserAccount" property="foaf:name" datatype="">Anonymous</span> – <a href="http://www.jeffgeerling.com/comment/2890#comment-2890" class="permalink" rel="bookmark">9 months ago</a></span>  </div>
+
+  <div class="content">
+    <span rel="sioc:reply_of" resource="/blogs/jeff-geerling/raspberry-pi-zero-conserve-energy" class="rdf-meta element-hidden"></span><span rel="sioc:reply_of" resource="/comment/2877#comment-2877" class="rdf-meta element-hidden"></span><div class="field field-name-comment-body field-type-text-long field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p>Wow, how rude!</p>
+<p>I have my primary Net-facing server RPi running at pretty low power 
+including such things as the CPU speed governor, and I don't know what 
+you are talking about.</p>
+<p>Thus I assume that you are a troll/bully and don't actually know 
+anything useful, since if you did you'd have shared it rather than 
+waving your nether regions at us.</p>
+<p>Damon</p>
+</div></div></div>  </div>
+
+  <ul class="links inline"><li class="comment-reply first last"><a href="http://www.jeffgeerling.com/comment/reply/2511/2890">reply</a></li>
+</ul></div>
+<a id="comment-3269"></a>
+<div class="comment comment-by-anonymous clearfix" about="/comment/3269#comment-3269" typeof="sioc:Post sioct:Comment">
+  
+  <div class="submitted">
+    <span property="dc:date dc:created" content="2016-03-18T14:37:28-05:00" datatype="xsd:dateTime" rel="sioc:has_creator"><span class="username" xml:lang="" typeof="sioc:UserAccount" property="foaf:name" datatype="">Anonymous</span> – <a href="http://www.jeffgeerling.com/comment/3269#comment-3269" class="permalink" rel="bookmark">6 months ago</a></span>  </div>
+
+  <div class="content">
+    <span rel="sioc:reply_of" resource="/blogs/jeff-geerling/raspberry-pi-zero-conserve-energy" class="rdf-meta element-hidden"></span><span rel="sioc:reply_of" resource="/comment/2877#comment-2877" class="rdf-meta element-hidden"></span><div class="field field-name-comment-body field-type-text-long field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p>Reminds
+ me of this quote I came across awhile back... "Give a man a fish and 
+he'll be fed for a day. Teach a man to fish and he'll promptly forget 
+that he once didn't know and proceed to call anyone who asks a n00b and 
+flame them on the boards for being stupid."</p>
+</div></div></div>  </div>
+
+  <ul class="links inline"><li class="comment-reply first last"><a href="http://www.jeffgeerling.com/comment/reply/2511/3269">reply</a></li>
+</ul></div>
+</div><a id="comment-2879"></a>
+<div class="comment comment-by-anonymous clearfix" about="/comment/2879#comment-2879" typeof="sioc:Post sioct:Comment">
+  
+  <div class="submitted">
+    <span property="dc:date dc:created" content="2015-11-30T00:42:02-06:00" datatype="xsd:dateTime" rel="sioc:has_creator"><a href="http://workshopshed.com/" rel="nofollow foaf:page" class="username" xml:lang="" typeof="sioc:UserAccount" property="foaf:name" datatype="">Andy from Works...</a> – <a href="http://www.jeffgeerling.com/comment/2879#comment-2879" class="permalink" rel="bookmark">9 months ago</a></span>  </div>
+
+  <div class="content">
+    <span rel="sioc:reply_of" resource="/blogs/jeff-geerling/raspberry-pi-zero-conserve-energy" class="rdf-meta element-hidden"></span><div class="field field-name-comment-body field-type-text-long field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p>It's
+ also possible to sleep the board. If it was doing something like 
+monitoring and only needed to be active for 10s in every minute then 
+that's another 6x saving on power.</p>
+</div></div></div>  </div>
+
+  <ul class="links inline"><li class="comment-reply first last"><a href="http://www.jeffgeerling.com/comment/reply/2511/2879">reply</a></li>
+</ul></div>
+
+<div class="indented"><a id="comment-2886"></a>
+<div class="comment comment-by-node-author clearfix" about="/comment/2886#comment-2886" typeof="sioc:Post sioct:Comment">
+  
+  <div class="submitted">
+    <span property="dc:date dc:created" content="2015-11-30T07:41:51-06:00" datatype="xsd:dateTime" rel="sioc:has_creator"><span class="username" xml:lang="" about="/users/jeff-geerling" typeof="sioc:UserAccount" property="foaf:name" datatype="">Jeff Geerling</span> – <a href="http://www.jeffgeerling.com/comment/2886#comment-2886" class="permalink" rel="bookmark">9 months ago</a></span>  </div>
+
+  <div class="content">
+    <span rel="sioc:reply_of" resource="/blogs/jeff-geerling/raspberry-pi-zero-conserve-energy" class="rdf-meta element-hidden"></span><span rel="sioc:reply_of" resource="/comment/2879#comment-2879" class="rdf-meta element-hidden"></span><div class="field field-name-comment-body field-type-text-long field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p>I've
+ had a hard time finding reliable instructions for this process; can you
+ provide a link or how you do this and then I'll try to see what numbers
+ this can get me?</p>
+</div></div></div>  </div>
+
+  <ul class="links inline"><li class="comment-reply first last"><a href="http://www.jeffgeerling.com/comment/reply/2511/2886">reply</a></li>
+</ul></div>
+</div><a id="comment-2880"></a>
+<div class="comment comment-by-anonymous clearfix" about="/comment/2880#comment-2880" typeof="sioc:Post sioct:Comment">
+  
+  <div class="submitted">
+    <span property="dc:date dc:created" content="2015-11-30T01:48:05-06:00" datatype="xsd:dateTime" rel="sioc:has_creator"><span class="username" xml:lang="" typeof="sioc:UserAccount" property="foaf:name" datatype="">fanoush</span> – <a href="http://www.jeffgeerling.com/comment/2880#comment-2880" class="permalink" rel="bookmark">9 months ago</a></span>  </div>
+
+  <div class="content">
+    <span rel="sioc:reply_of" resource="/blogs/jeff-geerling/raspberry-pi-zero-conserve-energy" class="rdf-meta element-hidden"></span><div class="field field-name-comment-body field-type-text-long field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p>Can
+ you also measure power draw when powered on without microsd card 
+inserted and also when resetting the board via shorting the RUN pin to 
+the ground? This could hint at what is the lowest power draw of Pi Zero 
+if power management would be properly implemented by switching off the 
+ARM core when not needed. Even with old B I've seen something like 15mA 
+when held in reset <a href="https://www.raspberrypi.org/forums/viewtopic.php?f=63&amp;t=73983">https://www.raspberrypi.org/forums/viewtopic.php?f=63&amp;t=73983</a></p>
+</div></div></div>  </div>
+
+  <ul class="links inline"><li class="comment-reply first last"><a href="http://www.jeffgeerling.com/comment/reply/2511/2880">reply</a></li>
+</ul></div>
+<a id="comment-2881"></a>
+<div class="comment comment-by-anonymous clearfix" about="/comment/2881#comment-2881" typeof="sioc:Post sioct:Comment">
+  
+  <div class="submitted">
+    <span property="dc:date dc:created" content="2015-11-30T05:59:18-06:00" datatype="xsd:dateTime" rel="sioc:has_creator"><span class="username" xml:lang="" typeof="sioc:UserAccount" property="foaf:name" datatype="">Jeff</span> – <a href="http://www.jeffgeerling.com/comment/2881#comment-2881" class="permalink" rel="bookmark">9 months ago</a></span>  </div>
+
+  <div class="content">
+    <span rel="sioc:reply_of" resource="/blogs/jeff-geerling/raspberry-pi-zero-conserve-energy" class="rdf-meta element-hidden"></span><div class="field field-name-comment-body field-type-text-long field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p>how did you measure the power consumption of your pi?</p>
+</div></div></div>  </div>
+
+  <ul class="links inline"><li class="comment-reply first last"><a href="http://www.jeffgeerling.com/comment/reply/2511/2881">reply</a></li>
+</ul></div>
+
+<div class="indented"><a id="comment-2891"></a>
+<div class="comment comment-by-node-author clearfix" about="/comment/2891#comment-2891" typeof="sioc:Post sioct:Comment">
+  
+  <div class="submitted">
+    <span property="dc:date dc:created" content="2015-11-30T09:19:08-06:00" datatype="xsd:dateTime" rel="sioc:has_creator"><span class="username" xml:lang="" about="/users/jeff-geerling" typeof="sioc:UserAccount" property="foaf:name" datatype="">Jeff Geerling</span> – <a href="http://www.jeffgeerling.com/comment/2891#comment-2891" class="permalink" rel="bookmark">9 months ago</a></span>  </div>
+
+  <div class="content">
+    <span rel="sioc:reply_of" resource="/blogs/jeff-geerling/raspberry-pi-zero-conserve-energy" class="rdf-meta element-hidden"></span><span rel="sioc:reply_of" resource="/comment/2881#comment-2881" class="rdf-meta element-hidden"></span><div class="field field-name-comment-body field-type-text-long field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p>I
+ used a USB 'Charger Doctor', though I am going to be getting a better 
+USB current meter in a day or two, and will try to verify my findings 
+with it. Others using Fluke meters have found that the draw is a bit 
+higher, but I'm also going to try to get better measurements with a few 
+different meters for comparison.</p>
+</div></div></div>  </div>
+
+  <ul class="links inline"><li class="comment-reply first last"><a href="http://www.jeffgeerling.com/comment/reply/2511/2891">reply</a></li>
+</ul></div>
+</div><a id="comment-2882"></a>
+<div class="comment comment-by-anonymous clearfix" about="/comment/2882#comment-2882" typeof="sioc:Post sioct:Comment">
+  
+  <div class="submitted">
+    <span property="dc:date dc:created" content="2015-11-30T06:43:18-06:00" datatype="xsd:dateTime" rel="sioc:has_creator"><span class="username" xml:lang="" typeof="sioc:UserAccount" property="foaf:name" datatype="">Evilkitty</span> – <a href="http://www.jeffgeerling.com/comment/2882#comment-2882" class="permalink" rel="bookmark">9 months ago</a></span>  </div>
+
+  <div class="content">
+    <span rel="sioc:reply_of" resource="/blogs/jeff-geerling/raspberry-pi-zero-conserve-energy" class="rdf-meta element-hidden"></span><div class="field field-name-comment-body field-type-text-long field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p>*disables HDMI*<br>
+under software when writing python scripts like this, put sleep statement in there to not run the CPU as fast as it can<br>
+while (GPIO.input(RCpin) == GPIO.LOW):<br>
+  reading += 1</p>
+</div></div></div>  </div>
+
+  <ul class="links inline"><li class="comment-reply first last"><a href="http://www.jeffgeerling.com/comment/reply/2511/2882">reply</a></li>
+</ul></div>
+<a id="comment-2883"></a>
+<div class="comment comment-by-anonymous clearfix" about="/comment/2883#comment-2883" typeof="sioc:Post sioct:Comment">
+  
+  <div class="submitted">
+    <span property="dc:date dc:created" content="2015-11-30T06:46:55-06:00" datatype="xsd:dateTime" rel="sioc:has_creator"><a href="http://www.earth.org.uk/" rel="nofollow foaf:page" class="username" xml:lang="" typeof="sioc:UserAccount" property="foaf:name" datatype="">Damon Hart-Davis</a> – <a href="http://www.jeffgeerling.com/comment/2883#comment-2883" class="permalink" rel="bookmark">9 months ago</a></span>  </div>
+
+  <div class="content">
+    <span rel="sioc:reply_of" resource="/blogs/jeff-geerling/raspberry-pi-zero-conserve-energy" class="rdf-meta element-hidden"></span><div class="field field-name-comment-body field-type-text-long field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p>I do indeed minimise a RPI's consumption and run it from off-grid solar...</p>
+<p><a href="http://www.earth.org.uk/note-on-Raspberry-Pi-setup.html">http://www.earth.org.uk/note-on-Raspberry-Pi-setup.html</a></p>
+<p>Rgds</p>
+<p>Damon</p>
+</div></div></div>  </div>
+
+  <ul class="links inline"><li class="comment-reply first last"><a href="http://www.jeffgeerling.com/comment/reply/2511/2883">reply</a></li>
+</ul></div>
+
+<div class="indented"><a id="comment-2887"></a>
+<div class="comment comment-by-node-author clearfix" about="/comment/2887#comment-2887" typeof="sioc:Post sioct:Comment">
+  
+  <div class="submitted">
+    <span property="dc:date dc:created" content="2015-11-30T07:42:48-06:00" datatype="xsd:dateTime" rel="sioc:has_creator"><span class="username" xml:lang="" about="/users/jeff-geerling" typeof="sioc:UserAccount" property="foaf:name" datatype="">Jeff Geerling</span> – <a href="http://www.jeffgeerling.com/comment/2887#comment-2887" class="permalink" rel="bookmark">9 months ago</a></span>  </div>
+
+  <div class="content">
+    <span rel="sioc:reply_of" resource="/blogs/jeff-geerling/raspberry-pi-zero-conserve-energy" class="rdf-meta element-hidden"></span><span rel="sioc:reply_of" resource="/comment/2883#comment-2883" class="rdf-meta element-hidden"></span><div class="field field-name-comment-body field-type-text-long field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p>That's awesome, thanks for sharing!</p>
+</div></div></div>  </div>
+
+  <ul class="links inline"><li class="comment-reply first last"><a href="http://www.jeffgeerling.com/comment/reply/2511/2887">reply</a></li>
+</ul></div>
+</div><a id="comment-2884"></a>
+<div class="comment comment-by-anonymous clearfix" about="/comment/2884#comment-2884" typeof="sioc:Post sioct:Comment">
+  
+  <div class="submitted">
+    <span property="dc:date dc:created" content="2015-11-30T07:30:54-06:00" datatype="xsd:dateTime" rel="sioc:has_creator"><a href="http://www.daveakerman.com/" rel="nofollow foaf:page" class="username" xml:lang="" typeof="sioc:UserAccount" property="foaf:name" datatype="">Dave Akerman</a> – <a href="http://www.jeffgeerling.com/comment/2884#comment-2884" class="permalink" rel="bookmark">9 months ago</a></span>  </div>
+
+  <div class="content">
+    <span rel="sioc:reply_of" resource="/blogs/jeff-geerling/raspberry-pi-zero-conserve-energy" class="rdf-meta element-hidden"></span><div class="field field-name-comment-body field-type-text-long field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p>Hi.
+  I've done some tests with a Fluke 179 meter and aren't getting the 
+same results.  For me, default current (booted, idle, nothing conected) 
+is 88mA, HDMI off drops that to 70.7mA, and with LED also off it drops 
+to 68.1mA.  I suspect your little tester is lying somewhat, especially 
+at lower currents.</p>
+<p>Dave</p>
+</div></div></div>  </div>
+
+  <ul class="links inline"><li class="comment-reply first last"><a href="http://www.jeffgeerling.com/comment/reply/2511/2884">reply</a></li>
+</ul></div>
+
+<div class="indented"><a id="comment-2889"></a>
+<div class="comment comment-by-node-author clearfix" about="/comment/2889#comment-2889" typeof="sioc:Post sioct:Comment">
+  
+  <div class="submitted">
+    <span property="dc:date dc:created" content="2015-11-30T07:38:00-06:00" datatype="xsd:dateTime" rel="sioc:has_creator"><span class="username" xml:lang="" about="/users/jeff-geerling" typeof="sioc:UserAccount" property="foaf:name" datatype="">Jeff Geerling</span> – <a href="http://www.jeffgeerling.com/comment/2889#comment-2889" class="permalink" rel="bookmark">9 months ago</a></span>  </div>
+
+  <div class="content">
+    <span rel="sioc:reply_of" resource="/blogs/jeff-geerling/raspberry-pi-zero-conserve-energy" class="rdf-meta element-hidden"></span><span rel="sioc:reply_of" resource="/comment/2884#comment-2884" class="rdf-meta element-hidden"></span><div class="field field-name-comment-body field-type-text-long field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p>Definitely
+ could be the case; I have another meter on the way that should be a 
+little more accurate (though not quite as good as a Fluke), and I'll 
+update the numbers once it arrives.</p>
+</div></div></div>  </div>
+
+  <ul class="links inline"><li class="comment-reply first last"><a href="http://www.jeffgeerling.com/comment/reply/2511/2889">reply</a></li>
+</ul></div>
+</div><a id="comment-2892"></a>
+<div class="comment comment-by-anonymous clearfix" about="/comment/2892#comment-2892" typeof="sioc:Post sioct:Comment">
+  
+  <div class="submitted">
+    <span property="dc:date dc:created" content="2015-11-30T09:50:14-06:00" datatype="xsd:dateTime" rel="sioc:has_creator"><span class="username" xml:lang="" typeof="sioc:UserAccount" property="foaf:name" datatype="">exDM69</span> – <a href="http://www.jeffgeerling.com/comment/2892#comment-2892" class="permalink" rel="bookmark">9 months ago</a></span>  </div>
+
+  <div class="content">
+    <span rel="sioc:reply_of" resource="/blogs/jeff-geerling/raspberry-pi-zero-conserve-energy" class="rdf-meta element-hidden"></span><div class="field field-name-comment-body field-type-text-long field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p>When
+ it comes to software tweaking, is CONFIG_NOHZ enabled in the kernel? 
+That should disable all periodic ticks from the kernel, allowing the CPU
+ to remain in a low-power state if nothing of interest happens.</p>
+<p><a href="https://www.kernel.org/doc/Documentation/timers/NO_HZ.txt">https://www.kernel.org/doc/Documentation/timers/NO_HZ.txt</a></p>
+</div></div></div>  </div>
+
+  <ul class="links inline"><li class="comment-reply first last"><a href="http://www.jeffgeerling.com/comment/reply/2511/2892">reply</a></li>
+</ul></div>
+
+<div class="indented"><a id="comment-2894"></a>
+<div class="comment comment-by-node-author clearfix" about="/comment/2894#comment-2894" typeof="sioc:Post sioct:Comment">
+  
+  <div class="submitted">
+    <span property="dc:date dc:created" content="2015-11-30T11:26:50-06:00" datatype="xsd:dateTime" rel="sioc:has_creator"><span class="username" xml:lang="" about="/users/jeff-geerling" typeof="sioc:UserAccount" property="foaf:name" datatype="">Jeff Geerling</span> – <a href="http://www.jeffgeerling.com/comment/2894#comment-2894" class="permalink" rel="bookmark">9 months ago</a></span>  </div>
+
+  <div class="content">
+    <span rel="sioc:reply_of" resource="/blogs/jeff-geerling/raspberry-pi-zero-conserve-energy" class="rdf-meta element-hidden"></span><span rel="sioc:reply_of" resource="/comment/2892#comment-2892" class="rdf-meta element-hidden"></span><div class="field field-name-comment-body field-type-text-long field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p>In
+ my limited research, it looks like that option might not be supported 
+(or make a difference) on the Pi/Raspbian. However, if anyone else can 
+figure out a way to set this (or other kernel settings) so it can 
+conserve power, I would love to hear about it!</p>
+</div></div></div>  </div>
+
+  <ul class="links inline"><li class="comment-reply first last"><a href="http://www.jeffgeerling.com/comment/reply/2511/2894">reply</a></li>
+</ul></div>
+</div><a id="comment-2893"></a>
+<div class="comment comment-by-anonymous clearfix" about="/comment/2893#comment-2893" typeof="sioc:Post sioct:Comment">
+  
+  <div class="submitted">
+    <span property="dc:date dc:created" content="2015-11-30T11:13:41-06:00" datatype="xsd:dateTime" rel="sioc:has_creator"><span class="username" xml:lang="" typeof="sioc:UserAccount" property="foaf:name" datatype="">zaphod</span> – <a href="http://www.jeffgeerling.com/comment/2893#comment-2893" class="permalink" rel="bookmark">9 months ago</a></span>  </div>
+
+  <div class="content">
+    <span rel="sioc:reply_of" resource="/blogs/jeff-geerling/raspberry-pi-zero-conserve-energy" class="rdf-meta element-hidden"></span><div class="field field-name-comment-body field-type-text-long field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p>Any
+ suggestions on using a RPi Zero with solar power?  I tried to use an A+
+ with a MoPi, a solar panel and this solar charge controller (<a href="http://www.instapark.com/solar-power-panels/ss1203-3amp-solar-power-charge-controller-45-watt-at-12v.html">http://www.instapark.com/solar-power-panels/ss1203-3amp-solar-power-char...</a>)</p>
+<p>But the batteries never charged for me - it would run off of solar 
+during the day but after a few days it would die, even though the solar 
+panel power should have been more than sufficient to drive the device 
+and charge at the same time.<br>
+But I never got it to actually</p>
+</div></div></div>  </div>
+
+  <ul class="links inline"><li class="comment-reply first last"><a href="http://www.jeffgeerling.com/comment/reply/2511/2893">reply</a></li>
+</ul></div>
+
+<div class="indented"><a id="comment-2896"></a>
+<div class="comment comment-by-anonymous clearfix" about="/comment/2896#comment-2896" typeof="sioc:Post sioct:Comment">
+  
+  <div class="submitted">
+    <span property="dc:date dc:created" content="2015-11-30T17:33:59-06:00" datatype="xsd:dateTime" rel="sioc:has_creator"><a href="http://www.johnbarbrook.info/" rel="nofollow foaf:page" class="username" xml:lang="" typeof="sioc:UserAccount" property="foaf:name" datatype="">John Barbrook</a> – <a href="http://www.jeffgeerling.com/comment/2896#comment-2896" class="permalink" rel="bookmark">9 months ago</a></span>  </div>
+
+  <div class="content">
+    <span rel="sioc:reply_of" resource="/blogs/jeff-geerling/raspberry-pi-zero-conserve-energy" class="rdf-meta element-hidden"></span><span rel="sioc:reply_of" resource="/comment/2893#comment-2893" class="rdf-meta element-hidden"></span><div class="field field-name-comment-body field-type-text-long field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p>What
+ watt panel did you use? As it is winter your panel may be suffering a 
+combination of heavy shade and seasonal low power. Your panel could be 
+providing as low as 5-10 percent of its rated wattage, and maybe not 
+even enough to charge the battery.</p>
+</div></div></div>  </div>
+
+  <ul class="links inline"><li class="comment-reply first last"><a href="http://www.jeffgeerling.com/comment/reply/2511/2896">reply</a></li>
+</ul></div>
+<a id="comment-2902"></a>
+<div class="comment comment-by-anonymous clearfix" about="/comment/2902#comment-2902" typeof="sioc:Post sioct:Comment">
+  
+  <div class="submitted">
+    <span property="dc:date dc:created" content="2015-12-02T09:37:22-06:00" datatype="xsd:dateTime" rel="sioc:has_creator"><span class="username" xml:lang="" typeof="sioc:UserAccount" property="foaf:name" datatype="">Jon Watkins</span> – <a href="http://www.jeffgeerling.com/comment/2902#comment-2902" class="permalink" rel="bookmark">9 months ago</a></span>  </div>
+
+  <div class="content">
+    <span rel="sioc:reply_of" resource="/blogs/jeff-geerling/raspberry-pi-zero-conserve-energy" class="rdf-meta element-hidden"></span><span rel="sioc:reply_of" resource="/comment/2893#comment-2893" class="rdf-meta element-hidden"></span><div class="field field-name-comment-body field-type-text-long field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p>Your problem could be the MoPi, that alone can draw up to 20ma itself which can be a big drain on a low power setup.</p>
+</div></div></div>  </div>
+
+  <ul class="links inline"><li class="comment-reply first last"><a href="http://www.jeffgeerling.com/comment/reply/2511/2902">reply</a></li>
+</ul></div>
+</div><a id="comment-2898"></a>
+<div class="comment comment-by-anonymous clearfix" about="/comment/2898#comment-2898" typeof="sioc:Post sioct:Comment">
+  
+  <div class="submitted">
+    <span property="dc:date dc:created" content="2015-12-01T13:16:31-06:00" datatype="xsd:dateTime" rel="sioc:has_creator"><span class="username" xml:lang="" typeof="sioc:UserAccount" property="foaf:name" datatype="">chx</span> – <a href="http://www.jeffgeerling.com/comment/2898#comment-2898" class="permalink" rel="bookmark">9 months ago</a></span>  </div>
+
+  <div class="content">
+    <span rel="sioc:reply_of" resource="/blogs/jeff-geerling/raspberry-pi-zero-conserve-energy" class="rdf-meta element-hidden"></span><div class="field field-name-comment-body field-type-text-long field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p>At
+ 30mA since you are not using the HDMI circuit anyways you could use it 
+to power the board for certain applications. Pin 18 of the HDMI standard
+ has a +5V @ 50mA.</p>
+</div></div></div>  </div>
+
+  <ul class="links inline"><li class="comment-reply first last"><a href="http://www.jeffgeerling.com/comment/reply/2511/2898">reply</a></li>
+</ul></div>
+<a id="comment-2899"></a>
+<div class="comment comment-by-anonymous clearfix" about="/comment/2899#comment-2899" typeof="sioc:Post sioct:Comment">
+  
+  <div class="submitted">
+    <span property="dc:date dc:created" content="2015-12-01T21:19:48-06:00" datatype="xsd:dateTime" rel="sioc:has_creator"><span class="username" xml:lang="" typeof="sioc:UserAccount" property="foaf:name" datatype="">Tobias</span> – <a href="http://www.jeffgeerling.com/comment/2899#comment-2899" class="permalink" rel="bookmark">9 months ago</a></span>  </div>
+
+  <div class="content">
+    <span rel="sioc:reply_of" resource="/blogs/jeff-geerling/raspberry-pi-zero-conserve-energy" class="rdf-meta element-hidden"></span><div class="field field-name-comment-body field-type-text-long field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p>I
+ dont know a lot about electricity usage so i wanted to ask you 
+something. I have a 10000 mah battery pack. How do i calculate how much 
+time the RBp zero will last at idle? (80 mah)</p>
+</div></div></div>  </div>
+
+  <ul class="links inline"><li class="comment-reply first last"><a href="http://www.jeffgeerling.com/comment/reply/2511/2899">reply</a></li>
+</ul></div>
+
+<div class="indented"><a id="comment-2900"></a>
+<div class="comment comment-by-node-author clearfix" about="/comment/2900#comment-2900" typeof="sioc:Post sioct:Comment">
+  
+  <div class="submitted">
+    <span property="dc:date dc:created" content="2015-12-01T21:32:32-06:00" datatype="xsd:dateTime" rel="sioc:has_creator"><span class="username" xml:lang="" about="/users/jeff-geerling" typeof="sioc:UserAccount" property="foaf:name" datatype="">Jeff Geerling</span> – <a href="http://www.jeffgeerling.com/comment/2900#comment-2900" class="permalink" rel="bookmark">9 months ago</a></span>  </div>
+
+  <div class="content">
+    <span rel="sioc:reply_of" resource="/blogs/jeff-geerling/raspberry-pi-zero-conserve-energy" class="rdf-meta element-hidden"></span><span rel="sioc:reply_of" resource="/comment/2899#comment-2899" class="rdf-meta element-hidden"></span><div class="field field-name-comment-body field-type-text-long field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p>125 hours, according to <a href="http://ncalculators.com/electrical/battery-life-calculator.htm">http://ncalculators.com/electrical/battery-life-calculator.htm</a></p>
+</div></div></div>  </div>
+
+  <ul class="links inline"><li class="comment-reply first last"><a href="http://www.jeffgeerling.com/comment/reply/2511/2900">reply</a></li>
+</ul></div>
+</div><a id="comment-2914"></a>
+<div class="comment comment-by-anonymous clearfix" about="/comment/2914#comment-2914" typeof="sioc:Post sioct:Comment">
+  
+  <div class="submitted">
+    <span property="dc:date dc:created" content="2015-12-04T06:43:00-06:00" datatype="xsd:dateTime" rel="sioc:has_creator"><a href="http://svennd.be/" rel="nofollow foaf:page" class="username" xml:lang="" typeof="sioc:UserAccount" property="foaf:name" datatype="">svenn</a> – <a href="http://www.jeffgeerling.com/comment/2914#comment-2914" class="permalink" rel="bookmark">9 months ago</a></span>  </div>
+
+  <div class="content">
+    <span rel="sioc:reply_of" resource="/blogs/jeff-geerling/raspberry-pi-zero-conserve-energy" class="rdf-meta element-hidden"></span><div class="field field-name-comment-body field-type-text-long field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p>I
+ wonder if writing to the sd is expensive energy wise, compared to 
+writing to memory. You could test that if you create a ram disk for 
+common writes (/tmp, /var/log/, ...) </p>
+<p>Nice article btw :)</p>
+</div></div></div>  </div>
+
+  <ul class="links inline"><li class="comment-reply first last"><a href="http://www.jeffgeerling.com/comment/reply/2511/2914">reply</a></li>
+</ul></div>
+<a id="comment-2964"></a>
+<div class="comment comment-by-anonymous clearfix" about="/comment/2964#comment-2964" typeof="sioc:Post sioct:Comment">
+  
+  <div class="submitted">
+    <span property="dc:date dc:created" content="2016-01-09T12:31:39-06:00" datatype="xsd:dateTime" rel="sioc:has_creator"><a href="http://sasquatchbioacoustic.blogspot.com/" rel="nofollow foaf:page" class="username" xml:lang="" typeof="sioc:UserAccount" property="foaf:name" datatype="">Anonymous</a> – <a href="http://www.jeffgeerling.com/comment/2964#comment-2964" class="permalink" rel="bookmark">8 months ago</a></span>  </div>
+
+  <div class="content">
+    <span rel="sioc:reply_of" resource="/blogs/jeff-geerling/raspberry-pi-zero-conserve-energy" class="rdf-meta element-hidden"></span><div class="field field-name-comment-body field-type-text-long field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p>Is
+ it possible to turn off the USB bus on a RasPi Zero, as we can do with a
+ RasPi 2? Doing so on the latter saves a ton of power. I tried it with 
+the Zero, but had no luck. And I didn't want to press my luck for fear 
+of bricking my Zero. (Great article by the way, I used two of your 
+pointers to reduce my power consumption on a battery powered RasPi Zero 
+audio recorder I'm building).</p>
+</div></div></div>  </div>
+
+  <ul class="links inline"><li class="comment-reply first last"><a href="http://www.jeffgeerling.com/comment/reply/2511/2964">reply</a></li>
+</ul></div>
+
+<div class="indented"><a id="comment-3752"></a>
+<div class="comment comment-by-anonymous clearfix" about="/comment/3752#comment-3752" typeof="sioc:Post sioct:Comment">
+  
+  <div class="submitted">
+    <span property="dc:date dc:created" content="2016-06-06T15:12:50-05:00" datatype="xsd:dateTime" rel="sioc:has_creator"><span class="username" xml:lang="" typeof="sioc:UserAccount" property="foaf:name" datatype="">Steve</span> – <a href="http://www.jeffgeerling.com/comment/3752#comment-3752" class="permalink" rel="bookmark">3 months ago</a></span>  </div>
+
+  <div class="content">
+    <span rel="sioc:reply_of" resource="/blogs/jeff-geerling/raspberry-pi-zero-conserve-energy" class="rdf-meta element-hidden"></span><span rel="sioc:reply_of" resource="/comment/2964#comment-2964" class="rdf-meta element-hidden"></span><div class="field field-name-comment-body field-type-text-long field-label-hidden"><div class="field-items"><div class="field-item even" property="content:encoded"><p>The
+ pi2 / pi3 have onboard USB hubs, which is how they get the four USB 
+ports... turning this off could save some power. The zero just has the 
+single USB as implemented in the cpu, so you might not be able to turn 
+it off and if you could it would save less power that on the bigger 
+brothers.</p>
+</div></div></div>  </div>
+
+  <ul class="links inline"><li class="comment-reply first last"><a href="http://www.jeffgeerling.com/comment/reply/2511/3752">reply</a></li>
+</ul></div>
+</div>
+  </section> <!-- /#comments -->
+
+</article> <!-- /.node -->
+  </div> <!-- /.content -->
+
+</div> <!-- /.block -->
+  </div>
+          </div></div> <!-- /.section, /#content -->
+
+          <nav id="navigation" role="navigation"><div class="section">
+        <h2 class="element-invisible">Main menu</h2><ul id="main-menu" class="links clearfix"><li class="menu-632 first"><a href="http://www.jeffgeerling.com/blog" title="">Blog</a></li>
+<li class="menu-629"><a href="http://www.jeffgeerling.com/projects" title="">Projects</a></li>
+<li class="menu-630 last"><a href="http://www.jeffgeerling.com/about">About</a></li>
+</ul>              </div></nav> <!-- /.section, /#navigation -->
+    
+    
+    
+  </div></div> <!-- /#main, /#main-wrapper -->
+  <footer id="footer" role="contentinfo"><div class="section">
+      <div class="region region-footer">
+    <div id="block-search-api-page-search" class="block block-search-api-page">
+
+      
+  <div class="content">
+    <form action="/blogs/jeff-geerling/raspberry-pi-zero-conserve-energy" method="post" id="search-api-page-search-form-search" accept-charset="UTF-8"><div><div class="form-item form-type-textfield form-item-keys-1">
+  <label class="element-invisible" for="edit-keys-1">Enter your keywords </label>
+ <input placeholder="Enter your keywords" id="edit-keys-1" name="keys_1" size="15" maxlength="128" class="form-text" type="text">
+</div>
+<input name="id" value="1" type="hidden">
+<input id="edit-submit-1" name="op" value="Search" class="form-submit" type="submit"><input name="form_build_id" value="form-EV-l77NwxmjHd0Uq2Cmm04hPcNaIdn2YaW3rE9EP0Ic" type="hidden">
+<input name="form_id" value="search_api_page_search_form_search" type="hidden">
+</div></form>  </div> <!-- /.content -->
+
+</div> <!-- /.block -->
+<div id="block-block-2" class="block block-block">
+
+      
+  <div class="content">
+    <style>
+<!--/*--><![CDATA[/* ><!--*/
+
+@media screen and (max-width: 600px) {
+  .family-crest {
+    width: 55px;
+    height: auto;
+  }
+}
+
+/*--><!]]>*/
+</style><p><img src="Raspberry%20Pi%20Zero%20-%20Conserve%20power%20and%20reduce%20draw%20to%2080mA%20%7C%20Jeff%20Geerling_files/geerling-family-crest.svg" alt="Geerling Family Crest" class="family-crest" height="65" width="55"><br>
+All content copyright Jeff Geerling. <a href="#top">Top of page</a>.</p>
+  </div> <!-- /.content -->
+
+</div> <!-- /.block -->
+  </div>
+  </div></footer> <!-- /.section, /#footer -->
+
+</div></div> <!-- /#page, /#page-wrapper -->
+  
+
+<div style="display: none;" id="cboxOverlay"></div><div style="display: none;" tabindex="-1" role="dialog" class="" id="colorbox"><div id="cboxWrapper"><div><div style="float: left;" id="cboxTopLeft"></div><div style="float: left;" id="cboxTopCenter"></div><div style="float: left;" id="cboxTopRight"></div></div><div style="clear: left;"><div style="float: left;" id="cboxMiddleLeft"></div><div style="float: left;" id="cboxContent"><div style="float: left;" id="cboxTitle"></div><div style="float: left;" id="cboxCurrent"></div><button id="cboxPrevious" type="button"></button><button id="cboxNext" type="button"></button><button id="cboxSlideshow"></button><div style="float: left;" id="cboxLoadingOverlay"></div><div style="float: left;" id="cboxLoadingGraphic"></div></div><div style="float: left;" id="cboxMiddleRight"></div></div><div style="clear: left;"><div style="float: left;" id="cboxBottomLeft"></div><div style="float: left;" id="cboxBottomCenter"></div><div style="float: left;" id="cboxBottomRight"></div></div></div><div style="position: absolute; width: 9999px; visibility: hidden; display: none; max-width: none;"></div></div></body></html>
