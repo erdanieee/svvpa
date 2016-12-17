@@ -27,9 +27,9 @@
 				<section>
 					<img width="100%" src="<?php echo 'http://'.$_SERVER['HTTP_HOST'].':8081'; ?>" >					
 				</section>
-				<section>
+<!--				<section>
 					<img width="100%" src="<?php echo 'http://'.$_SERVER['HTTP_HOST'].':8082'; ?>" >					
-				</section>
+				</section>-->
 			</div>
 		</section>
 
