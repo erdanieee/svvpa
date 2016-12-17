@@ -283,7 +283,7 @@ el comando bash'
                 if cmd in self.COMMANDS:
                     # solo permite comandos por mensaje privado o de admin
                     if user_id == self.ADMIN_USER or chat_id == self.CHAT_GROUP:
-                        self.COMMANDS[cmd](msg) #TODO: en un futuro se puede lanzar un thread por comando, pero por ahora se queda así
+                        self.COMMANDS[cmd](msg) #TODO: Meter comandos en un thread para que no se bloquee el bot (comprobar concurrencia)
                             
                     else:                
                         print >> sys.stderr, u"[{}] {}: WARNING! El comando no ha sido enviado al chat de grupo. Ignorando msg...".format(datetime.datetime.now(), __file__)
@@ -1274,7 +1274,7 @@ def main():
     bot = Telegram_bot(TOKEN)
     #bot.message_loop({'chat': bot.on_chat_message, 'callback_query': bot.on_callback_query, 'inline_query': bot.on_inline_query, 'chosen_inline_result': bot.on_chosen_inline_result}, relax=1, timeout=60)
     #bot.message_loop(relax=5, timeout=120)    
-    bot.message_loop(relax=int(os.environ['TELEGRAM_UPDATE_TIME']), timeout=240)    
+    bot.message_loop(relax=int(os.environ['TELEGRAM_UPDATE_TIME']), timeout=240)    #TODO: depués de recibir un comando reducir UPDATE_TIME a 1s durante ej. 10min, para facilitar la recepcción de varios comandos seguidos (ej. callback). Pasado ese tiempo, volver al valor TELEGRAM_UPDATE_TIME
     # Keep the program running.
     while 1:
         time.sleep(10)
