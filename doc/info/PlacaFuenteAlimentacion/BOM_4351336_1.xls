@@ -1,0 +1,9 @@
+Part	Manufacturer	Part Number	Quantity	Price	Attribute 1 Name	Attribute 1 Value	Attribute 2 Name	Attribute 2 Value	Attribute 3 Name	Attribute 3 Value	Footprint
+"Css"	"AVX"	"08055C393KAT2A"	"1"	"0.02"	"Cap"	"39nF"	"ESR"	"0.038Ohm"	"VDC"	"50V"	"0805"
+"Cbst"	"Kemet"	"C0805C103K5RACTU"	"1"	"0.01"	"Cap"	"10nF"	"ESR"	"1.739Ohm"	"VDC"	"50V"	"0805"
+"Cin"	"MuRata"	"GRM31CR71H475KA12L"	"3"	"0.07"	"Cap"	"4.7uF"	"ESR"	"3mOhm"	"VDC"	"50V"	"1206"
+"Cinx"	"Taiyo Yuden"	"GMK212B7105KG-T"	"1"	"0.05"	"Cap"	"1uF"	"ESR"	"0Ohm"	"VDC"	"35V"	"0805"
+"Cout"	"Panasonic"	"8TPE100MAZB"	"1"	"0.48"	"Cap"	"100uF"	"ESR"	"0.035Ohm"	"VDC"	"8V"	"3528-21"
+"D1"	"Diodes Inc."	"B560C-13-F"	"1"	"0.19"	"VFatIo"	"0.7V"	"Io"	"5A"	"VRRM"	"60V"	"SMC"
+"L1"	"Bourns"	"SDR1307-100ML"	"1"	"0.35"	"L"	"10uH"	"DCR"	"0.021Ohm"	"IDC"	"5.6A"	"SDR1307"
+"U1"	"Texas Instruments"	"LM22679TJ-5.0/NOPB"	"1"	"2.4"	""	""	""	""	""	""	"TJ7A"
