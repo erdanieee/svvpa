@@ -178,8 +178,8 @@ case $1 in
 		dht22Val="$(sudo python -u _readDht22.py)"
                 RETVAL=$(($RETVAL|$?))
 	
-		bmp180Pres="$(echo $bmp180Val|awk '{print $1}')"
-		bmp180Temp="$(echo $bmp180Val|awk '{print $2}')"
+		bmp180Pres="$(echo $bmp180Val|awk '{print $2}')"
+		bmp180Temp="$(echo $bmp180Val|awk '{print $1}')"
 		dht22Temp="$(echo $dht22Val|awk '{print $1}')"
 		dht22Hr="$(echo $dht22Val|awk '{print $2}')"
 

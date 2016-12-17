@@ -36,7 +36,7 @@ import sys
 #
 # For the Beaglebone Black the library will assume bus 1 by default, which is
 # exposed with SCL = P9_19 and SDA = P9_20.
-#sensor = BMP085.BMP085()
+sensor = BMP085.BMP085()
 # Optionally you can override the bus number:
 #sensor = BMP085.BMP085(busnum=2)
 
@@ -55,10 +55,12 @@ import sys
 #################
 ###  M A I N  ###
 #################
-def main(args):
+def main():
 	try:
         	sensor = BMP085.BMP085()
-	        print '{0:0.2f} {0:0.2f}'.format(sensor.read_temperature(), sensor.read_pressure()*0.00750061683)
+		temp=sensor.read_temperature()
+		press=sensor.read_pressure()*0.00750061683
+	        print '{0:0.2f} {1:0.2f}'.format(temp, press)
 
 	except:
 	        print >> sys.stderr, "[{}] {}: ERROR! No se pudo leer el sensor BMP185".format(datetime.datetime.now(), __file__)
@@ -66,7 +68,7 @@ def main(args):
 
 
 if __name__ == "__main__":
-	sys.exit(main(sys.argv))
+	sys.exit(main())
 
 
 
