@@ -1,13 +1,11 @@
 # encoding: utf-8
 
 
-import json
 import os, sys, traceback
 import re
 import subprocess as proc
 import telepot
-from telepot.namedtuple import InlineQueryResultPhoto, ReplyKeyboardHide,\
-    InlineKeyboardMarkup, InlineKeyboardButton
+from telepot.namedtuple import InlineQueryResultPhoto, InlineKeyboardMarkup, InlineKeyboardButton
 import time
 import threading
 import MySQLdb
@@ -465,12 +463,12 @@ el comando bash'
         else:
             buttons=[]
             for v in videos:
-                id        = v[0]
-                y,m,d,H,M = id.split("_")[:5]
+                idd       = v[0]
+                y,m,d,H,M = idd.split("_")[:5]
                 size      = self.get_humanSize(v[1]) if v[1] else u'?'
                 t         = u'{}/{}/{} {}:{} ({})'.format(y, m, d, H, M, size)
                 
-                buttons.append([ InlineKeyboardButton( text=t, callback_data=self.callback2string(self.CBQ_UPLOAD_FILE, [id])) ])
+                buttons.append([ InlineKeyboardButton( text=t, callback_data=self.callback2string(self.CBQ_UPLOAD_FILE, [idd])) ])
                                 
             buttons.append([ InlineKeyboardButton( text=u'Más antiguos', callback_data=self.callback2string(self.CBQ_UPLOAD_FILE, [self.GET_MORE, count])) ])
             buttons.append([ InlineKeyboardButton( text=self.BUT_CANCEL, callback_data=self.callback2string(self.CBQ_FUNCTION_CANCEL) ) ])
@@ -522,7 +520,7 @@ el comando bash'
     def cmd_reboot(self,msg):
         print u"[{}] {}: Reiniciando el sistema...".format(datetime.datetime.now(), __file__)        
         self.sendMessage(self.CHAT_GROUP, self.MSG_CMD_REBOOT)
-        t = threading.Timer(5, self.reboot)
+        t = threading.Timer(20, self.reboot)
         t.setDaemon(True)
         t.start()
         
@@ -568,15 +566,15 @@ el comando bash'
         cmd=re.sub("/[a-zA-Z]+ ", "", msg['text']).strip()
         
         if not cmd:
-           self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_NO_SHELL_CMD)
+            self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_NO_SHELL_CMD)
            
         else:        
             try:            
                 p = proc.Popen(cmd, shell=True, stdout=proc.PIPE)
-		p.wait()
+                p.wait()
                 self.sendMessage(msg['chat']['id'], "".join(p.stdout))                
                      
-            except Exception as e:
+            except:
                 print >>sys.stderr, u"[{}] {}: ERROR! Se produjo un error inesperado al ejecutar el comando bash:".format(datetime.datetime.now(), __file__)
                 traceback.print_exc()            
                 self.sendMessage(msg['chat']['id'], self.MSG_ERROR_SHELL_CMD)       
@@ -616,7 +614,7 @@ el comando bash'
             if not INLINE_KEYBOARDS_GROUP_ACTIVE:
                 self.sendMessage(self.CHAT_GROUP, text)
                  
-        except Exception as e:
+        except:
             print >>sys.stderr, u"[{}] {}: ERROR! Se produjo un error inesperado al incluir un nuevo usuario en la lista de usuarios autorizados:".format(datetime.datetime.now(), __file__)
             traceback.print_exc()            
             self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_ADDING_USER) 
@@ -667,7 +665,7 @@ el comando bash'
             self.editMessageText(self.getMsgChatId(msg), text)
             
             if not INLINE_KEYBOARDS_GROUP_ACTIVE:
-               self.sendMessage(self.CHAT_GROUP, text)
+                self.sendMessage(self.CHAT_GROUP, text)
             
             m = self._timers.pop(self.MOTION_TIMER, None)
             if m:
@@ -720,7 +718,7 @@ el comando bash'
                   
         markup = InlineKeyboardMarkup(inline_keyboard=buttons)                
         
-        chat    = self.CHAT_GROUP if INLINE_KEYBOARDS_GROUP_ACTIVE else msg['from']['id']
+        #chat    = self.CHAT_GROUP if INLINE_KEYBOARDS_GROUP_ACTIVE else msg['from']['id']
         t       = u"\n(Actualmente: " + self._motionDelay.toString() + u")" if self._motionDelay.getTime()>0 else ""
         m       = self.editMessageText( self.getMsgChatId(msg), self.MSG_CMD_MOTION_TIME_SET.format(text.upper(), t), reply_markup=markup)
         self.addMsgTimeout(*self.getMsgChatId(m))
@@ -764,7 +762,7 @@ el comando bash'
                 self.editMessageText(self.getMsgChatId(msg), self.MSG_CMD_MOTION_STOP)
             
             if not INLINE_KEYBOARDS_GROUP_ACTIVE:
-               self.sendMessage(self.CHAT_GROUP, self.MSG_CMD_MOTION_STOP)
+                self.sendMessage(self.CHAT_GROUP, self.MSG_CMD_MOTION_STOP)
             
         except Exception as e:
             print >>sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al detener el servicio motion:".format(datetime.datetime.now(), __file__)
@@ -781,7 +779,7 @@ el comando bash'
             else:                
                 self.editMessageText(self.getMsgChatId(msg),  self.MSG_CMD_MOTION_DISABLED)
             
-        except:         
+        except Exception as e:         
             print >> sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al comprobar el estado del servicio motion:".format(datetime.datetime.now(), __file__)
             traceback.print_exc()
             self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))
@@ -870,9 +868,9 @@ el comando bash'
             self.cmd_upload_video(msg, '%s' % (int(count)+10), True )
             
         else:        
-            file = os.environ['MOTION_DIR'] + eventId + '.' + os.environ['MOTION_VIDEO_EXT']
+            f = os.environ['MOTION_DIR'] + eventId + '.' + os.environ['MOTION_VIDEO_EXT']
             
-            t = threading.Thread(target=self.upload_video, args=(file,msg,))
+            t = threading.Thread(target=self.upload_video, args=(f,msg,))
             t.start()
               
 
@@ -885,7 +883,7 @@ el comando bash'
         if not INLINE_KEYBOARDS_GROUP_ACTIVE:
             self.sendMessage(self.CHAT_GROUP, self.MSG_SHUTTING_DOWN)
                     
-        t = threading.Timer(5, self.shutdown)
+        t = threading.Timer(20, self.shutdown)
         t.setDaemon(True)
         t.start()
          
@@ -1038,38 +1036,38 @@ el comando bash'
                     os.kill(pid, signal.SIGKILL)
                     break
         
-        except Exception as e:
+        except:
             print >> sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al cerrar el servicio ssh:".format(datetime.datetime.now(), __file__)
             traceback.print_exc()
 
 
 
-    def upload_video(self, file, msg=None):
-        print u"[{}] {}: Subiendo archivo a google drive ({})".format(datetime.datetime.now(), __file__, file)
+    def upload_video(self, filePath, msg=None):
+        print u"[{}] {}: Subiendo archivo a google drive ({})".format(datetime.datetime.now(), __file__, filePath)
         
         if msg:        
-            self.editMessageText(self.getMsgChatId(msg), u'Subiendo archivo {}...'.format(os.path.basename(file)))
+            self.editMessageText(self.getMsgChatId(msg), u'Subiendo archivo {}...'.format(os.path.basename(filePath)))
             
         else:
-            msg = self.sendMessage(self.CHAT_GROUP, u'Subiendo archivo {}...'.format(os.path.basename(file)))
+            msg = self.sendMessage(self.CHAT_GROUP, u'Subiendo archivo {}...'.format(os.path.basename(filePath)))
         
         try:            
             self.sendChatAction(self.CHAT_GROUP, 'upload_video')
-            fileuploader(file)   
+            fileuploader(filePath)   
             
-            query = "select link from videos where id like '{}'".format(os.path.basename(file)[:-4])
+            query = "select link from videos where id like '{}'".format(os.path.basename(filePath)[:-4])
             data  = self.run_query(query)
             
             if data:
-                text = self.MSG_CMD_UPLOAD_DONE.format(os.path.basename(file), data[0][0])            
+                text = self.MSG_CMD_UPLOAD_DONE.format(os.path.basename(filePath), data[0][0])            
                 self.editMessageText(self.getMsgChatId(msg), text, parse_mode='Markdown')
                 
                 if not INLINE_KEYBOARDS_GROUP_ACTIVE:
                     self.sendMessage(self.CHAT_GROUP, text, parse_mode='Markdown')
                 
             else:
-                print >> sys.stderr, u"[{}] {}: ERROR! No se ha podido subir el archivo {} a google drive. Se han agotado los intentos".format(datetime.datetime.now(), __file__, file)
-                self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UPLOAD_MAX_TRIES.format(os.path.basename(file)))
+                print >> sys.stderr, u"[{}] {}: ERROR! No se ha podido subir el archivo {} a google drive. Se han agotado los intentos".format(datetime.datetime.now(), __file__, filePath)
+                self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UPLOAD_MAX_TRIES.format(os.path.basename(filePath)))
                             
         except Exception as e:
             print >> sys.stderr, u"[{}] {}: ERROR! Se produjo un error inesperado al subir el video a google drive:".format(datetime.datetime.now(), __file__)
@@ -1078,13 +1076,13 @@ el comando bash'
             
     
     
-    def send_snapshot(self, file):
-        if os.path.isfile(file):
+    def send_snapshot(self, filePath):
+        if os.path.isfile(filePath):
             try:
                 print u"[{}] {}: Enviando snapshot".format(datetime.datetime.now(), __file__)
                 self.sendChatAction(self.CHAT_GROUP, 'upload_photo')
-                fd = open(file, 'rb')
-                self.sendPhoto(self.CHAT_GROUP, fd, datetime.datetime.fromtimestamp(os.path.getctime(file)).strftime("%Y/%m/%d %H:%M:%S"))
+                fd = open(filePath, 'rb')
+                self.sendPhoto(self.CHAT_GROUP, fd, datetime.datetime.fromtimestamp(os.path.getctime(filePath)).strftime("%Y/%m/%d %H:%M:%S"))
                 fd.close()
                 
             except Exception as e:
@@ -1095,8 +1093,8 @@ el comando bash'
                 self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))
             
         else:
-            print >> sys.stderr, u"ERROR! No existe el archivo {}".format(file)
-            self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(u'No existe el archivo ' + file))
+            print >> sys.stderr, u"ERROR! No existe el archivo {}".format(filePath)
+            self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(u'No existe el archivo ' + filePath))
             
             
 
@@ -1144,7 +1142,7 @@ el comando bash'
             kb = proc.check_output(cmd, shell=True).strip()
             return u'{}MiB'.format(kb)
         
-        except Exception as e:
+        except:
             print >> sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado calcular los megas consumidos:".format(datetime.datetime.now(), __file__)
             traceback.print_exc()
             
@@ -1172,26 +1170,26 @@ el comando bash'
         except Exception as e:
             print >> sys.stderr, u"[{}] {}: ERROR! Hubo un problema inesperado al tratar de apagar el sistema:".format(datetime.datetime.now(), __file__)
             traceback.print_exc()
-            self.editMessageText(self.getMsgChatId(msg), self.MSG_ERROR_UNEXPECTED.format(repr(e)))
+            self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))
    
     
 
  
-    def get_humanSize(self, bytes):
-       if bytes < self.SIZE_KiB:
-          return u'{0} {1}'.format(bytes,'Bytes' if bytes > 1 else 'Byte')
-      
-       elif self.SIZE_KiB <= bytes < self.SIZE_MiB:
-          return u'{0:.2f} KiB'.format(bytes/self.SIZE_KiB)
-      
-       elif self.SIZE_MiB <= bytes < self.SIZE_GiB:
-          return u'{0:.2f} MiB'.format(bytes/self.SIZE_MiB)
-      
-       elif self.SIZE_GiB <= bytes < self.SIZE_TiB:
-          return u'{0:.2f} GiB'.format(bytes/self.SIZE_GiB)
-      
-       elif self.SIZE_TiB <= bytes:
-          return u'{0:.2f} TiB'.format(bytes/self.SIZE_TiB)
+    def get_humanSize(self, mBytes):
+        if mBytes < self.SIZE_KiB:
+            return u'{0} {1}'.format(mBytes,'Bytes' if mBytes > 1 else 'Byte')
+        
+        elif self.SIZE_KiB <= mBytes < self.SIZE_MiB:
+            return u'{0:.2f} KiB'.format(mBytes/self.SIZE_KiB)
+        
+        elif self.SIZE_MiB <= mBytes < self.SIZE_GiB:
+            return u'{0:.2f} MiB'.format(mBytes/self.SIZE_MiB)
+        
+        elif self.SIZE_GiB <= mBytes < self.SIZE_TiB:
+            return u'{0:.2f} GiB'.format(mBytes/self.SIZE_GiB)
+        
+        elif self.SIZE_TiB <= mBytes:
+            return u'{0:.2f} TiB'.format(mBytes/self.SIZE_TiB)
             
     
     
