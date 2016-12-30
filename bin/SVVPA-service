@@ -172,7 +172,7 @@ case $1 in
 		cpuTemp="$(sudo ./_readInternalTemp.sh)"
 		RETVAL=$(($RETVAL|$?))
 
-		bmp180Val="$(sudo python -u _readBmp180.py)"
+		bmp180Val="$(python -u _readBmp180.py)"
 		RETVAL=$(($RETVAL|$?))
 
 		dht22Val="$(sudo python -u _readDht22.py)"
