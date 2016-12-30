@@ -27,6 +27,7 @@
 import Adafruit_BMP.BMP085 as BMP085
 import datetime
 import sys
+import os
 
 # Default constructor will pick a default I2C bus.
 #
@@ -36,7 +37,7 @@ import sys
 #
 # For the Beaglebone Black the library will assume bus 1 by default, which is
 # exposed with SCL = P9_19 and SDA = P9_20.
-sensor = BMP085.BMP085()
+#sensor = BMP085.BMP085()
 # Optionally you can override the bus number:
 #sensor = BMP085.BMP085(busnum=2)
 
@@ -57,13 +58,14 @@ sensor = BMP085.BMP085()
 #################
 def main():
 	try:
+		#print "%d" % int(os.environ['ALTITUDE'])
         	sensor = BMP085.BMP085()
 		temp=sensor.read_temperature()
-		press=sensor.read_pressure()*0.00750061683
-	        print '{0:0.2f} {1:0.2f}'.format(temp, press)
+		press=sensor.read_sealevel_pressure(int(os.environ['ALTITUDE']))*0.01
+       		print '{0:0.2f} {1:0.2f}'.format(temp, press)
 
-	except:
-	        print >> sys.stderr, "[{}] {}: ERROR! No se pudo leer el sensor BMP185".format(datetime.datetime.now(), __file__)
+	except Exception as e:		
+	        print >> sys.stderr, "[{}] {}: ERROR! No se pudo leer el sensor BMP185\n{}".format(datetime.datetime.now(), __file__, repr(e))
 		return 1
 
 

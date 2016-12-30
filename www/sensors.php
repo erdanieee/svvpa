@@ -109,7 +109,7 @@ $hideSeries = json_decode('[' . $_GET["h"] . ']', true);
 							opposite: true 
 						}, 
 						{
-							title: {text: 'mmHg',	align: 'high', offset: 10, rotation: 0},
+							title: {text: 'hPa',	align: 'high', offset: 10, rotation: 0},
 							showEmpty: false,
 							tickWidth: 1,
 							tickLength: 8,
@@ -161,7 +161,7 @@ $hideSeries = json_decode('[' . $_GET["h"] . ']', true);
 							lineWidth:4
 						}, 
 						{
-							name: 'Presión atmosférica (mmHg)',
+							name: 'Presión atmosférica (hPa)',
 							type : 'spline',
 							data: [<?php echo join($bmp180Press, ',') ?>],
 							yAxis: 2,

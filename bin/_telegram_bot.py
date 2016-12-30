@@ -86,7 +86,7 @@ T. CPU: {}ºC
 T. ext: {}ºC
 T. int: {}ºC
 H. rel: {}%
-P. atm: {}mmHg
+P. atm: {}hPa
 ```
 '''
     MSG_CMD_UPDATE = u'''Repositorio actualizado con exito\n```{}```'''
