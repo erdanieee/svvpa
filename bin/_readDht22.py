@@ -44,7 +44,7 @@ humidity, temperature = Adafruit_DHT.read_retry(sensor, pin)
 # the results will be null (because Linux can't
 # guarantee the timing of calls to read the sensor).  
 # If this happens try again!
-if humidity is not None and temperature is not None:
+if humidity is not None and temperature is not None and humidity <=100 and humidity >=0 and temperature <=100:
 	print '{0:0.1f} {1:0.1f}'.format(temperature, humidity)
 
 else:
