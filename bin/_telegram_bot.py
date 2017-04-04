@@ -12,9 +12,20 @@ import MySQLdb
 import signal
 import datetime
 from _google_drive_uploader import main as fileuploader
+from math import log
+
+try:
+    from Queue import Queue	#python 2.7
+except ImportError:
+    from queue import Queue	#python 3
+
 
 #poner a TRUE cuando deje de estar en fase Beta!!!!
 INLINE_KEYBOARDS_GROUP_ACTIVE = True
+
+
+
+
 
 
 
@@ -153,11 +164,14 @@ el comando bash'
     MOTION_HOURS       = 'h'
     MOTION_MINUTES     = 'm'
     MOTION_SECONDS     = 's'
-    MOTION_TIMER       = u'motionTimer'
-    SSH_TIMER          = u'sshTimer'
     SHUTDOWN_CONFIRM   = u'True'
     EMAIL_NOTIF_ON     = u'ON'
     EMAIL_NOTIF_OFF    = u'OFF'
+
+    TIMER_MOTION    = u'motionTimer'
+    TIMER_SSH       = u'sshTimer'
+	TIMER_UPDATE	= u'updateTimer'
+
     
     # Callback functions usadas para procesar las respuestas de los inline keyboards.
     CBQ_FUNCTION_CANCEL     = u'Cancelar'           
@@ -196,11 +210,13 @@ el comando bash'
         self.ADMIN_USER     = int(os.environ['TELEGRAM_ADMIN_USER'])
         self.FILE_CONSTANTS = os.environ['BIN_DIR']+'CONSTANTS.sh' 
         self.BOT_NAME       = self.getMe()['username']
-        #self.MSG_TIMEOUT    = int(os.environ['TELEGRAM_MSG_TIMEOUT'])
-        self.MSG_TIMEOUT    = 3600
+        self.MSG_TIMEOUT    = int(os.environ['TELEGRAM_MSG_TIMEOUT'])
+        #self.MSG_TIMEOUT    = 3600
         
         self._timers        = {}
         self._motionDelay   = None
+		self._queue 		= Queue()
+		#self._update_time	= int(os.environ['TELEGRAM_UPDATE_MIN'])
         
             
         self.CALLBACKS={
@@ -235,11 +251,63 @@ el comando bash'
             '/shell'          : self.cmd_shell
         }
     
-  
+		self.bot.message_loop(callback=handle, source=_queue)
+		t = threading.Thread(target=self.update_queue)
+		t.daemon = True
+        t.start()
 
-  
+	
+
+
+
+	def update_queue(self):		
+		_update_offset 	= None
+		_update_timeout	= int(os.environ['TELEGRAM_UPDATE_TIMEOUT'])
+		_update_min		= int(os.environ['TELEGRAM_UPDATE_MIN'])
+		_update_max		= int(os.environ['TELEGRAM_UPDATE_MAX'])
+		_update_steps	= int(os.environ['TELEGRAM_UPDATE_STEPS'])
+		_update_factor	= int(os.environ['TELEGRAM_UPDATE_FACTOR'])
+		_step_times		= [round(max(_update_min,log(x,2)*_update_max/log(_update_steps,2))) for x in range(1,_update_steps+1)]
+		_update_time	= None
+		
+
+		def add_queue(update):
+			self._queue.put(update)
+			return update['update_id']
+
+
+		def update_time(curr_step=0):
+			m = self._timers.pop(self.TIMER_UPDATE, None)
+            if m:
+                print u"[{}] {}: Cancelando timer update".format(datetime.datetime.now(), __file__)
+                m.cancel()
+            			      
+			_update_time = _step_times[curr_step]
+			print u"[{}] {}: Estableciendo update cada %s segundos".format(datetime.datetime.now(), __file__, _update_time) 
+						
+			if curr_step < _update_steps:                     
+	            self._timers[self.TIMER_UPDATE] = threading.Timer(_update_time*_update_factor, update_time, args=(curr_step+1,))
+    	        self._timers[self.TIMER_UPDATE].start()
+
+
+		update_time()
+		while 1:
+			try:
+				result = self.getUpdates(offset=self._update_offset, timeout=_update_timeout)
+
+				if len(result) > 0:
+				    offset	= max([add_queue(update) for update in result]) + 1		#No se ordena; confiamos en que el servidor de telegram
+					update_time()
+
+			except:
+				print >>sys.stderr, u"[{}] {}: ERROR! Se produjo un error inesperado al actualizar la cola:".format(datetime.datetime.now(), __file__)
+                traceback.print_exc()
+
+			finally:
+				time.sleep(self._update_time)		
+
         
-    def handle(self, msg):
+	def handle(self, msg):
         flavor = telepot.flavor(msg)
         #print json.dumps(msg, sort_keys=True, indent=4, separators=(',', ': '))
         print u"[{}] {}: Msg:\n{}".format(datetime.datetime.now(), __file__, msg)
@@ -418,7 +486,7 @@ el comando bash'
     #FIXME: abrir el ssh puede tardar en algunas ocasiones. Hacer en thread independiente     
     def cmd_open_ssh(self, msg):
         try:            
-            m = self._timers.pop(self.SSH_TIMER, None)
+            m = self._timers.pop(self.TIMER_SSH, None)
             if m:
                 print u"[{}] {}: Cancelando timer ssh".format(datetime.datetime.now(), __file__)
                 m.cancel()
@@ -439,8 +507,8 @@ el comando bash'
                                                                             os.environ['SSH_REMOTE_TUNEL_PORT'], 
                                                                             os.environ['SSH_REMOTE_TIMEOUT']))
                                                 
-                self._timers[self.SSH_TIMER] = threading.Timer(int(os.environ['SSH_REMOTE_TIMEOUT']), self.close_ssh)
-                self._timers[self.SSH_TIMER].start()
+                self._timers[self.TIMER_SSH] = threading.Timer(int(os.environ['SSH_REMOTE_TIMEOUT']), self.close_ssh)
+                self._timers[self.TIMER_SSH].start()
                 
             else:
                 print >>sys.stderr, u"[{}] {}: ERROR! Hubo un problema al abrir el puerto ssh (ret={})".format(datetime.datetime.now(), __file__, ret)                
@@ -667,13 +735,13 @@ el comando bash'
             if not INLINE_KEYBOARDS_GROUP_ACTIVE:
                 self.sendMessage(self.CHAT_GROUP, text)
             
-            m = self._timers.pop(self.MOTION_TIMER, None)
+            m = self._timers.pop(self.TIMER_MOTION, None)
             if m:
                 print u"[{}] {}: Cancelando timer motion".format(datetime.datetime.now(), __file__)
                 m.cancel()
                                             
-            self._timers[self.MOTION_TIMER] = threading.Timer(self._motionDelay.getTime(), self.cbq_motionStart)
-            self._timers[self.MOTION_TIMER].start()
+            self._timers[self.TIMER_MOTION] = threading.Timer(self._motionDelay.getTime(), self.cbq_motionStart)
+            self._timers[self.TIMER_MOTION].start()
             
             
             
@@ -727,7 +795,7 @@ el comando bash'
       
     def cbq_motionStart(self, msg=None):
         try:
-            m = self._timers.pop(self.MOTION_TIMER, None)
+            m = self._timers.pop(self.TIMER_MOTION, None)
             if m:
                 print u"[{}] {}: Cancelando timer motion".format(datetime.datetime.now(), __file__)
                 m.cancel()
@@ -750,7 +818,7 @@ el comando bash'
         
     def cbq_motionStop(self, msg=None):            
         try:
-            m = self._timers.pop(self.MOTION_TIMER, None)
+            m = self._timers.pop(self.TIMER_MOTION, None)
             if m:
                 print u"[{}] {}: Cancelando timer motion".format(datetime.datetime.now(), __file__)
                 m.cancel()
@@ -859,6 +927,7 @@ el comando bash'
                 self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))                
                  
         t = threading.Thread(target=self.send_snapshot, args=(fileout,))
+		t.daemon = True
         t.start()
            
            
@@ -871,6 +940,7 @@ el comando bash'
             f = os.environ['MOTION_DIR'] + eventId + '.' + os.environ['MOTION_VIDEO_EXT']
             
             t = threading.Thread(target=self.upload_video, args=(f,msg,))
+			t.daemon = True
             t.start()
               
 
@@ -1272,13 +1342,12 @@ def main():
     bot = Telegram_bot(TOKEN)
     #bot.message_loop({'chat': bot.on_chat_message, 'callback_query': bot.on_callback_query, 'inline_query': bot.on_inline_query, 'chosen_inline_result': bot.on_chosen_inline_result}, relax=1, timeout=60)
     #bot.message_loop(relax=5, timeout=120)    
-    bot.message_loop(relax=int(os.environ['TELEGRAM_UPDATE_TIME']), timeout=240)    #TODO: depués de recibir un comando reducir UPDATE_TIME a 1s durante ej. 10min, para facilitar la recepcción de varios comandos seguidos (ej. callback). Pasado ese tiempo, volver al valor TELEGRAM_UPDATE_TIME
+    #bot.message_loop(relax=int(os.environ['TELEGRAM_UPDATE_TIME']), timeout=240)    #TODO: depués de recibir un comando reducir UPDATE_TIME a 1s durante ej. 10min, para facilitar la recepcción de varios comandos seguidos (ej. callback). Pasado ese tiempo, volver al valor TELEGRAM_UPDATE_TIME
+	
     # Keep the program running.
     while 1:
         time.sleep(10)
     
-             
-         
          
          
 if __name__ == "__main__":
