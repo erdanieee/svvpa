@@ -208,7 +208,7 @@ el comando bash'
         _update_max		= int(os.environ['TELEGRAM_UPDATE_MAX'])
         _update_steps	= int(os.environ['TELEGRAM_UPDATE_STEPS'])
         _update_factor	= int(os.environ['TELEGRAM_UPDATE_FACTOR'])
-        _step_times		= [round(max(_update_min,log(x,2)*_update_max/log(_update_steps,2))) for x in range(1,_update_steps+1)]
+        _step_times		= [int(max(_update_min,log(x,2)*_update_max/log(_update_steps,2))) for x in range(1,_update_steps+1)]
 		
 
         def add_queue(update):
