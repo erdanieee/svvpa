@@ -170,7 +170,7 @@ el comando bash'
 
     TIMER_MOTION    = u'motionTimer'
     TIMER_SSH       = u'sshTimer'
-	TIMER_UPDATE	= u'updateTimer'
+    TIMER_UPDATE	= u'updateTimer'
 
     
     # Callback functions usadas para procesar las respuestas de los inline keyboards.
@@ -197,8 +197,88 @@ el comando bash'
     SIZE_TiB = 1099511627776.0
     
     GET_MORE = u'more' 
+
+
+
+    def update_queue(self):		
+        print u"[{}] {}: Iniciando cola telegram".format(datetime.datetime.now(), __file__)
+        _update_offset 	= None
+        _update_timeout	= int(os.environ['TELEGRAM_UPDATE_TIMEOUT'])
+        _update_min		= int(os.environ['TELEGRAM_UPDATE_MIN'])
+        _update_max		= int(os.environ['TELEGRAM_UPDATE_MAX'])
+        _update_steps	= int(os.environ['TELEGRAM_UPDATE_STEPS'])
+        _update_factor	= int(os.environ['TELEGRAM_UPDATE_FACTOR'])
+        _step_times		= [round(max(_update_min,log(x,2)*_update_max/log(_update_steps,2))) for x in range(1,_update_steps+1)]
+		
+
+        def add_queue(update):
+            self._queue.put(update)
+            return update['update_id']
+
+
+        def update_time(self, curr_step=0):
+            m = self._timers.pop(self.TIMER_UPDATE, None)
+            if m:
+                #print u"[{}] {}: Cancelando timer update".format(datetime.datetime.now(), __file__)
+                m.cancel()
+
+            self._update_time = _step_times[curr_step]
+            aux = self._update_time*_update_factor
+            
+            if curr_step < _update_steps:                     
+                self._timers[self.TIMER_UPDATE] = threading.Timer(aux, update_time, args=(self,curr_step+1,))
+                self._timers[self.TIMER_UPDATE].start()
+                print u"[{}] {}: Estableciendo update cada {} s durante {} s ".format(datetime.datetime.now(), __file__, self._update_time, aux)
     
-    
+            else:
+                print u"[{}] {}: Estableciendo update cada {}".format(datetime.datetime.now(), __file__, self._update_time)
+            
+
+
+        update_time(self)
+        while 1:
+            try:
+                print u"[{}] {}: Update Telegram queue".format(datetime.datetime.now(), __file__) 
+                result = self.getUpdates(offset=_update_offset) #, timeout=_update_timeout)
+
+                if len(result) > 0:
+                    _update_offset	= max([add_queue(update) for update in result]) + 1		#No se ordena; confiamos en que el servidor de telegram
+                    update_time(self)
+
+            except:
+                print >>sys.stderr, u"[{}] {}: ERROR! Se produjo un error inesperado al actualizar la cola:".format(datetime.datetime.now(), __file__)
+                traceback.print_exc()
+
+            finally:
+                time.sleep(self._update_time)		
+
+
+        def handle(self, msg):
+            flavor = telepot.flavor(msg)
+            #print json.dumps(msg, sort_keys=True, indent=4, separators=(',', ': '))
+            print u"[{}] {}: Msg:\n{}".format(datetime.datetime.now(), __file__, msg)
+            print u"[{}] {}: Flavor: {}".format(datetime.datetime.now(), __file__, flavor)
+
+            if flavor == 'chat':
+                self.on_chat_message(msg)
+
+            elif flavor == 'callback_query':
+                self.on_callback_query(msg)
+
+            elif flavor == 'inline_query':
+                self.on_inline_query(msg)
+
+            elif flavor == 'chosen_inline_result':
+                self.on_chosen_inline_result(msg)
+
+            else:
+                raise telepot.BadFlavor(msg)
+
+
+
+    #############
+    #  I N I T  #
+    #############    
     def __init__(self, *args, **kwargs):    
         super(Telegram_bot, self).__init__(*args, **kwargs)
         
@@ -215,8 +295,8 @@ el comando bash'
         
         self._timers        = {}
         self._motionDelay   = None
-		self._queue 		= Queue()
-		#self._update_time	= int(os.environ['TELEGRAM_UPDATE_MIN'])
+        self._queue 		= Queue()
+        self._update_time	= None
         
             
         self.CALLBACKS={
@@ -251,84 +331,10 @@ el comando bash'
             '/shell'          : self.cmd_shell
         }
     
-		self.bot.message_loop(callback=handle, source=_queue)
-		t = threading.Thread(target=self.update_queue)
-		t.daemon = True
+        self.message_loop(callback=self.handle, source=self._queue)
+        t = threading.Thread(target=self.update_queue)
+        t.daemon = True
         t.start()
-
-	
-
-
-
-	def update_queue(self):		
-		_update_offset 	= None
-		_update_timeout	= int(os.environ['TELEGRAM_UPDATE_TIMEOUT'])
-		_update_min		= int(os.environ['TELEGRAM_UPDATE_MIN'])
-		_update_max		= int(os.environ['TELEGRAM_UPDATE_MAX'])
-		_update_steps	= int(os.environ['TELEGRAM_UPDATE_STEPS'])
-		_update_factor	= int(os.environ['TELEGRAM_UPDATE_FACTOR'])
-		_step_times		= [round(max(_update_min,log(x,2)*_update_max/log(_update_steps,2))) for x in range(1,_update_steps+1)]
-		_update_time	= None
-		
-
-		def add_queue(update):
-			self._queue.put(update)
-			return update['update_id']
-
-
-		def update_time(curr_step=0):
-			m = self._timers.pop(self.TIMER_UPDATE, None)
-            if m:
-                print u"[{}] {}: Cancelando timer update".format(datetime.datetime.now(), __file__)
-                m.cancel()
-            			      
-			_update_time = _step_times[curr_step]
-			print u"[{}] {}: Estableciendo update cada %s segundos".format(datetime.datetime.now(), __file__, _update_time) 
-						
-			if curr_step < _update_steps:                     
-	            self._timers[self.TIMER_UPDATE] = threading.Timer(_update_time*_update_factor, update_time, args=(curr_step+1,))
-    	        self._timers[self.TIMER_UPDATE].start()
-
-
-		update_time()
-		while 1:
-			try:
-				result = self.getUpdates(offset=self._update_offset, timeout=_update_timeout)
-
-				if len(result) > 0:
-				    offset	= max([add_queue(update) for update in result]) + 1		#No se ordena; confiamos en que el servidor de telegram
-					update_time()
-
-			except:
-				print >>sys.stderr, u"[{}] {}: ERROR! Se produjo un error inesperado al actualizar la cola:".format(datetime.datetime.now(), __file__)
-                traceback.print_exc()
-
-			finally:
-				time.sleep(self._update_time)		
-
-        
-	def handle(self, msg):
-        flavor = telepot.flavor(msg)
-        #print json.dumps(msg, sort_keys=True, indent=4, separators=(',', ': '))
-        print u"[{}] {}: Msg:\n{}".format(datetime.datetime.now(), __file__, msg)
-        print u"[{}] {}: Flavor: {}".format(datetime.datetime.now(), __file__, flavor)
-        
-        if flavor == 'chat':
-            self.on_chat_message(msg)
-        
-        elif flavor == 'callback_query':
-            self.on_callback_query(msg)
-        
-        elif flavor == 'inline_query':
-            self.on_inline_query(msg)
-        
-        elif flavor == 'chosen_inline_result':
-            self.on_chosen_inline_result(msg)
-        
-        else:
-            raise telepot.BadFlavor(msg)
-
-
   
   
   
@@ -926,10 +932,10 @@ el comando bash'
                 traceback.print_exc()
                 self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))                
                  
-        t = threading.Thread(target=self.send_snapshot, args=(fileout,))
-		t.daemon = True
-        t.start()
-           
+            t = threading.Thread(target=self.send_snapshot, args=(fileout,))
+            t.daemon = True
+            t.start()
+                       
            
       
     def cbq_uploadVideo(self, msg, eventId, count=5):
@@ -940,9 +946,9 @@ el comando bash'
             f = os.environ['MOTION_DIR'] + eventId + '.' + os.environ['MOTION_VIDEO_EXT']
             
             t = threading.Thread(target=self.upload_video, args=(f,msg,))
-			t.daemon = True
+            t.daemon = True
             t.start()
-              
+                      
 
 
 
