@@ -141,6 +141,7 @@ Debes especificar el comando a ejecutar despues del comando shell. Para ello, \
 envía el mensaje /shell comando'
     MSG_ERROR_SHELL_CMD = u'ERROR! Se produjo un error inesperado al ejecutar \
 el comando bash'
+    MSG_ERROR_CMD = u'\u203c\ufe0fERROR! Se ha producido un error inesperado al procesar el comando'
     
 
     
@@ -355,7 +356,13 @@ el comando bash'
                 if cmd in self.COMMANDS:
                     # solo permite comandos por mensaje privado o de admin
                     if user_id == self.ADMIN_USER or chat_id == self.CHAT_GROUP:
-                        self.COMMANDS[cmd](msg) #TODO: Meter comandos en un thread para que no se bloquee el bot (comprobar concurrencia)
+                        try:
+	                        self.COMMANDS[cmd](msg) #TODO: Meter comandos en un thread para que no se bloquee el bot (comprobar concurrencia)
+
+                        except:
+                            print >>sys.stderr, u"[{}] {}: ERROR! Se ha producido un error inesperado al procesar el comando".format(datetime.datetime.now(), __file__)
+                            traceback.print_exc()
+                            self.sendMessage(chat_id, self.MSG_ERROR_CMD, reply_to_message_id=msg['message_id'])
                             
                     else:                
                         print >> sys.stderr, u"[{}] {}: WARNING! El comando no ha sido enviado al chat de grupo. Ignorando msg...".format(datetime.datetime.now(), __file__)
