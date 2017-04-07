@@ -243,7 +243,7 @@ el comando bash'
         update_time(self)
         while 1:
             try:
-                print u"[{}] {}: Update Telegram queue".format(datetime.datetime.now(), __file__) 
+                #print u"[{}] {}: Update Telegram queue".format(datetime.datetime.now(), __file__) 
                 result = self.getUpdates(offset=_update_offset) #, timeout=_update_timeout)
 
                 if len(result) > 0:
