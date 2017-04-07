@@ -204,14 +204,13 @@ el comando bash'
         print u"[{}] {}: Iniciando cola telegram".format(datetime.datetime.now(), __file__)
         _update_offset 	= None
         _update_timeout	= int(os.environ['TELEGRAM_UPDATE_TIMEOUT'])
-        _update_min		= int(os.environ['TELEGRAM_UPDATE_MIN'])
         _update_steps	= int(os.environ['TELEGRAM_UPDATE_STEPS'])
         _update_base	= float(os.environ['TELEGRAM_UPDATE_BASE'])
         _update_factor	= float(os.environ['TELEGRAM_UPDATE_FACTOR'])
 
         _step_times = []
         for i in range(1,_update_steps+1):
-            _step_times.append([(_update_base**i)+_update_min, ((_update_base**i)+_update_min)**2*_update_factor ])
+            _step_times.append([(_update_base**i), (_update_base**i)**2*_update_factor ])
     
         print u"[{}] {}: Array tiempos de refresco: {}".format(datetime.datetime.now(), __file__, ' '.join( "%.1f|%s" %(_step_times[x][0],datetime.timedelta(seconds=int(_step_times[x][1]))) for x in range(len(_step_times)) ))
 		
