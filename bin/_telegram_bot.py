@@ -12,7 +12,6 @@ import MySQLdb
 import signal
 import datetime
 from _google_drive_uploader import main as fileuploader
-from math import log
 
 try:
     from Queue import Queue	#python 2.7
@@ -206,10 +205,15 @@ el comando bash'
         _update_offset 	= None
         _update_timeout	= int(os.environ['TELEGRAM_UPDATE_TIMEOUT'])
         _update_min		= int(os.environ['TELEGRAM_UPDATE_MIN'])
-        _update_max		= int(os.environ['TELEGRAM_UPDATE_MAX'])
         _update_steps	= int(os.environ['TELEGRAM_UPDATE_STEPS'])
-        _update_factor	= int(os.environ['TELEGRAM_UPDATE_FACTOR'])
-        _step_times		= [int(max(_update_min,log(x,2)*_update_max/log(_update_steps,2))) for x in range(1,_update_steps+1)]
+        _update_base	= float(os.environ['TELEGRAM_UPDATE_BASE'])
+        _update_factor	= float(os.environ['TELEGRAM_UPDATE_FACTOR'])
+
+        _step_times = []
+        for i in range(1,_update_steps+1):
+            _step_times.append([(_update_base**i)+_update_min, ((_update_base**i)+_update_min)**2*_update_factor ])
+    
+        print u"[{}] {}: Array tiempos de refresco: {}".format(datetime.datetime.now(), __file__, ' '.join( "%.1f|%s" %(_step_times[x][0],datetime.timedelta(seconds=int(_step_times[x][1]))) for x in range(len(_step_times)) ))
 		
 
         def add_queue(update):
@@ -223,16 +227,16 @@ el comando bash'
                 #print u"[{}] {}: Cancelando timer update".format(datetime.datetime.now(), __file__)
                 m.cancel()
 
-            self._update_time = _step_times[curr_step]
-            aux = self._update_time*_update_factor
+            self._update_time = _step_times[curr_step][0]
             
-            if curr_step < _update_steps:                     
+            if curr_step < _update_steps:                                
+                aux = _step_times[curr_step][1]         
                 self._timers[self.TIMER_UPDATE] = threading.Timer(aux, update_time, args=(self,curr_step+1,))
                 self._timers[self.TIMER_UPDATE].start()
-                print u"[{}] {}: Estableciendo update cada {} s durante {} s ".format(datetime.datetime.now(), __file__, self._update_time, aux)
+                print u"[{}] {}: Estableciendo update cada {:.1f} s durante {:.1f} s ".format(datetime.datetime.now(), __file__, self._update_time, aux)
     
             else:
-                print u"[{}] {}: Estableciendo update cada {}".format(datetime.datetime.now(), __file__, self._update_time)
+                print u"[{}] {}: Estableciendo update cada {:.1f}".format(datetime.datetime.now(), __file__, self._update_time)
             
 
 

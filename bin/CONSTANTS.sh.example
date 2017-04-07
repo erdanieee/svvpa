@@ -84,8 +84,8 @@ export ALTITUDE="650"
 
 export TELEGRAM_UPDATE_TIMEOUT=300	# GetUpdates timeout (retry)
 export TELEGRAM_UPDATE_MIN="5"		# Tiempo mínimo de refresco
-export TELEGRAM_UPDATE_MAX="60"         # Tiempo máximo de refresco
 export TELEGRAM_UPDATE_STEPS="24"	# Número de pasos desde min hasta max
-export TELEGRAM_UPDATE_FACTOR="120"	# Tiempo de refresco updateTime=LOG(currStep)*MAX_TIME/LOG(NUM_STEPS) durante updateTime*FACTOR
+export TELEGRAM_UPDATE_BASE="1.26"	# Tiempo de refresco (updateTime) = BASE^currStep+MIN
+export TELEGRAM_UPDATE_FACTOR="4"       # Tiempo por paso = updateTime^2*FACTOR
 
 
