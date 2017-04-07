@@ -221,7 +221,7 @@ el comando bash'
             return update['update_id']
 
 
-        def update_time(self, curr_step=0):
+        def update_time(curr_step=0):
             m = self._timers.pop(self.TIMER_UPDATE, None)
             if m:
                 #print u"[{}] {}: Cancelando timer update".format(datetime.datetime.now(), __file__)
@@ -231,16 +231,16 @@ el comando bash'
             
             if curr_step < _update_steps:                                
                 aux = _step_times[curr_step][1]         
-                self._timers[self.TIMER_UPDATE] = threading.Timer(aux, update_time, args=(self,curr_step+1,))
+                self._timers[self.TIMER_UPDATE] = threading.Timer(aux, update_time, args=(curr_step+1,))
                 self._timers[self.TIMER_UPDATE].start()
-                print u"[{}] {}: Estableciendo update cada {:.1f} s durante {:.1f} s ".format(datetime.datetime.now(), __file__, self._update_time, aux)
+                print u"[{}] {}: Estableciendo update cada {:.1f} s durante {}".format(datetime.datetime.now(), __file__, self._update_time, datetime.timedelta(seconds=int(aux)))
     
             else:
                 print u"[{}] {}: Estableciendo update cada {:.1f}".format(datetime.datetime.now(), __file__, self._update_time)
             
 
 
-        update_time(self)
+        update_time()
         while 1:
             try:
                 #print u"[{}] {}: Update Telegram queue".format(datetime.datetime.now(), __file__) 
@@ -248,7 +248,7 @@ el comando bash'
 
                 if len(result) > 0:
                     _update_offset	= max([add_queue(update) for update in result]) + 1		#No se ordena; confiamos en que el servidor de telegram
-                    update_time(self)
+                    update_time()
 
             except:
                 print >>sys.stderr, u"[{}] {}: ERROR! Se produjo un error inesperado al actualizar la cola:".format(datetime.datetime.now(), __file__)
