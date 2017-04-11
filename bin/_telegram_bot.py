@@ -655,9 +655,9 @@ el comando bash'
         else:        
             try:            
                 p = proc.Popen(cmd, shell=True, stdout=proc.PIPE)
-                p.wait()
-                self.sendMessage(msg['chat']['id'], "".join(p.stdout))                
-                     
+                p.wait()            
+                self.sendMessage(msg['chat']['id'], u'''{}\nRET:{}'''.format("".join(p.stdout), p.returncode))                
+                                 
             except:
                 print >>sys.stderr, u"[{}] {}: ERROR! Se produjo un error inesperado al ejecutar el comando bash:".format(datetime.datetime.now(), __file__)
                 traceback.print_exc()            
