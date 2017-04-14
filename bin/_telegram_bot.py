@@ -817,7 +817,8 @@ el comando bash'
                 m.cancel()
 
             print u"[{}] {}: Reiniciando servicio motion".format(datetime.datetime.now(), __file__)
-            proc.call('sudo service motion restart', shell=True)
+            #proc.call('sudo service motion restart', shell=True)
+	    proc.call('/home/pi/software/motion-mmal/motion -c /etc/motion/motion.conf', shell=True)
             
             if msg:
                 self.editMessageText(self.getMsgChatId(msg), self.MSG_MOTION_START)
@@ -840,7 +841,8 @@ el comando bash'
                 m.cancel()
 
             print u"[{}] {}: Parando servicio motion".format(datetime.datetime.now(), __file__)
-            proc.call('sudo service motion stop', shell=True)
+            #proc.call('sudo service motion stop', shell=True)
+	    proc.cll('killall motion',shell=True)	
             
             if msg:
                 self.editMessageText(self.getMsgChatId(msg), self.MSG_CMD_MOTION_STOP)
@@ -1100,7 +1102,8 @@ el comando bash'
     
     def isMotionEnabled(self):
         try:
-            if proc.call('sudo service motion status', shell=True) == 0:
+            #if proc.call('sudo service motion status', shell=True) == 0:
+	    if proc.call('ps aux|egrep "\bmotion\b"|grep -v grep', shell=True) == 0:
                 print u"[{}] {}: Servicio MOTION esta activo".format(datetime.datetime.now(), __file__)
                 return True
         

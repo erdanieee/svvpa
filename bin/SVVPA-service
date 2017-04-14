@@ -53,6 +53,10 @@ case $1 in
 	# Encender servicio. Se ejecuta automáticamente por Linux cuando se inicia el sistema (init 2 3 4 5)
 	start|notify_startup)
 		echo "[$(date)] $0: Servicio '$1': El sistema se está arrancando"
+		
+		#start motion
+		/home/pi/software/motion-mmal/motion -c /etc/motion/motion.conf &
+		
 		#start _telegram_bot
 		python -u _telegram_bot.py &
 
