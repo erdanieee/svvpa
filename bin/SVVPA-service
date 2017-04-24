@@ -55,7 +55,7 @@ case $1 in
 		echo "[$(date)] $0: Servicio '$1': El sistema se está arrancando"
 		
 		#start motion
-		/home/pi/software/motion-mmal/motion -c /etc/motion/motion.conf &
+		sudo /home/pi/software/motion-mmal/motion -c /etc/motion/motion.conf &
 		
 		#start _telegram_bot
 		python -u _telegram_bot.py &
@@ -101,7 +101,8 @@ case $1 in
 	# Comprueba estado de MOTION
 	check_services)
 		echo "[$(date)] $0: Servicio '$1': Comprobando estado de los servicios requeridos por SVVPA"
-		sudo /usr/sbin/service motion status
+		#sudo /usr/sbin/service motion status
+        ps aux|egrep "\bmotion\b"|grep -v 'grep'
 		RETVAL=$(($RETVAL|$?))
 
 		sudo /usr/sbin/service apache2 status

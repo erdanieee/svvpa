@@ -337,13 +337,15 @@ def cmd_motionDetection(args):
 			msg_subject	= cmd_motionDetection_subject_INICIAR
 			msg_html		= cmd_motionDetection_html_INICIAR
 			print u"[{}] {}: Iniciando servicio MOTION".format(datetime.datetime.now(), __file__)
-			proc.call('sudo service motion restart', shell=True)
+			#proc.call('sudo service motion restart', shell=True)
+            proc.call('sudo /home/pi/software/motion-mmal/motion -c /etc/motion/motion.conf', shell=True)
 			
 		elif r.group('action') == "PARAR":
 			msg_subject	= cmd_motionDetection_subject_PARAR
 			msg_html		= cmd_motionDetection_html_PARAR
 			print u"[{}] {}: Parando servicio MOTION".format(datetime.datetime.now(), __file__)
-			proc.call('sudo service motion stop', shell=True)
+			#proc.call('sudo service motion stop', shell=True)
+            proc.call('sudo killall motion',shell=True)
 			
 		else:
 			try:
@@ -351,7 +353,8 @@ def cmd_motionDetection(args):
 				print u"[{}] {}: Pausando servicio MOTION durante {} segundos".format(datetime.datetime.now(), __file__, str(timeout))
 				msg_subject	= cmd_motionDetection_subject_PAUSAR
 				msg_html		= cmd_motionDetection_html_PAUSAR.format(time=str(timeout), correo=os.environ['GMAIL_ACCOUNT_ALIAS'])
-				proc.call('sudo service motion stop', shell=True)				
+				#proc.call('sudo service motion stop', shell=True)				
+                proc.call('sudo killall motion',shell=True)
 				notificar_email(msg_subject, msg_html)
 				step=1
 				t=0
@@ -363,7 +366,8 @@ def cmd_motionDetection(args):
 				msg_subject	= cmd_motionDetection_subject_REANUDAR
 				msg_html		= cmd_motionDetection_html_REANUDAR
 				print u"[{}] {}: Reanudando servicio MOTION".format(datetime.datetime.now(), __file__)
-				proc.call('sudo service motion start', shell=True)
+				#proc.call('sudo service motion start', shell=True)
+                proc.call('sudo /home/pi/software/motion-mmal/motion -c /etc/motion/motion.conf', shell=True)
 
 		notificar_email(msg_subject, msg_html)			
 

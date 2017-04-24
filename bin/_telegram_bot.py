@@ -818,7 +818,7 @@ el comando bash'
 
             print u"[{}] {}: Reiniciando servicio motion".format(datetime.datetime.now(), __file__)
             #proc.call('sudo service motion restart', shell=True)
-	    proc.call('/home/pi/software/motion-mmal/motion -c /etc/motion/motion.conf', shell=True)
+	    proc.call('sudo /home/pi/software/motion-mmal/motion -c /etc/motion/motion.conf', shell=True)
             
             if msg:
                 self.editMessageText(self.getMsgChatId(msg), self.MSG_MOTION_START)
@@ -842,7 +842,7 @@ el comando bash'
 
             print u"[{}] {}: Parando servicio motion".format(datetime.datetime.now(), __file__)
             #proc.call('sudo service motion stop', shell=True)
-	    proc.cll('killall motion',shell=True)	
+	    proc.call('sudo killall motion',shell=True)	
             
             if msg:
                 self.editMessageText(self.getMsgChatId(msg), self.MSG_CMD_MOTION_STOP)
