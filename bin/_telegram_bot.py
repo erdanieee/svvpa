@@ -944,9 +944,9 @@ el comando bash'
                 traceback.print_exc()
                 self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))                
                  
-            t = threading.Thread(target=self.send_snapshot, args=(fileout,))
-            t.daemon = True
-            t.start()
+        t = threading.Thread(target=self.send_snapshot, args=(fileout,))
+        t.daemon = True
+        t.start()
                        
            
       
