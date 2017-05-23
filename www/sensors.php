@@ -9,7 +9,7 @@ $dht22HR = [];
 date_default_timezone_set('UTC');
 
 // Create connection
-$conn = mysqli_connect(MYSQL_SERVER, MYSQL_USER, MYSQL_PASS, MYSQL_DB);
+$conn = mysqli_connect('localhost', MYSQL_USER, MYSQL_PASS, MYSQL_DB);
 // Check connection
 if (mysqli_connect_errno()) {
 	echo "Failed to connect to MySQL: " . mysqli_connect_error();

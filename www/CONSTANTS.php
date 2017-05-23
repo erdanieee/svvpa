@@ -20,6 +20,4 @@ for ($i=0; $i<count($v); $i++){
 	define("$v[$i]", exec("bash -c 'source ../bin/CONSTANTS.sh; echo \$$v[$i]'"));
 }
 
-define('MYSQL_SERVER','localhost');
-
 ?>
