@@ -91,3 +91,8 @@ CREATE TABLE `videos` (
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2016-05-11 12:48:25
+
+
+DROP USER 'svvpa'@'localhost';
+CREATE USER 'svvpa'@'localhost' IDENTIFIED BY 'updateSensors';
+GRANT ALL PRIVILEGES ON svvpa.* TO 'svvpa'@'localhost';
