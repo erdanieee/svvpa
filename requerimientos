@@ -1,19 +1,16 @@
 ###################################
 ### INSTALACIÓN DE DEPENDENCIAS	###
 ###################################
-* sudo apt-get install git motion apache2 mysql-server php5 php5-mysql bc build-essential python-dev python-smbus vnstat fswebcam sshpass python-mysqldb
-* sudo pip install --upgrade oauth2client PyOpenSSL gspread zipfile md5 nunconv google-api-python-client
-* Adafruit_Python_DHT
-	- git clone https://github.com/adafruit/Adafruit_Python_DHT.git
-	- sudo python setup.py install
+* sudo apt-get install git motion apache2 mysql-server php5 php5-mysql bc build-essential python-dev python-smbus vnstat fswebcam sshpass python-mysqldb python-pip vim
+* sudo pip install --upgrade oauth2client PyOpenSSL gspread google-api-python-client
+#* Adafruit_Python_DHT
+#	- git clone https://github.com/adafruit/Adafruit_Python_DHT.git
+#	- sudo python setup.py install
 * Adafruit_Python_BMP
 	- git clone https://github.com/adafruit/Adafruit_Python_BMP.git
 	- sudo python setup.py install
 * rclone 
 	- http://downloads.rclone.org/rclone-current-linux-arm.zip
-* ffmpeg (probar a usar avconv que está en los repositorios [libav-tools])
-	- compilación en la RPi (see http://owenashurst.com/?p=242)
-		* es necesario modificar el archivo autogen.sh de libaacplus para que no falle al no encontrar libtool (debe ser libtoolize)
 * instalar la versión modificada de gmail-sender que está en mi github
 	- git clone https://github.com/erdanieee/gmail-sender
 	- sudo python setup.py install
@@ -23,6 +20,9 @@
 	- sudo python setup.py install
 * instalar telepot
 	- git clone https://github.com/nickoala/telepot && cd telepot && sudo python setup.py install
+* ffmpeg (probar a usar avconv que está en los repositorios [libav-tools])
+	- compilación en la RPi (see http://owenashurst.com/?p=242)
+	- copiar config/ffmepg.conf a /etc/ld.so.conf.d/
 
 			
 
@@ -30,10 +30,8 @@
 ####################
 ### TABLAS MYSQL ###
 ####################
-* crear base de datos a partir del archivo config/svvpa.sql
+* crear base de datos y usuarios a partir del archivo config/svvpa.sql
 	- mysql -u root -p < config/svvpa.sql
-* crear usuario con permisos select, insert, update y poner user/pass en updateSensors.sh
-* crear usuario con permiso select y poner user/pass en sensors.php
 
 
 
@@ -41,6 +39,8 @@
 ### MODIFICACIÓN DE FICHEROS ###
 ################################
 * clonar proyecto en /var/www
+* cambiar permisos del directorio /var/www/svvpa y /var/www/svvpa/www
+* Crear directorio motion (ver CONSTANTS para la ubicación) que pertenezca a www-data y motion con permisos 774
 * modificar /etc/apache2/sites-available/000-default.conf para que el directorio por defecto sea /var/www/svvpa/www
 	- DocumentRoot /var/www/svvpa/www
 * proteger www con password
@@ -51,7 +51,7 @@
     * AuthUserFile /etc/apache2/pwd
     * Require user svvpa
 * copiar ~/.rclone.conf
-* copiar svvpa-81b7a04fc4c2.json para gspread
+#* copiar svvpa-81b7a04fc4c2.json para gspread
 * copiar CONSTANTS.php.example a CONSTANTS.php y modificar a criterio
 * copiar CONSTANTS.sh.example a CONSTANTS.sh y modificar a criterio
 * modificar /etc/default/motion para que se inicie motion on startup
@@ -63,8 +63,8 @@
 	- SVVPAWEB ALL = NOPASSWD: /sbin/shutdown, /sbin/date, /usr/bin/vnstat
 	- MOTION   ALL = NOPASSWD: /usr/bin/vnstat, /usr/sbin/service
 	- CRONUSER ALL = NOPASSWD: ALL
-* Crear directorio motion (ver CONSTANTS para la ubicación) que pertenezca a www-data y motion con permisos 774
 * Copiar config/svvpa.logrotate.example a /etc/logrotate.d/svvpa, modificarlo convenientemente y cambiar usuario a root:root
+* Modificar /etc/modules para que incluya módulo bcm2835-v4l2
 
 
 
