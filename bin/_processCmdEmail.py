@@ -86,7 +86,7 @@ cmd_emailNotif_html_INICIAR=u'<html><body>Las notificaciones por email estan act
 cmd_emailNotif_html_PARAR=u'<html><body>Las notificaciones por email estan desactivadas</body></html>'
 
 cmd_shell_subject=u'SVVPA - Comando shell'
-cmd_help_html=u'<html><body>Se ha ejecutado el comando "{}" con la siguiente salida:<br><pre>{}</pre></body></html>'
+cmd_shell_html=u'<html><body>Se ha ejecutado el comando "{}" con la siguiente salida:<br><pre>{}</pre></body></html>'
 
 cmd_telegramBot_subjet_ON=u'SVVPA - Bot telegram activado'
 cmd_telegramBot_subjet_OFF=u'SVVPA - Bot telegram desactivado'
@@ -452,7 +452,7 @@ def cmd_shell(cmd):
 		try:			
 			p = proc.check_output(cmd, shell=True).strip()
 			msg_subject	= cmd_shell_subject
-			msg_html	= cmd_help_html.format(cmd, p)
+			msg_html	= cmd_shell_html.format(cmd, p)
 				 
 		except Exception as e:
 			print >>sys.stderr, u"[{}] {}: ERROR! Se produjo un error inesperado al ejecutar el comando bash:".format(datetime.datetime.now(), __file__)
@@ -533,6 +533,7 @@ def main(args):
 				
 			except Exception, ex:
 				print >> sys.stderr, u"[{}] {}: ERROR! Ha ocurrido el error '{}' al procesar el comando '{}'".format(datetime.datetime.now(), __file__, repr(ex), r.group('cmd'))
+				traceback.print_exc()
 				e=getEmailByUid(uid, e)
 				e.add_label(CMD_ERROR)
 				msg_subject	= error_general_subject.format(command=r.group('cmd'))
