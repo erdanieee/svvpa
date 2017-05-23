@@ -25,4 +25,5 @@ SHELL=/bin/bash
 */6 * * * * sleep 25; sudo /usr/sbin/service SVVPA-service check_cmd_email
 */1 * * * * sleep 30; sudo /usr/sbin/service SVVPA-service check_telegram_service
 */20 * * * * sleep 45; sudo /usr/sbin/service SVVPA-service update_online_sensors 4
+0 6 * * * sudo reboot now
 
