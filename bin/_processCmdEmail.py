@@ -12,6 +12,7 @@ import zlib
 import md5
 import time
 import signal
+from _google_drive_uploader import main as fileuploader
 
 
 
@@ -134,52 +135,55 @@ def cmd_help(a=None):
 
 def cmd_saveFile(eventId):
 	print u"[{}] {}: Guardando archivos en google drive (id:{})".format(datetime.datetime.now(), __file__, eventId)
-	errorMsg=""
-	imageFile 	 = os.environ['MOTION_DIR'] +  eventId + "." + os.environ['MOTION_IMAGE_EXT']
-	videoFile 	 = os.environ['MOTION_DIR'] +  eventId + "." + os.environ['MOTION_VIDEO_EXT']
-	imageLogFile = "/tmp/" +  eventId + "_IMAGEN.log"
-	videoLogFile = "/tmp/" +  eventId + "_VIDEO.log"
-	imageCmd 	 = os.environ['RCLONE_BIN'] + " --config " + os.environ['RCLONE_CONFIG'] + " copy " + imageFile + " google:SVVPA/imagenes 2>&1 |tee " + imageLogFile
-	videoCmd 	 = os.environ['RCLONE_BIN'] + " --config " + os.environ['RCLONE_CONFIG'] + " copy " + videoFile + " google:SVVPA/videos 2>&1 |tee " + videoLogFile
+	#errorMsg=""
+	#imageFile 	 = os.environ['MOTION_DIR'] +  eventId + "." + os.environ['MOTION_IMAGE_EXT']
+	#videoFile 	 = os.environ['MOTION_DIR'] +  eventId + "." + os.environ['MOTION_VIDEO_EXT']
+	#imageLogFile = "/tmp/" +  eventId + "_IMAGEN.log"
+	#videoLogFile = "/tmp/" +  eventId + "_VIDEO.log"
+	#imageCmd 	 = os.environ['RCLONE_BIN'] + " --config " + os.environ['RCLONE_CONFIG'] + " copy " + imageFile + " google:SVVPA/imagenes 2>&1 |tee " + imageLogFile
+	#videoCmd 	 = os.environ['RCLONE_BIN'] + " --config " + os.environ['RCLONE_CONFIG'] + " copy " + videoFile + " google:SVVPA/videos 2>&1 |tee " + videoLogFile
 
 	msg_subject		= cmd_saveFile_subject_OK.format(eventId=eventId)
 	msg_html			= cmd_saveFile_html_OK
-	msg_attachment = [imageLogFile, videoLogFile]
-
-	if not os.path.isfile(imageFile):
-		print >> sys.stderr, u"[{}] {}: ERROR! No se encuentra la imagen {}.".format(datetime.datetime.now(), __file__, imageFile)
-		raise Exception(u'{0}: No se encuentra la imagen del evento! Comprueba que has escrito correctamente el identificador del evento'.format(imageFile))	
-	if not os.path.isfile(videoFile):
-		print >> sys.stderr, u"[{}] {}: ERROR! No se encuentra el video {}".format(datetime.datetime.now(), __file__, videoFile)
-		raise Exception(u'{0}: No se encuentra el video del evento! Es posible que aun se este procesando. Por favor, intentalo de nuevo mas tarde'.format(videoFile))
-	if len(eventId.split("_")) < 12:
-		print >> sys.stderr, u"[{}] {}: ERROR! El identificador del evento ({}) tiene menos de 12 tokens".format(datetime.datetime.now(), __file__, eventId)
-		raise Exception(u'Error en el identificador del evento "{0}". Recuerda que el identificador son 12 numeros separados por guiones bajos'.format(eventId))
-
-	try:
-		imageCmdResult = proc.call(imageCmd, shell=True)
-	except Exception as e:
-		print >> sys.stderr, u"[{}] {}: ERROR! Se produjeron errores al subir la imagen a google drive:".format(datetime.datetime.now(), __file__)
-		traceback.print_exc()
-		errorMsg+=u'Error al enviar la imagen a google drive.\n{}\n'.format(repr(e))
-		#raise type(e)('Error al enviar el archivo a google drive.\n' + str(e) + '\n' + imageCmd)
-
-	try:
-		videoCmdResult = proc.call(videoCmd, shell=True)
-	except Exception as e:
-		print >> sys.stderr, u"[{}] {}: ERROR! Se produjeron errores al subir el video a google drive:".format(datetime.datetime.now(), __file__)
-		traceback.print_exc()
-		errorMsg+=u'Error al enviar el video a google drive.\n{}\n'.format(repr(e))
+	f = os.environ['MOTION_DIR'] + eventId + '.' + os.environ['MOTION_VIDEO_EXT']
+	fileuploader(f)
 	
-	if imageCmdResult or videoCmdResult or errorMsg:
-		print >> sys.stderr, u"[{}] {}: Se produjeron errores al subir los archivos del evento {} a google drive".format(eventId)
-		msg_subject=cmd_saveFile_subject_ERROR.format(eventId=eventId)
-		msg_html=cmd_saveFile_html_ERROR.format(error=errorMsg)
+	#msg_attachment = [imageLogFile, videoLogFile]
 
-	notificar_email(msg_subject, msg_html, msg_attachment)
+	#if not os.path.isfile(imageFile):
+	#	print >> sys.stderr, u"[{}] {}: ERROR! No se encuentra la imagen {}.".format(datetime.datetime.now(), __file__, imageFile)
+	#	raise Exception(u'{0}: No se encuentra la imagen del evento! Comprueba que has escrito correctamente el identificador del evento'.format(imageFile))	
+	#if not os.path.isfile(videoFile):
+	#	print >> sys.stderr, u"[{}] {}: ERROR! No se encuentra el video {}".format(datetime.datetime.now(), __file__, videoFile)
+	#	raise Exception(u'{0}: No se encuentra el video del evento! Es posible que aun se este procesando. Por favor, intentalo de nuevo mas tarde'.format(videoFile))
+	#if len(eventId.split("_")) < 12:
+	#	print >> sys.stderr, u"[{}] {}: ERROR! El identificador del evento ({}) tiene menos de 12 tokens".format(datetime.datetime.now(), __file__, eventId)
+	#	raise Exception(u'Error en el identificador del evento "{0}". Recuerda que el identificador son 12 numeros separados por guiones bajos'.format(eventId))
 
-	for f in msg_attachment:
-		os.remove(f)
+	#try:
+	#	imageCmdResult = proc.call(imageCmd, shell=True)
+	#except Exception as e:
+	#	print >> sys.stderr, u"[{}] {}: ERROR! Se produjeron errores al subir la imagen a google drive:".format(datetime.datetime.now(), __file__)
+	#	traceback.print_exc()
+	#	errorMsg+=u'Error al enviar la imagen a google drive.\n{}\n'.format(repr(e))
+	#	#raise type(e)('Error al enviar el archivo a google drive.\n' + str(e) + '\n' + imageCmd)
+
+	#try:
+	#	videoCmdResult = proc.call(videoCmd, shell=True)
+	#except Exception as e:
+	#	print >> sys.stderr, u"[{}] {}: ERROR! Se produjeron errores al subir el video a google drive:".format(datetime.datetime.now(), __file__)
+	#	traceback.print_exc()
+	#	errorMsg+=u'Error al enviar el video a google drive.\n{}\n'.format(repr(e))
+	
+	#if imageCmdResult or videoCmdResult or errorMsg:
+	#	print >> sys.stderr, u"[{}] {}: Se produjeron errores al subir los archivos del evento {} a google drive".format(eventId)
+	#	msg_subject=cmd_saveFile_subject_ERROR.format(eventId=eventId)
+	#	msg_html=cmd_saveFile_html_ERROR.format(error=errorMsg)
+
+	notificar_email(msg_subject, msg_html)
+
+	#for f in msg_attachment:
+	#	os.remove(f)
 
 
 
