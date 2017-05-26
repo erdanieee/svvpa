@@ -9,8 +9,8 @@
 * Adafruit_Python_BMP
 	- git clone https://github.com/adafruit/Adafruit_Python_BMP.git
 	- sudo python setup.py install
-* rclone 
-	- http://downloads.rclone.org/rclone-current-linux-arm.zip
+#* rclone 
+#	- http://downloads.rclone.org/rclone-current-linux-arm.zip
 * instalar la versión modificada de gmail-sender que está en mi github
 	- git clone https://github.com/erdanieee/gmail-sender
 	- sudo python setup.py install

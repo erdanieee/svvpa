@@ -150,22 +150,22 @@ case $1 in
 
 
 
-	# Actualiza la IP en duckdns.org y en google drive. Este comando es útil cuando SVVPA tiene acceso desde el exterior (IP pública real), pero no tiene IP fija. Si se desea actualizar, debería llamarse tras cada reconexión o un par de veces al día desde cron
-	update_ip)
-		echo "[$(date)] $0: Servicio '$1': Actualizando IP"
-		echo url="https://www.duckdns.org/update?domains=${DUCKDNS_DOMAIN}&token=${DUCKDNS_TOKEN}&ip=" | curl -s -k -K -
-		RETVAL=$(($RETVAL|$?))
-
-		ip=$(wget "http://ipecho.net/plain" -qO -)
-		RETVAL=$(($RETVAL|$?))
-
-		echo "http://${DUCKDNS_DOMAIN}.duckdns.org:${APACHE_PORT}" > ${CURRENT_IP_FILE} 
-		echo "http://${ip}:${APACHE_PORT}" >> ${CURRENT_IP_FILE}
-		RETVAL=$(($RETVAL|$?))
-
-		${RCLONE_BIN} --config ${RCLONE_CONFIG} copy ${CURRENT_IP_FILE} google:SVVPA/ 2>&1
-		RETVAL=$(($RETVAL|$?))
-	;;
+#	# Actualiza la IP en duckdns.org y en google drive. Este comando es útil cuando SVVPA tiene acceso desde el exterior (IP pública real), pero no tiene IP fija. Si se desea actualizar, debería llamarse tras cada reconexión o un par de veces al día desde cron
+#	update_ip)
+#		echo "[$(date)] $0: Servicio '$1': Actualizando IP"
+#		echo url="https://www.duckdns.org/update?domains=${DUCKDNS_DOMAIN}&token=${DUCKDNS_TOKEN}&ip=" | curl -s -k -K -
+#		RETVAL=$(($RETVAL|$?))
+#
+#		ip=$(wget "http://ipecho.net/plain" -qO -)
+#		RETVAL=$(($RETVAL|$?))
+#
+#		echo "http://${DUCKDNS_DOMAIN}.duckdns.org:${APACHE_PORT}" > ${CURRENT_IP_FILE} 
+#		echo "http://${ip}:${APACHE_PORT}" >> ${CURRENT_IP_FILE}
+#		RETVAL=$(($RETVAL|$?))
+#
+#		${RCLONE_BIN} --config ${RCLONE_CONFIG} copy ${CURRENT_IP_FILE} google:SVVPA/ 2>&1
+#		RETVAL=$(($RETVAL|$?))
+#	;;
 	
 
 

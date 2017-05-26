@@ -20,11 +20,9 @@ fi
 	
 export APACHE_PORT="9999"
 
-export RCLONE_BIN="/home/pi/software/rclone-v1.27-linux-arm/rclone"
 export FFMPEG_BIN="/usr/local/bin/ffmpeg"
 export VNSTAT_BIN="/usr/bin/vnstat"
 
-export RCLONE_CONFIG=${CONFIG_DIR}"rclone.conf"
 export GSREAD_JSON=${CONFIG_DIR}"gspread.json"
 
 export DUCKDNS_DOMAIN="svvpa"
