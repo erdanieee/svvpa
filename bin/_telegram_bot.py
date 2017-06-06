@@ -77,6 +77,8 @@ podra volver a enviar comandos a traves de telegram!'''
 el usuario (!?)'''
     MSG_CMD_MOTION = u'''Este comando te permite ajustar la deteccion de movimiento. \
 ¿Que quieres hacer?'''
+    MSG_CMD_WIFI = u'''Este comando te permite controlar la wifi "El Cárabo". \
+¿Que quieres hacer?'''
     MSG_ERROR_NO_CAMERAS = u'''ERROR! No hay cámaras configuradas'''
     MSG_SELECT_DEVICE = u'''Selecciona la cámara que quieres usar para tomar la foto'''
     MSG_SSH_OPENED = u'''Se ha abierto un tunel reverso ssh que será accesible \
@@ -122,6 +124,10 @@ correctamente \U0001f440.'''
     MSG_CMD_MOTION_STOP = u'''La detección de movimiento se ha detenido \U0001f648 '''
     MSG_CMD_MOTION_ENABLED = u'''La detección de movimiento esta activa \U0001f440'''
     MSG_CMD_MOTION_DISABLED = u'''La detección de movimiento esta inactiva \U0001f648'''
+    MSG_CMD_WIFI_START = u'''La wifi El Cárabo se acaba de activar'''
+    MSG_CMD_WIFI_STOP = u'''La wifi El Cárabo se ha desactivado'''    
+    MSG_CMD_WIFI_ENABLED = u'''La wifi El Cárabo está activa'''
+    MSG_CMD_WIFI_DISABLED = u'''La wifi El Cárabo está inactiva'''
     MSG_CMD_SNAPSHOT = u'''Capturando foto...'''
     MSG_CMD_EMAIL_NOTIF_ENABLED = u'''Las notificaciones por email estan \
 actualmente activadas \u2709\ufe0f'''
@@ -153,6 +159,9 @@ el comando bash'
     BUT_MOTION_STOP             = u'\u23f9 Parar'
     BUT_MOTION_PAUSE            = u'\u23f8 Pausar'
     BUT_MOTION_STATUS           = u'\u2753 Comprobar estado'
+    BUT_WIFI_START              = u'\u25b6\ufe0f Iniciar'
+    BUT_WIFI_STOP               = u'\u23f9 Parar'
+    BUT_WIFI_PAUSE              = u'\u23f8 Pausar'
     BUT_SHUTDOWN_NO             = u'\u2620 No'
     BUT_SHUTDOWN_NOTSURE        = u'\u2620 No totalmente'
     BUT_SHUTDOWN_MAYBE          = u'\u2620 Creo que sí'
@@ -170,6 +179,7 @@ el comando bash'
     EMAIL_NOTIF_OFF    = u'OFF'
 
     TIMER_MOTION    = u'motionTimer'
+    TIMER_WIFI      = u'wifiTimer'
     TIMER_SSH       = u'sshTimer'
     TIMER_UPDATE	= u'updateTimer'
 
@@ -184,10 +194,14 @@ el comando bash'
     CBQ_MOTION_START        = u'cbq_motionStart'
     CBQ_MOTION_STOP         = u'cbq_motionStop'
     CBQ_MOTION_STATUS       = u'cbq_motionStatus'
+    CBQ_WIFI_START          = u'cbq_wifiStart'
+    CBQ_WIFI_STOP           = u'cbq_wifiStop'
+    CBQ_WIFI_STATUS         = u'cbq_wifiStatus'    
     CBQ_SNAPSHOT            = u'cbq_snapshot'
     CBQ_UPLOAD_FILE         = u'cbq_uploadVideo'
     CBQ_SHUTDOWN            = u'cbq_shutdown'
     CBQ_EMAIL_NOTIF         = u'cbq_emailNotif'  
+
     
     RETRIES_MAX     = 10
     RETRIES_WAIT    = 50
@@ -258,6 +272,8 @@ el comando bash'
                 time.sleep(self._update_time)		
 
 
+
+
         def handle(self, msg):
             flavor = telepot.flavor(msg)
             #print json.dumps(msg, sort_keys=True, indent=4, separators=(',', ': '))
@@ -314,6 +330,9 @@ el comando bash'
                         self.CBQ_MOTION_START           : self.cbq_motionStart,
                         self.CBQ_MOTION_STOP            : self.cbq_motionStop,
                         self.CBQ_MOTION_STATUS          : self.cbq_motionStatus,
+                        self.CBQ_WIFI_START             : self.cbq_wifiStart,
+                        self.CBQ_WIFI_STOP              : self.cbq_wifiStop,
+                        self.CBQ_WIFI_STATUS            : self.cbq_wifiStatus,                        
                         self.CBQ_SNAPSHOT               : self.cbq_snapshot,
                         self.CBQ_UPLOAD_FILE            : self.cbq_uploadVideo,
                         self.CBQ_SHUTDOWN               : self.cbq_shutdown,
@@ -325,9 +344,10 @@ el comando bash'
             '/start'          : self.cmd_help,          # Descripcion. Indicar tambien que por seguridad solo responde a comandos enviados desde el chat de grupo
             '/ayuda'          : self.cmd_help,
             '/movimiento'     : self.cmd_motion,        # iniciar, parar, pausar...
+            '/wifi'           : self.cmd_wifi,          # iniciar/parar/status de la wifi El Cárabo
             '/foto'           : self.cmd_photo,         # Toma una instantanea            
             '/subir'          : self.cmd_upload_video,  # sube un video a google drive
-            '/sensores'       : self.cmd_sensors,       # muestra el estado de los sensores
+            '/sensores'       : self.cmd_sensors,       # muestra el estado de los sensores            
             '/emails'         : self.cmd_notif_emails,  # activa/desactiva la modificacion por emails
             '/ssh'            : self.cmd_open_ssh,      # abre tunel ssh en Bacmine
             '/actualizar'     : self.cmd_update,        # actualiza el repositorio github
@@ -474,6 +494,19 @@ el comando bash'
         chat    = self.CHAT_GROUP if INLINE_KEYBOARDS_GROUP_ACTIVE else msg['from']['id']    
         m       = self.sendMessage(chat, self.MSG_CMD_MOTION, reply_markup=markup)
         self.addMsgTimeout(*self.getMsgChatId(m))
+        
+
+    def cmd_wifi(self,msg):            
+        markup = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton( text=self.BUT_WIFI_START,  callback_data=self.callback2string( self.CBQ_WIFI_START ) )],
+            [InlineKeyboardButton( text=self.BUT_WIFI_STOP,   callback_data=self.callback2string( self.CBQ_WIFI_STOP ) )],
+            [InlineKeyboardButton( text=self.BUT_WIFI_STATUS, callback_data=self.callback2string( self.CBQ_WIFI_STATUS ) )],
+            [InlineKeyboardButton( text=self.BUT_CANCEL,        callback_data=self.callback2string(self.CBQ_FUNCTION_CANCEL) )],
+        ])                
+                        
+        chat    = self.CHAT_GROUP if INLINE_KEYBOARDS_GROUP_ACTIVE else msg['from']['id']    
+        m       = self.sendMessage(chat, self.MSG_CMD_WIFI, reply_markup=markup)
+        self.addMsgTimeout(*self.getMsgChatId(m))        
  
         
     def cmd_photo(self,msg):
@@ -871,6 +904,68 @@ el comando bash'
             traceback.print_exc()
             self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))
         
+
+ 
+    def cbq_wifiStart(self, msg=None):
+        try:
+            m = self._timers.pop(self.TIMER_WIFI, None)
+            if m:
+                print u"[{}] {}: Cancelando timer wifi".format(datetime.datetime.now(), __file__)
+                m.cancel()
+
+            print u"[{}] {}: Iniciando wifi El Cárabo".format(datetime.datetime.now(), __file__)
+            proc.call("ssh root@192.168.1.1 'manageWifi start'", shell=True)
+            
+            if msg:
+                self.editMessageText(self.getMsgChatId(msg), self.MSG_WIFI_START)
+            
+            if not INLINE_KEYBOARDS_GROUP_ACTIVE:        
+                self.sendMessage(self.CHAT_GROUP, self.MSG_WIFI_START)            
+        
+        except Exception as e:
+            print >> sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al iniciar la wifi El Cárabo:".format(datetime.datetime.now(), __file__)
+            traceback.print_exc()
+            self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))
+        
+                
+        
+    def cbq_wifiStop(self, msg=None):            
+        try:
+            m = self._timers.pop(self.TIMER_WIFI, None)
+            if m:
+                print u"[{}] {}: Cancelando timer wifi".format(datetime.datetime.now(), __file__)
+                m.cancel()
+
+            print u"[{}] {}: Desabilitando la wifi El Cárabo".format(datetime.datetime.now(), __file__)
+            proc.call("ssh root@192.168.1.1 'manageWifi stop'", shell=True)
+            
+            if msg:
+                self.editMessageText(self.getMsgChatId(msg), self.MSG_CMD_WIFI_STOP)
+            
+            if not INLINE_KEYBOARDS_GROUP_ACTIVE:
+                self.sendMessage(self.CHAT_GROUP, self.MSG_CMD_WIFI_STOP)
+            
+        except Exception as e:
+            print >>sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al detener la wifi El Cárabo:".format(datetime.datetime.now(), __file__)
+            traceback.print_exc()
+            self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))
+            
+         
+        
+    def cbq_wifiStatus(self, msg):
+        try:
+            if self.isWifiEnabled():                
+                self.editMessageText(self.getMsgChatId(msg),  self.MSG_CMD_WIFI_ENABLED)
+            
+            else:                
+                self.editMessageText(self.getMsgChatId(msg),  self.MSG_CMD_WIFI_DISABLED)
+            
+        except Exception as e:         
+            print >> sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al comprobar el estado de la wifi El Cárabo:".format(datetime.datetime.now(), __file__)
+            traceback.print_exc()
+            self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e))) 
+ 
+
         
         
     def cbq_BlockUserOneTime(self, msg, arg):
@@ -1113,6 +1208,20 @@ el comando bash'
             traceback.print_exc()
         
         print u"[{}] {}: Servicio motion esta inactivo".format(datetime.datetime.now(), __file__)
+
+
+
+    def isWifiEnabled(self):
+        try:
+            if proc.check_output("ssh root@192.168.1.1 'manageWifi status'", shell=True).strip() in "enabled":
+                print u"[{}] {}: La wifi El Cárabo está activa".format(datetime.datetime.now(), __file__)
+                return True
+        
+        except:
+            print >> sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al comprobar el estado de la wifi El Cárabo:".format(datetime.datetime.now(), __file__)
+            traceback.print_exc()
+        
+        print u"[{}] {}: La wifi El Cárabo está inactiva".format(datetime.datetime.now(), __file__)
 
     
     
