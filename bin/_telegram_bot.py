@@ -917,10 +917,10 @@ el comando bash'
             proc.call('ssh root@192.168.1.1 "manageWifi start"', shell=True)
             
             if msg:
-                self.editMessageText(self.getMsgChatId(msg), self.MSG_WIFI_START)
+                self.editMessageText(self.getMsgChatId(msg), self.MSG_CMD_WIFI_START)
             
             if not INLINE_KEYBOARDS_GROUP_ACTIVE:        
-                self.sendMessage(self.CHAT_GROUP, self.MSG_WIFI_START)            
+                self.sendMessage(self.CHAT_GROUP, self.MSG_CMD_WIFI_START)            
         
         except Exception as e:
             print >> sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al iniciar la wifi:".format(datetime.datetime.now(), __file__)
