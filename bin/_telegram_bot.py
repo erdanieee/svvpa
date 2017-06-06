@@ -913,7 +913,7 @@ el comando bash'
                 print u"[{}] {}: Cancelando timer wifi".format(datetime.datetime.now(), __file__)
                 m.cancel()
 
-            print u"[{}] {}: Iniciando wifi El Cárabo".format(datetime.datetime.now(), __file__)
+            print u"[{}] {}: Iniciando wifi".format(datetime.datetime.now(), __file__)
             proc.call('ssh root@192.168.1.1 "manageWifi start"', shell=True)
             
             if msg:
@@ -923,7 +923,7 @@ el comando bash'
                 self.sendMessage(self.CHAT_GROUP, self.MSG_WIFI_START)            
         
         except Exception as e:
-            print >> sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al iniciar la wifi El Cárabo:".format(datetime.datetime.now(), __file__)
+            print >> sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al iniciar la wifi:".format(datetime.datetime.now(), __file__)
             traceback.print_exc()
             self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))
         
@@ -936,7 +936,7 @@ el comando bash'
                 print u"[{}] {}: Cancelando timer wifi".format(datetime.datetime.now(), __file__)
                 m.cancel()
 
-            print u"[{}] {}: Desabilitando la wifi El Cárabo".format(datetime.datetime.now(), __file__)
+            print u"[{}] {}: Desabilitando la wifi".format(datetime.datetime.now(), __file__)
             proc.call('ssh root@192.168.1.1 "manageWifi stop"', shell=True)
             
             if msg:
@@ -946,7 +946,7 @@ el comando bash'
                 self.sendMessage(self.CHAT_GROUP, self.MSG_CMD_WIFI_STOP)
             
         except Exception as e:
-            print >>sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al detener la wifi El Cárabo:".format(datetime.datetime.now(), __file__)
+            print >>sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al detener la wifi:".format(datetime.datetime.now(), __file__)
             traceback.print_exc()
             self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e)))
             
@@ -961,7 +961,7 @@ el comando bash'
                 self.editMessageText(self.getMsgChatId(msg),  self.MSG_CMD_WIFI_DISABLED)
             
         except Exception as e:         
-            print >> sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al comprobar el estado de la wifi El Cárabo:".format(datetime.datetime.now(), __file__)
+            print >> sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al comprobar el estado de la wifi:".format(datetime.datetime.now(), __file__)
             traceback.print_exc()
             self.sendMessage(self.CHAT_GROUP, self.MSG_ERROR_UNEXPECTED.format(repr(e))) 
  
@@ -1215,14 +1215,14 @@ el comando bash'
         try:
             o = proc.check_output('ssh root@192.168.1.1 "manageWifi status"', shell=True)
             if o.strip() in "enabled":
-                print u"[{}] {}: La wifi El Cárabo está activa".format(datetime.datetime.now(), __file__)
+                print u"[{}] {}: wifi activa".format(datetime.datetime.now(), __file__)
                 return True
         
         except:
-            print >> sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al comprobar el estado de la wifi El Cárabo:".format(datetime.datetime.now(), __file__)
+            print >> sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado al comprobar el estado de la wifi:".format(datetime.datetime.now(), __file__)
             traceback.print_exc()
         
-        print u"[{}] {}: La wifi El Cárabo está inactiva".format(datetime.datetime.now(), __file__)
+        print u"[{}] {}: wifi inactiva".format(datetime.datetime.now(), __file__)
 
     
     
