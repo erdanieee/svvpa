@@ -1,5 +1,5 @@
 <?php
-exec("/sbin/shutdown -r now");
+exec("sudo /sbin/shutdown -r now");
 ?>
 
 <html>
