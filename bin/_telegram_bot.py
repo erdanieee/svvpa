@@ -24,7 +24,7 @@ INLINE_KEYBOARDS_GROUP_ACTIVE = True
 
 
 
-
+#TODO: Añadir comando telegram para iniciar/para/estado/configuración de la wifi minirouter
 
 
 
@@ -32,10 +32,10 @@ class Telegram_bot(telepot.Bot):
     '''
     classdocs
     '''
-    MSG_NEW_USER = u'''{} {} ha enviado un comando a @{}, pero aún no tiene \
+    MSG_NEW_USER = u'''{} {} ha enviado un comando a {}, pero aún no tiene \
 permiso. ¿Quieres añadir al menda a la lista de usuarios autorizados para ejecutar \
 comandos a traves de Telegram?'''
-    MSG_BLOCKED_PRIVATE_CHAT = u'''Lo siento, pero por ahora el control de @{} \
+    MSG_BLOCKED_PRIVATE_CHAT = u'''Lo siento, pero por ahora el control de {} \
 por chat privado esta desactivado (es pa\' controlar el percal \U0001f609).\
 Utiliza el chat de grupo para mandar los commandos'''
     MSG_DONT_MENTION_ME = u'''¿Que dices de mi?'''
@@ -43,7 +43,7 @@ Utiliza el chat de grupo para mandar los commandos'''
 \U0001f238\u203c\ufe0f\n\n¿Te has enterado? Pues yo tampoco se lo que quieres. \
 Anda, hazme el favor de escribir los comandos correctamente y solo uno por mensaje \
 , que si no no se puede, aaaaaaaaes?.'''
-    MSG_CMD_HELP = u'''Mu wenas! Soy @{}, el *robot telegram* diseñado \
+    MSG_CMD_HELP = u'''Mu wenas! Soy {}, el *robot telegram* diseñado \
 específicamente para el control remoto de _SVVPA_ \U0001f60e. Al final de este \
 mensaje puedes ver los comandos disponibles. Para más información visita este \
 [enlace](https://docs.google.com/document/d/1L5-JcmTxsYVXZKHnDxlkZrFGeXPqNvtwgtptdFnbYlc/edit?usp=sharing).
@@ -58,6 +58,7 @@ pulsar sobre la captura que te interese.
 /foto - Toma una instantánea            
 /subir - Sube una captura a google drive
 /sensores - Muestra el estado de los sensores
+/wifi - Activa/desactiva la wifi de El Cárabo
 /emails - Activa/desactiva la notificación por emails
 /ssh - Abre tunel inverso ssh para gestión remota de SVVPA
 /actualizar - actualiza el repositorio github
@@ -293,7 +294,7 @@ el comando bash'
         self.BANNED_USERS   = [] if not os.environ['TELEGRAM_BANNED_USERS'] else map(int,os.environ['TELEGRAM_BANNED_USERS'].split(','))
         self.ADMIN_USER     = int(os.environ['TELEGRAM_ADMIN_USER'])
         self.FILE_CONSTANTS = os.environ['BIN_DIR']+'CONSTANTS.sh' 
-        self.BOT_NAME       = self.getMe()['username']
+        self.BOT_NAME       = "SVVPA" #self.getMe()['username']
         self.MSG_TIMEOUT    = int(os.environ['TELEGRAM_MSG_TIMEOUT'])
         #self.MSG_TIMEOUT    = 3600
         
@@ -455,7 +456,7 @@ el comando bash'
     #                            C O M M A N D S  
     ###########################################################################  
     def cmd_help(self,msg):
-        print u"[{}] {}: Enviando mensaje de ayuda".format(datetime.datetime.now(), __file__)        
+        print u"[{}] {}: Enviando mensaje de ayuda".format(datetime.datetime.now(), __file__)
         self.sendMessage(self.CHAT_GROUP, self.MSG_CMD_HELP.format(self.BOT_NAME), parse_mode="Markdown")
   
     
