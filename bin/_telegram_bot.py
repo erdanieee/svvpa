@@ -914,7 +914,7 @@ el comando bash'
                 m.cancel()
 
             print u"[{}] {}: Iniciando wifi El Cárabo".format(datetime.datetime.now(), __file__)
-            proc.call("ssh root@192.168.1.1 'manageWifi start'", shell=True)
+            proc.call('ssh root@192.168.1.1 "manageWifi start"', shell=True)
             
             if msg:
                 self.editMessageText(self.getMsgChatId(msg), self.MSG_WIFI_START)
@@ -937,7 +937,7 @@ el comando bash'
                 m.cancel()
 
             print u"[{}] {}: Desabilitando la wifi El Cárabo".format(datetime.datetime.now(), __file__)
-            proc.call("ssh root@192.168.1.1 'manageWifi stop'", shell=True)
+            proc.call('ssh root@192.168.1.1 "manageWifi stop"', shell=True)
             
             if msg:
                 self.editMessageText(self.getMsgChatId(msg), self.MSG_CMD_WIFI_STOP)
@@ -1213,7 +1213,8 @@ el comando bash'
 
     def isWifiEnabled(self):
         try:
-            if proc.check_output("ssh root@192.168.1.1 'manageWifi status'", shell=True).strip() in "enabled":
+            o = proc.check_output('ssh root@192.168.1.1 "manageWifi status"', shell=True)
+            if o.strip() in "enabled":
                 print u"[{}] {}: La wifi El Cárabo está activa".format(datetime.datetime.now(), __file__)
                 return True
         
