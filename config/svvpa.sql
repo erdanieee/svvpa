@@ -93,6 +93,14 @@ CREATE TABLE `videos` (
 -- Dump completed on 2016-05-11 12:48:25
 
 
+DROP TABLE IF EXISTS `internetUsage`;
+CREATE TABLE `internetUsage` ( 
+   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+   `bytes` integer DEFAULT NULL, 
+   PRIMARY KEY (`date`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
 DROP USER 'svvpa'@'localhost';
-CREATE USER 'svvpa'@'localhost' IDENTIFIED BY 'updateSensors';
+CREATE USER 'svvpa'@'localhost' IDENTIFIED BY 'svvpa';
 GRANT ALL PRIVILEGES ON svvpa.* TO 'svvpa'@'localhost';

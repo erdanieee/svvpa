@@ -1,7 +1,7 @@
 ###################################
 ### INSTALACIÓN DE DEPENDENCIAS	###
 ###################################
-* sudo apt-get install git motion apache2 mysql-server php5 php5-mysql bc build-essential python-dev python-smbus vnstat fswebcam sshpass python-mysqldb python-pip vim
+* sudo apt-get install git motion apache2 mysql-server php5 php5-mysql bc build-essential python-dev python-smbus iptables-persistent fswebcam sshpass python-mysqldb python-pip vim
 * sudo pip install --upgrade oauth2client PyOpenSSL gspread google-api-python-client
 #* Adafruit_Python_DHT
 #	- git clone https://github.com/adafruit/Adafruit_Python_DHT.git
@@ -60,11 +60,12 @@
 	- User_Alias SVVPAWEB = www-data
 	- User_Alias CRONUSER = pi
 	- User_Alias MOTION   = motion
-	- SVVPAWEB ALL = NOPASSWD: /sbin/shutdown, /sbin/date, /usr/bin/vnstat
-	- MOTION   ALL = NOPASSWD: /usr/bin/vnstat, /usr/sbin/service
+	- SVVPAWEB ALL = NOPASSWD: /sbin/shutdown, /sbin/date
+	- MOTION   ALL = NOPASSWD: /usr/sbin/service
 	- CRONUSER ALL = NOPASSWD: ALL
 * Copiar config/svvpa.logrotate.example a /etc/logrotate.d/svvpa, modificarlo convenientemente y cambiar usuario a root:root
 * Modificar /etc/modules para que incluya módulo bcm2835-v4l2
+* borrar /etc/iptables/rules.v4 y sustituir por enlace simbólico a config/iptables.rules.v4 
 
 
 

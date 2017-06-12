@@ -134,14 +134,14 @@ case $1 in
 	;;
 
 
+	
+	update_internetUsage)
+	    echo "[$(date)] $0: Servicio '$1': Actualizando tráfico de internet"
 
+	    usage=$(sudo iptables -L INTERNET -vnxZ --line-numbers|egrep '^1'|awk '{print $2}')
+	    sqlStm=$(echo "insert into internetUsage (bytes) values ($(getMysqlVal $usage))")
 
-
-
-	# Actualiza el tráfico de internet por la tarjeta. Este servicio debe ser llamada al menos cada hora desde cron
-	update_vnstats)
-		echo "[$(date)] $0: Servicio '$1': Actualizando tráfico en ${VNSTAT_INTERFACE}"
-		sudo ${VNSTAT_BIN} -u -i ${VNSTAT_INTERFACE}
+		mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo $sqlStm)
 		RETVAL=$(($RETVAL|$?))
 	;;
 
@@ -204,7 +204,7 @@ case $1 in
 		if [[ $# -gt 1 ]]
 		then
 			avg=$2	#número de muestras sobre el que se calculan los datos de los sensores
-			query="select avg(x) from (select XXX as x from sensors order by date desc limit $avg) s"
+			query="select avg(x) from (select XXX as x from sensors order by date desc limit $avg) sensors"
 
 			#datetime=$( mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo "select date from sensors order by date desc limit 1") --skip-column-names )
 			cpuTemp=$( mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo "${query/XXX/CPU_temp}") --skip-column-names )

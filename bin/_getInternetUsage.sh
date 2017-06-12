@@ -1,10 +1,6 @@
 #!/bin/bash
-#Imprime los Mebibytes (2^20 bytes) gastados en el mes para la interfaz de red
-
+#Imprime los MB gastados en el mes para la interfaz de red
 
 source $(dirname $0)/CONSTANTS.sh
-#touch ${LOG_FILE}; exec &> >(tee -a ${LOG_FILE})
-
-${VNSTAT_BIN} -u -i ${VNSTAT_INTERFACE} 2>&1 > /dev/null
-${VNSTAT_BIN} --dumpdb -i ${VNSTAT_INTERFACE}|egrep 'm;0'|awk -F";" '{print $4+$5}'
-
+sqlStm=$(echo "select sum(bytes)/1000000 from (select bytes from internetUsage where YEAR(date) = YEAR(NOW()) and MONTH(date) = MONTH(NOW())) s;")
+mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} --skip-column-names < <(echo $sqlStm)

@@ -21,7 +21,6 @@ fi
 export APACHE_PORT="9999"
 
 export FFMPEG_BIN="/usr/local/bin/ffmpeg"
-export VNSTAT_BIN="/usr/bin/vnstat"
 
 export GSREAD_JSON=${CONFIG_DIR}"gspread.json"
 
@@ -44,7 +43,6 @@ export MYSQL_USER="svvpa"
 export MYSQL_PASS="updateSensors"
 export MYSQL_DB="svvpa"
 
-export VNSTAT_INTERFACE="eth0"
 export DATOS_MENSUALES="100"
 
 export GMAIL_ACCOUNT_ALIAS="svvpaec+CMD@gmail.com"
