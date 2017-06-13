@@ -90,7 +90,7 @@ desde {}:{} durante {} segundos'''
     MSG_CMD_UPLOAD = u'''Este comando sirve para subir los videos capturados a \
 Google Drive (las imagenes mas representativas se suben automaticamente). \
 Selecciona el video del evento que quieres subir a Google Drive (el gasto \
-actual de datos es de {} de los {}MiB que incluye la tarifa).'''
+actual de datos es de {} de los {}MB que incluye la tarifa).'''
     MSG_CMD_SENSORS = u'''A continuacion se muestran los datos tomados  el dia \
 *{}* a las *{}*:
         
@@ -206,10 +206,10 @@ el comando bash'
     RETRIES_MAX     = 10
     RETRIES_WAIT    = 50
     
-    SIZE_KiB = 1024.0
-    SIZE_MiB = 1048576.0 
-    SIZE_GiB = 1073741824.0 
-    SIZE_TiB = 1099511627776.0
+    SIZE_KB = 1024.0
+    SIZE_MB = 1048576.0 
+    SIZE_GB = 1073741824.0 
+    SIZE_TB = 1099511627776.0
     
     GET_MORE = u'more' 
 
@@ -1333,23 +1333,13 @@ el comando bash'
         
         print u"[{}] {}: La notificacion por email esta desactivada".format(datetime.datetime.now(), __file__)
         
- 
- 
-    def convert_size(self, size_bytes):
-        if size_bytes == 0:
-            return "0B"
-        size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
-        i = int(math.floor(math.log(size_bytes, 1024)))
-        p = math.pow(1024, i)
-        s = round(size_bytes / p, 2)
-        return "%s%s" % (s, size_name[i]) 
- 
+
 
     def get_datosConsumidos(self):
         try:
             cmd = "sudo " + os.environ['BIN_DIR'] + "_getInternetUsage.sh"     
             b = proc.check_output(cmd, shell=True).strip()
-            return u'{}'.format(self.convert_size(b))
+            return u'{}'.format(self.get_humanSize(float(b)))
         
         except:
             print >> sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado calcular los megas consumidos:".format(datetime.datetime.now(), __file__)
@@ -1385,20 +1375,20 @@ el comando bash'
 
  
     def get_humanSize(self, mBytes):
-        if mBytes < self.SIZE_KiB:
-            return u'{0} {1}'.format(mBytes,'Bytes' if mBytes > 1 else 'Byte')
+        if mBytes < self.SIZE_KB:
+            return u'{0}{1}'.format(mBytes,'B')
         
-        elif self.SIZE_KiB <= mBytes < self.SIZE_MiB:
-            return u'{0:.2f} KiB'.format(mBytes/self.SIZE_KiB)
+        elif self.SIZE_KB <= mBytes < self.SIZE_MB:
+            return u'{0:.2f}KB'.format(mBytes/self.SIZE_KB)
         
-        elif self.SIZE_MiB <= mBytes < self.SIZE_GiB:
-            return u'{0:.2f} MiB'.format(mBytes/self.SIZE_MiB)
+        elif self.SIZE_MB <= mBytes < self.SIZE_GB:
+            return u'{0:.2f}MB'.format(mBytes/self.SIZE_MB)
         
-        elif self.SIZE_GiB <= mBytes < self.SIZE_TiB:
-            return u'{0:.2f} GiB'.format(mBytes/self.SIZE_GiB)
+        elif self.SIZE_GB <= mBytes < self.SIZE_TB:
+            return u'{0:.2f}GB'.format(mBytes/self.SIZE_GB)
         
-        elif self.SIZE_TiB <= mBytes:
-            return u'{0:.2f} TiB'.format(mBytes/self.SIZE_TiB)
+        else 
+            return u'{0:.2f}TB'.format(mBytes/self.SIZE_TB)
             
     
     
