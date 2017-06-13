@@ -1335,12 +1335,21 @@ el comando bash'
         
  
  
+    def convert_size(size_bytes):
+        if size_bytes == 0:
+            return "0B"
+        size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
+        i = int(math.floor(math.log(size_bytes, 1024)))
+        p = math.pow(1024, i)
+        s = round(size_bytes / p, 2)
+        return "%s%s" % (s, size_name[i]) 
+ 
 
     def get_datosConsumidos(self):
         try:
             cmd = "sudo " + os.environ['BIN_DIR'] + "_getInternetUsage.sh"     
-            kb = proc.check_output(cmd, shell=True).strip()
-            return u'{}MiB'.format(kb)
+            b = proc.check_output(cmd, shell=True).strip()
+            return u'{}'.format(self.convert_size(b))
         
         except:
             print >> sys.stderr, u"[{}] {}: ERROR! Hubo un error inesperado calcular los megas consumidos:".format(datetime.datetime.now(), __file__)

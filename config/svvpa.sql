@@ -96,7 +96,8 @@ CREATE TABLE `videos` (
 DROP TABLE IF EXISTS `internetUsage`;
 CREATE TABLE `internetUsage` ( 
    `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, 
-   `bytes` integer DEFAULT NULL, 
+   `bytes_in` integer DEFAULT NULL, 
+   `bytes_out` integer DEFAULT NULL,
    PRIMARY KEY (`date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 

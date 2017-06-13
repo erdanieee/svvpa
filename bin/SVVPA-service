@@ -138,8 +138,9 @@ case $1 in
 	update_internetUsage)
 	    echo "[$(date)] $0: Servicio '$1': Actualizando tráfico de internet"
 
-	    usage=$(sudo iptables -L INTERNET -vnxZ --line-numbers|egrep '^1'|awk '{print $2}')
-	    sqlStm=$(echo "insert into internetUsage (bytes) values ($(getMysqlVal $usage))")
+	    in=$(sudo iptables -L INTERNET_IN -vnxZ --line-numbers|egrep '^1'|awk '{print $2}')
+	    out=$(sudo iptables -L INTERNET_OUT -vnxZ --line-numbers|egrep '^1'|awk '{print $2}')
+	    sqlStm=$(echo "insert into internetUsage (bytes_in, bytes_out) values ($(getMysqlVal $in), $(getMysqlVal $out))")
 
 		mysql -u ${MYSQL_USER} -p${MYSQL_PASS} ${MYSQL_DB} < <(echo $sqlStm)
 		RETVAL=$(($RETVAL|$?))
