@@ -1387,7 +1387,7 @@ el comando bash'
         elif self.SIZE_GB <= mBytes < self.SIZE_TB:
             return u'{0:.2f}GB'.format(mBytes/self.SIZE_GB)
         
-        else 
+        else: 
             return u'{0:.2f}TB'.format(mBytes/self.SIZE_TB)
             
     
