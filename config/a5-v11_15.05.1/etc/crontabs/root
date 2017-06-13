@@ -1,0 +1,4 @@
+#31 5 * * * reboot -f
+*/5 * * * * /root/bin/manage3g.sh 
+1 11 * * * /root/bin/manageWifi.sh start
+#1 18 * * * /root/bin/manageWifi.sh stop     

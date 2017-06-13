@@ -1,0 +1,19 @@
+#!/bin/sh /etc/rc.common
+# Example script
+# Copyright (C) 2007 OpenWrt.org
+ 
+START=91
+STOP=15
+ 
+start() {
+        usbmode -s
+        ifup wan3
+}                 
+ 
+stop() {          
+        ifdown wan3
+}
+
+restart() {
+        start
+}
