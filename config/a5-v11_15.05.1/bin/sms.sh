@@ -10,7 +10,7 @@ if [[ "$aux" ]]
 then
   rm $2
   date >> /root/sms_shutdown
-  (echo -e "GET /reboot.php\r\n"|nc 192.168.1.10 80) && reboot -f  
+  (echo -e "GET /reboot.php\r\n"|nc 192.168.1.10 80) && reboot -d 15 -f 
 
 else
   echo "banned $2" >> /root/sms_shutdown
