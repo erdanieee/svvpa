@@ -572,7 +572,7 @@ el comando bash'
         
                     
     def cmd_upload_video(self, msg, count=5, onlyUpdate=False):
-        videos = self.run_query('select id,size from videos order by id desc limit {}'.format(count))
+        videos = self.run_query('select id,size from videos where uid is not NULL and link is not NULL order by id desc limit {}'.format(count))
                         
         if len(videos)==0:
             print u"[{}] {}: Todavia no hay eventos capturados".format(datetime.datetime.now(), __file__)            
