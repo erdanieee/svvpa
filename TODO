@@ -1,0 +1,9 @@
+- ajustar enfoque de la cámara
+- probar nuevo sensor temperatura/humedad
+- activar tarifa 10GB para el verano
+- hacer backup de toda la instalación RPi
+- eliminar RCLONE de la web svvpa
+- hacer placa para conectar varios dispositivos I2C
+- comprobar que el sensor temperatura/humedad no tiene pullups en SDA/SCL
+- arreglar antena minirouter
+- modificar SVVPA-service para que la función que comprueba telegram verifique si es necesario reiniciarlo (fichero flag?)
