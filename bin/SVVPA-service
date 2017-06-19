@@ -182,7 +182,8 @@ case $1 in
 		bmp180Val="$(python -u _readBmp180.py)"
 		RETVAL=$(($RETVAL|$?))
 
-		dht22Val="$(sudo python -u _readDht22.py)"
+		#dht22Val="$(sudo python -u _readDht22.py)"
+		dht22Val="$(sudo ./_readSi7021)"
                 RETVAL=$(($RETVAL|$?))
 	
 		bmp180Pres="$(echo $bmp180Val|awk '{print $2}')"
