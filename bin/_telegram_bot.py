@@ -618,7 +618,7 @@ el comando bash'
       
     def restart_telegram(self):
         with open(os.environ['TELEGRAM_RESTART_FILE'], 'w') as f:
-            f.write("")     #touch file
+            f.write("")     #touching file
             
         
     #FIXME: meter en un thread para no bloquear el bot
