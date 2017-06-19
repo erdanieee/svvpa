@@ -82,5 +82,5 @@ export TELEGRAM_UPDATE_TIMEOUT=300	# GetUpdates timeout (retry)
 export TELEGRAM_UPDATE_STEPS="36"	# Número de pasos desde min hasta max
 export TELEGRAM_UPDATE_BASE="1.17"	# Tiempo de refresco (updateTime) = BASE^currStep+MIN
 export TELEGRAM_UPDATE_FACTOR="5"       # Tiempo por paso = updateTime^2*FACTOR
-
+export TELEGRAM_RESTART_FILE=${SVVPA_DIR}"/RESTART_TELEGRAM"
 

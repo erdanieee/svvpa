@@ -347,7 +347,7 @@ el comando bash'
             '/sensores'       : self.cmd_sensors,       # muestra el estado de los sensores            
             '/emails'         : self.cmd_notif_emails,  # activa/desactiva la modificacion por emails
             '/ssh'            : self.cmd_open_ssh,      # abre tunel ssh en Bacmine
-            '/actualizar'     : self.cmd_update,        # actualiza el repositorio github
+            '/actualizar'     : self.cmd_update,        # actualiza el repositorio github !!!A VECES REQUIERE REINICIO DE TELEGRAM
             '/reiniciar'      : self.cmd_reboot,        # reinicia el sistema
             '/apagar'         : self.cmd_shutdown,
             '/shell'          : self.cmd_shell
@@ -614,7 +614,12 @@ el comando bash'
                                                                       bmp180_press)        
         
         self.sendMessage(self.CHAT_GROUP, text.replace('None', '? '), parse_mode="Markdown")
-        
+      
+      
+    def restart_telegram(self):
+        with open(os.environ['TELEGRAM_RESTART_FILE'], 'w') as f:
+            f.write("")
+            
         
     #FIXME: meter en un thread para no bloquear el bot
     def cmd_update(self,msg):
@@ -623,6 +628,8 @@ el comando bash'
             print u"[{}] {}: Actualizando repositorio".format(datetime.datetime.now(), __file__)
             output = proc.check_output('cd {}; git pull'.format(os.environ['SVVPA_DIR']), shell=True)            
             self.sendMessage(self.CHAT_GROUP, self.MSG_CMD_UPDATE.format(output), parse_mode='Markdown')
+            if "bin/_telegram_bot.py" in output:
+                self.restart_telegram()
             
         except Exception as e:
             print >>sys.stderr, u"[{}] {}: ERROR! Se ha producido un error inesperado al actualizar el repositorio git:".format(datetime.datetime.now(), __file__)

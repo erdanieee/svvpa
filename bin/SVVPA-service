@@ -81,6 +81,15 @@ case $1 in
 
 	check_telegram_service)
 		pid=$(ps aux|grep 'python'|grep '_telegram_bot.py'|grep -v 'grep'| awk '{print $2}')
+		
+		if [[ -e $TELEGRAM_RESTART_FILE ]]
+		then
+			echo "[$(date)] $0: Servicio '$1': Matando servicio telegram"
+		    sudo kill $pid
+		    pid=""
+		    sudo rm -rf $TELEGRAM_RESTART_FILE
+
+	    fi
 
 		if [[ "${TELEGRAM_BOT^^}" == "ON" && ! "${pid}" ]]
 		then
