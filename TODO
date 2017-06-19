@@ -1,9 +1,9 @@
+- arreglar antena minirouter
+- hacer placa para conectar varios dispositivos I2C
+- eliminar RCLONE de la web svvpa
 - ajustar enfoque de la cámara
+- hacer backup de toda la instalación RPi
+- activar tarifa 10GB para el verano
 x probar nuevo sensor temperatura/humedad
 x comprobar que el sensor temperatura/humedad no tiene pullups en SDA/SCL
-- activar tarifa 10GB para el verano
-- hacer backup de toda la instalación RPi
-- eliminar RCLONE de la web svvpa
-- hacer placa para conectar varios dispositivos I2C
-- arreglar antena minirouter
 x modificar SVVPA-service para que la función que comprueba telegram verifique si es necesario reiniciarlo (fichero flag?)
