@@ -770,8 +770,8 @@ el comando bash'
             self.cbq_MotionAskTime(msg, self.MOTION_DAYS)        
         elif not self._motionDelay.isHoursSetted():
             self.cbq_MotionAskTime(msg, self.MOTION_HOURS)        
-        elif not self._motionDelay.isMinutesSetted():
-            self.cbq_MotionAskTime(msg, self.MOTION_MINUTES)        
+        #elif not self._motionDelay.isMinutesSetted():
+        #    self.cbq_MotionAskTime(msg, self.MOTION_MINUTES)        
         #elif not self._motionDelay.isSecondsSetted():
         #    self.cbq_MotionAskTime(msg, self.MOTION_SECONDS)
             
@@ -856,7 +856,9 @@ el comando bash'
 
             print u"[{}] {}: Reiniciando servicio motion".format(datetime.datetime.now(), __file__)
             proc.call('sudo service motion restart', shell=True)
-            #proc.call('sudo /home/pi/software/motion-mmal/motion -c /etc/motion/motion.conf', shell=True)
+			if os.path.exists(os.environ['FILE_MOTION_OFF']):
+				os.remove(os.environ['FILE_MOTION_OFF'])
+            
             
             if msg:
                 self.editMessageText(self.getMsgChatId(msg), self.MSG_MOTION_START)
@@ -880,7 +882,8 @@ el comando bash'
 
             print u"[{}] {}: Parando servicio motion".format(datetime.datetime.now(), __file__)
             proc.call('sudo service motion stop', shell=True)
-            #proc.call('sudo killall motion',shell=True)	
+			with open(os.environ['FILE_MOTION_OFF'], 'w') as f:
+				f.write("")     #touch file	
             
             if msg:
                 self.editMessageText(self.getMsgChatId(msg), self.MSG_CMD_MOTION_STOP)

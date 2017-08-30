@@ -43,6 +43,7 @@ case $1 in
 	# Apagar servicio. Se ejecuta automáticamente por Linux cuando se apaga el sistema (init 0 1 6)
 	stop|notify_shutdown)
 		echo "[$(date)] $0: Servicio '$1': El sistema se está apagando"
+		rm ${FILE_MOTION_OFF} 2>/dev/null
 		python -u _notificator.py "ON_SHUTDOWN"
 		RETVAL=$(($RETVAL|$?))
 	;;
@@ -56,6 +57,7 @@ case $1 in
 		
 		#start motion
 		#sudo /home/pi/software/motion-mmal/motion -c /etc/motion/motion.conf &
+		rm ${FILE_MOTION_OFF} 2>/dev/null
 		sudo /usr/sbin/service motion start
 		
 		#start _telegram_bot
@@ -348,6 +350,27 @@ case $1 in
 		fi
 	;;
 	
+
+	check_motionDaylight)
+	    echo "[$(date)] $0: Servicio '$1': Comprobando motion Daylight"
+		
+		python -u _daylightMotion.python
+		RETVAL=$?
+
+		if [[ $RETVAL -eq 1 ]]
+		then
+		    echo "[$(date)] $0: Servicio '$1': Arrancando motion"
+			sudo /usr/sbin/service motion restart
+			RETVAL=$?
+	
+		elif [[ $RETVAL -eq -1 ]]
+		    echo "[$(date)] $0: Servicio '$1': Parando motion"
+			sudo /usr/sbin/service motion stop
+			RETVAL=$?	
+		fi
+	;;
+
+
 
 
 

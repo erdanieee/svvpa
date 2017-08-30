@@ -84,3 +84,7 @@ export TELEGRAM_UPDATE_BASE="1.17"	# Tiempo de refresco (updateTime) = BASE^curr
 export TELEGRAM_UPDATE_FACTOR="5"       # Tiempo por paso = updateTime^2*FACTOR
 export TELEGRAM_RESTART_FILE=${SVVPA_DIR}"/RESTART_TELEGRAM"
 
+#usados para calcular la salida y puesta de sol
+export LATITUD="37.04"	
+export LONGITUD="-4.07"
+export FILE_MOTION_OFF="/tmp/motionOFF"
