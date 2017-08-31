@@ -881,7 +881,7 @@ el comando bash'
                 m.cancel()
 
             print u"[{}] {}: Parando servicio motion".format(datetime.datetime.now(), __file__)
-            proc.call('sudo service motion stop', shell=True)
+            proc.call('sudo service motion stop 2>&1 >/dev/null', shell=True)
             with open(os.environ['FILE_MOTION_OFF'], 'w') as f:
                 f.write("")     #touch file	
             
@@ -1205,7 +1205,7 @@ el comando bash'
     
     def isMotionEnabled(self):
         try:
-            if proc.call('sudo service motion status', shell=True) == 0:
+            if proc.call('sudo service motion status 2>&1 >/dev/null', shell=True) == 0:
             #if proc.call('ps aux|egrep "\bmotion\b"|grep -v grep', shell=True) == 0:
                 print u"[{}] {}: Servicio MOTION esta activo".format(datetime.datetime.now(), __file__)
                 return True

@@ -113,7 +113,7 @@ case $1 in
 	# Comprueba estado de MOTION
 	check_services)
 		echo "[$(date)] $0: Servicio '$1': Comprobando estado de los servicios requeridos por SVVPA"
-		sudo /usr/sbin/service motion status
+		sudo /usr/sbin/service motion status 2>&1 >/dev/null
         #ps aux|egrep "\bmotion\b"|grep -v 'grep'
 		RETVAL=$(($RETVAL|$?))
 
@@ -366,7 +366,7 @@ case $1 in
 		elif [[ $RETVAL -eq -1 ]]
 		then
 		    echo "[$(date)] $0: Servicio '$1': Parando motion"
-			sudo /usr/sbin/service motion stop
+			sudo /usr/sbin/service motion stop 2>&1 >/dev/null
 			RETVAL=$?	
 		fi
 	;;
@@ -376,7 +376,7 @@ case $1 in
 	take_timeLapse)
 	    echo "[$(date)] $0: Servicio '$1': guardando foto para timeLapse"
 		
-		sudo /usr/sbin/service motion status
+		sudo /usr/sbin/service motion status 2>&1 >/dev/null
 		RETVAL=$?
 				
 		if [[ $RETVAL -eq 0 ]]
