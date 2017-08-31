@@ -856,8 +856,8 @@ el comando bash'
 
             print u"[{}] {}: Reiniciando servicio motion".format(datetime.datetime.now(), __file__)
             proc.call('sudo service motion restart', shell=True)
-			if os.path.exists(os.environ['FILE_MOTION_OFF']):
-				os.remove(os.environ['FILE_MOTION_OFF'])
+            if os.path.exists(os.environ['FILE_MOTION_OFF']):
+	        os.remove(os.environ['FILE_MOTION_OFF'])
             
             
             if msg:
@@ -882,8 +882,8 @@ el comando bash'
 
             print u"[{}] {}: Parando servicio motion".format(datetime.datetime.now(), __file__)
             proc.call('sudo service motion stop', shell=True)
-			with open(os.environ['FILE_MOTION_OFF'], 'w') as f:
-				f.write("")     #touch file	
+            with open(os.environ['FILE_MOTION_OFF'], 'w') as f:
+                f.write("")     #touch file	
             
             if msg:
                 self.editMessageText(self.getMsgChatId(msg), self.MSG_CMD_MOTION_STOP)
