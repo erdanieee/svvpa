@@ -354,7 +354,7 @@ case $1 in
 	check_motionDaylight)
 	    echo "[$(date)] $0: Servicio '$1': Comprobando motion Daylight"
 		
-		python -u _daylightMotion.python
+		python -u _daylightMotion.py
 		RETVAL=$?
 
 		if [[ $RETVAL -eq 1 ]]
@@ -364,6 +364,7 @@ case $1 in
 			RETVAL=$?
 	
 		elif [[ $RETVAL -eq -1 ]]
+		then
 		    echo "[$(date)] $0: Servicio '$1': Parando motion"
 			sudo /usr/sbin/service motion stop
 			RETVAL=$?	
