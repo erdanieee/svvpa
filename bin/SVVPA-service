@@ -370,6 +370,26 @@ case $1 in
 			RETVAL=$?	
 		fi
 	;;
+	
+	
+
+	take_timeLapse)
+	    echo "[$(date)] $0: Servicio '$1': guardando foto para timeLapse"
+		
+		sudo /usr/sbin/service motion status
+		$RETVAL=$?
+				
+		if [[ $RETVAL -eq 0 ]]
+		then
+		    sudo cp /var/www/svvpa/www/motion/.snapshot-1.jpg /home/pi/timelapse/`date '+%Y%m%d'`.jpg
+			RETVAL=$?
+	
+		else
+		then
+		    ${FSWEBCAM_BIN} --config ${FSWEBCAM_CONFIG} --device ${CAMERA_DEVICES} /home/pi/timelapse/`date '+%Y%m%d'`.jpg
+			RETVAL=$?	
+		fi
+	;;
 
 
 
