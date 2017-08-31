@@ -3,6 +3,7 @@
 ###################################
 * sudo apt-get install git motion apache2 mysql-server php5 php5-mysql bc build-essential python-dev python-smbus iptables-persistent fswebcam sshpass python-mysqldb python-pip vim
 * sudo pip install --upgrade oauth2client PyOpenSSL gspread google-api-python-client
+* sudo pip install pyephem
 #* Adafruit_Python_DHT
 #	- git clone https://github.com/adafruit/Adafruit_Python_DHT.git
 #	- sudo python setup.py install
