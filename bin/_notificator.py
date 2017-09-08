@@ -304,7 +304,7 @@ def on_motion(file):
             print >> sys.stderr, u'[{}] {}: ERROR! El archivo {} no existe o no es un archivo regular'.format(datetime.datetime.now(), __file__, file)
             return
             
-        fileuploader(file)   
+        #fileuploader(file)   
         
         id       = os.path.basename(file)[:-4]    
         data_img = run_query("select link from images where id like '{}'".format(id))
