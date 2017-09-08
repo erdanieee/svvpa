@@ -3,7 +3,7 @@ import os,sys
 import subprocess as proc
 
 
-DEBUG=True
+DEBUG=False
 
 
 #el archivo FILE_MOTION_OFF se crea cuando se para o pausa motion por telegram/email
