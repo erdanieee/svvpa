@@ -67,7 +67,9 @@
 * Copiar config/svvpa.logrotate.example a /etc/logrotate.d/svvpa, modificarlo convenientemente y cambiar usuario a root:root
 * Modificar /etc/modules para que incluya módulo bcm2835-v4l2
 * borrar /etc/iptables/rules.v4 y sustituir por enlace simbólico a config/iptables.rules.v4 
-
+* Añadir a /usr/lib/python2.7/sitecustomize.py las siguientes líneas:
+	import sys
+	sys.setdefaultencoding('iso-8859-15')	# cambia codificación por defecto
 
 
 #############
