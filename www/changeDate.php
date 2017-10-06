@@ -1,7 +1,7 @@
 <?php
 $date = htmlspecialchars($_GET["dateField"]);
 
-exec("date -s \"$date $(date +%H:%M:%S)\"");
+exec("sudo date -s \"$date $(date +%H:%M:%S)\"");
 
 header( 'Location: /ajustes.php' ) ;
 ?>
