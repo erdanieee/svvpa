@@ -11,6 +11,6 @@
 </html>
 
 <?php
-exec("/sbin/shutdown -h now");
+exec("sudo /sbin/shutdown -h now");
 ?>
 
