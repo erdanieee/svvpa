@@ -134,7 +134,7 @@ $hideSeries = json_decode('[' . $_GET["h"] . ']', true);
 					series : [
 						{
 							type : 'spline',
-							name : 'Humedad Revaliva (%)',
+							name : 'Humedad Relativa (%)',
 							data : [<?php echo join($dht22HR, ',') ?>],
 							yAxis: 0,
 							lineWidth:4 
