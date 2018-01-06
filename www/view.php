@@ -15,7 +15,7 @@
 		"11" => "Noviembre",
 		"12" => "Diciembre"];	
 	$name = htmlspecialchars($_GET["n"]);
-	list($y, $m, $d, $H, $M, $S, $p, $n, $J, $w, $h, $t) = split ("_", $name);
+	list($y, $m, $d, $H, $M, $S, $p, $n, $J, $w, $h, $t) = explode ("_", $name);
 ?>
 
 

@@ -82,7 +82,7 @@ require_once('CONSTANTS.php');
 					foreach (new DirectoryIterator(MOTION_DIR) as $fileInfo) {
 						if(!$fileInfo->isDot() && endsWith($fileInfo->getFilename(),'.' . MOTION_VIDEO_EXT)){
 							$file =  $fileInfo->getBasename('.' . MOTION_VIDEO_EXT);
-							list($y, $m, $d, $H, $M, $S, $p, $n, $J, $w, $h, $t) = split ("_", $file);
+							list($y, $m, $d, $H, $M, $S, $p, $n, $J, $w, $h, $t) = explode ("_", $file);
 
 							$filesByName[] = array(
 							"sorting" => $y . $m . $d . $H . $M . $S,
