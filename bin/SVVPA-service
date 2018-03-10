@@ -392,6 +392,23 @@ case $1 in
 		fi
 	;;
 
+	check_internet_conection)
+		echo "[$(date)] $0: Servicio '$1': comprobando conexión a internet"
+
+		#ping -q -w 1 -c 1 `ip r | grep 'default via' | cut -d ' ' -f 3` > /dev/null #&& echo ok || echo error
+		wget -q --tries=10 --timeout=20 --spider http://google.com
+
+		if [ $? -ne 0 ]
+		then
+			source gpio
+			gpio mode 21 out			
+			gpio write 21 0
+			sleep 2
+			gpio write 21 1
+			gpio mode 21 in			
+		fi
+
+	;;
 
 
 
