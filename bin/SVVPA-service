@@ -400,14 +400,20 @@ case $1 in
 
 		if [ $? -ne 0 ]
 		then
-			source gpio
-			gpio mode 21 out			
-			gpio write 21 0
-			sleep 2
-			gpio write 21 1
-			gpio mode 21 in			
-		fi
+			#source gpio
+			#gpio mode 21 out			
+			#gpio write 21 0
+			#sleep 2
+			#gpio write 21 1
+			#gpio mode 21 in			
 
+			echo 21 > /sys/class/gpio/export
+			echo out > /sys/class/gpio/gpio21/direction
+			echo 0 > /sys/class/gpio/gpio21/value
+			sleep 2
+			echo 1 > /sys/class/gpio/gpio21/value
+			echo 21 > /sys/class/gpio/unexport
+		fi
 	;;
 
 
